@@ -8,6 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public interface RecipeDao {
 
     @Query("SELECT * FROM recipes")
     LiveData<List<Recipe>> getRecipes();
+
+    @Query("SELECT id, name FROM recipes")
+    LiveData<List<MinimalRecipe>> getMinimalRecipes();
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     LiveData<Recipe> getRecipe(int id);

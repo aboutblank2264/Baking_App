@@ -1,9 +1,11 @@
 package com.aboutblank.baking_app;
 
+import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.baking_app.data.DataModel;
 import com.aboutblank.baking_app.data.IDataModel;
+import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
 
@@ -12,7 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
 
 @Singleton
 public class MainViewModel {
@@ -23,32 +25,34 @@ public class MainViewModel {
     @NonNull
     private ISchedulerProvider schedulerProvider;
 
-    private Observable<List<Recipe>> cachedRecipes;
+    @NonNull
+    private CompositeDisposable compositeDisposable;
 
     @Inject
-    public MainViewModel(@NonNull DataModel dataModel, @NonNull ISchedulerProvider schedulerProvider) {
+    public MainViewModel(@NonNull DataModel dataModel, @NonNull ISchedulerProvider schedulerProvider,
+                         @NonNull CompositeDisposable compositeDisposable) {
         this.dataModel = dataModel;
         this.schedulerProvider = schedulerProvider;
+        this.compositeDisposable = compositeDisposable;
     }
 
-    public Observable<String> update() {
-        return dataModel.update();
+    public void update() {
+        dataModel.update();
     }
 
-    public Observable<List<Recipe>> getRecipes() {
-        if(cachedRecipes == null) {
-
-            cachedRecipes = dataModel.getRecipes();
-        }
-        return cachedRecipes;
+    public LiveData<List<MinimalRecipe>> getMinimalRecipes() {
+        return dataModel.getMinimalRecipes();
     }
 
-    public Observable<Recipe> getRecipe(int id) {
-        if(cachedRecipes == null) {
-        }
+    public LiveData<Recipe> getRecipe(int id) {
+        return dataModel.getRecipe(id);
+    }
 
-//        Observable.just(cachedRecipes.)
-        return null;
+    /**
+     * Do any cleanup that's necessary
+     */
+    public void onDestroy() {
+        compositeDisposable.dispose();
     }
 
 }

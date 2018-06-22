@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aboutblank.baking_app.R;
-import com.aboutblank.baking_app.data.model.Recipe;
+import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.utils.ImageUtils;
 
 import java.util.List;
@@ -18,10 +18,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.MainRecyclerViewHolder> {
-    private List<Recipe> recipeList;
+    private List<MinimalRecipe> recipeList;
     private ItemClickedListener itemClickedListener;
 
-    public MainRecyclerViewAdapter(List<Recipe> recipeList) {
+    public MainRecyclerViewAdapter(List<MinimalRecipe> recipeList) {
         this.recipeList = recipeList;
     }
 
@@ -44,7 +44,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         return recipeList.size();
     }
 
-    public void updateRecipeList(List<Recipe> list) {
+    public void updateRecipeList(List<MinimalRecipe> list) {
         recipeList.clear();
         recipeList.addAll(list);
 

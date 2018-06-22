@@ -1,13 +1,16 @@
 package com.aboutblank.baking_app.data;
 
+import android.arch.lifecycle.LiveData;
+
+import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-
 public interface IDataModel {
-    Observable<String> update();
+    void update();
 
-    Observable<List<Recipe>> getRecipes();
+    LiveData<List<MinimalRecipe>> getMinimalRecipes();
+
+    LiveData<Recipe> getRecipe(int id);
 }

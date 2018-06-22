@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.aboutblank.baking_app.data.local.room.RecipeDao;
 import com.aboutblank.baking_app.data.local.room.RecipeDatabase;
+import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 
 import java.util.List;
@@ -23,8 +24,12 @@ public class LocalRepository {
         this.recipeDao = RecipeDatabase.getInstance(context).getRecipeDao();
     }
 
-    public LiveData<List<Recipe>> getRecipes() {
+    public LiveData<List<Recipe>> getFullRecipes() {
         return recipeDao.getRecipes();
+    }
+
+    public LiveData<List<MinimalRecipe>> getMinimalRecipes() {
+        return recipeDao.getMinimalRecipes();
     }
 
     public LiveData<Recipe> getRecipe(int id) {
