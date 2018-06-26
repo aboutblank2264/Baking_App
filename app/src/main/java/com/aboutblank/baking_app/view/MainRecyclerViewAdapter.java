@@ -18,6 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.MainRecyclerViewHolder> {
+    private final String LOG_TAG = getClass().getSimpleName();
+
     private List<MinimalRecipe> recipeList;
     private ItemClickedListener itemClickedListener;
 
@@ -36,6 +38,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull MainRecyclerViewHolder holder, int position) {
+//        Log.d(LOG_TAG, holder.toString() + " " + position + ", " + recipeList.get(position) + ", " + getItemCount());
         holder.setTitle(recipeList.get(position).getName());
     }
 
@@ -61,17 +64,19 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         @BindView(R.id.title)
         TextView titleTextView;
 
-        public MainRecyclerViewHolder(View view) {
+        MainRecyclerViewHolder(View view) {
             super(view);
-            ButterKnife.bind(view);
+            ButterKnife.bind(this, view);
+
+            view.setOnClickListener(this);
         }
 
-        public void setTitle(@NonNull String title) {
+        public void setTitle(String title) {
             titleTextView.setText(title);
         }
 
-        public void setImage( String imageUrl) {
-            if(imageUrl != null && !imageUrl.isEmpty()) {
+        public void setImage(String imageUrl) {
+            if (imageUrl != null && !imageUrl.isEmpty()) {
                 ImageUtils.loadImage(imageView, imageUrl);
             }
         }

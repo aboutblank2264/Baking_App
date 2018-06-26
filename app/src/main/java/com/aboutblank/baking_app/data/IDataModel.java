@@ -13,4 +13,6 @@ public interface IDataModel {
     LiveData<List<MinimalRecipe>> getMinimalRecipes();
 
     LiveData<Recipe> getRecipe(int id);
+
+    void clear();
 }

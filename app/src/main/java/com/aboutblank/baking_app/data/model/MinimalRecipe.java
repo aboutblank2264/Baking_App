@@ -16,4 +16,12 @@ public class MinimalRecipe {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "MinimalRecipe{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

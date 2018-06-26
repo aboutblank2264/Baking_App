@@ -31,9 +31,6 @@ public class DataModel implements IDataModel {
     @NonNull
     private CompositeDisposable compositeDisposable;
 
-    private LiveData<List<MinimalRecipe>> minimalRecipes;
-    private LiveData<Recipe> currentRecipe;
-
     @Inject
     public DataModel(@NonNull LocalRepository localRepository, @NonNull RemoteRepository remoteRepository,
                      @NonNull ISchedulerProvider schedulerProvider, @NonNull CompositeDisposable compositeDisposable) {
@@ -48,6 +45,7 @@ public class DataModel implements IDataModel {
         Observable<List<Recipe>> recipes = remoteRepository.getRecipes();
 
         compositeDisposable.add(recipes.observeOn(schedulerProvider.computation())
+                .subscribeOn(schedulerProvider.computation())
                 .subscribe(new Consumer<List<Recipe>>() {
                     @Override
                     public void accept(List<Recipe> recipes) throws Exception {
@@ -58,17 +56,16 @@ public class DataModel implements IDataModel {
 
     @Override
     public LiveData<List<MinimalRecipe>> getMinimalRecipes() {
-        if (minimalRecipes == null) {
-            minimalRecipes = localRepository.getMinimalRecipes();
-        }
-        return minimalRecipes;
+        return localRepository.getMinimalRecipes();
     }
 
     @Override
     public LiveData<Recipe> getRecipe(int id) {
-        if (currentRecipe == null) {
-            currentRecipe = localRepository.getRecipe(id);
-        }
-        return currentRecipe;
+        return localRepository.getRecipe(id);
+    }
+
+    @Override
+    public void clear() {
+        localRepository.deleteAll();
     }
 }

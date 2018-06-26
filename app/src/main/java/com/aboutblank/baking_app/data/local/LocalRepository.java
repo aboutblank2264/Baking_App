@@ -47,4 +47,8 @@ public class LocalRepository {
     public void deleteRecipe(Recipe... recipes) {
         recipeDao.delete(recipes);
     }
+
+    public void deleteAll() {
+        recipeDao.deleteAll();
+    }
 }

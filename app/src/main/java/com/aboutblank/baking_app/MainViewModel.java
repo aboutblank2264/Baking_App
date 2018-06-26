@@ -1,6 +1,7 @@
 package com.aboutblank.baking_app;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.baking_app.data.DataModel;
@@ -17,7 +18,7 @@ import javax.inject.Singleton;
 import io.reactivex.disposables.CompositeDisposable;
 
 @Singleton
-public class MainViewModel {
+public class MainViewModel extends ViewModel {
 
     @NonNull
     private IDataModel dataModel;
@@ -27,6 +28,11 @@ public class MainViewModel {
 
     @NonNull
     private CompositeDisposable compositeDisposable;
+
+    private LiveData<List<MinimalRecipe>> minimalRecipes;
+
+    private int currentId;
+    private LiveData<Recipe> currentRecipe;
 
     @Inject
     public MainViewModel(@NonNull DataModel dataModel, @NonNull ISchedulerProvider schedulerProvider,
@@ -41,18 +47,23 @@ public class MainViewModel {
     }
 
     public LiveData<List<MinimalRecipe>> getMinimalRecipes() {
-        return dataModel.getMinimalRecipes();
+        if(minimalRecipes == null) {
+            minimalRecipes = dataModel.getMinimalRecipes();
+        }
+        return minimalRecipes;
     }
 
     public LiveData<Recipe> getRecipe(int id) {
-        return dataModel.getRecipe(id);
+        if(currentId != id || currentRecipe == null) {
+            currentRecipe = dataModel.getRecipe(id);
+            currentId = id;
+        }
+        return currentRecipe;
     }
 
-    /**
-     * Do any cleanup that's necessary
-     */
-    public void onDestroy() {
+    @Override
+    protected void onCleared() {
+        super.onCleared();
         compositeDisposable.dispose();
     }
-
 }
