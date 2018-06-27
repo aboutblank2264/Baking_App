@@ -23,8 +23,9 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private List<MinimalRecipe> recipeList;
     private ItemClickedListener itemClickedListener;
 
-    public MainRecyclerViewAdapter(List<MinimalRecipe> recipeList) {
+    public MainRecyclerViewAdapter(List<MinimalRecipe> recipeList, ItemClickedListener itemClickedListener) {
         this.recipeList = recipeList;
+        this.itemClickedListener = itemClickedListener;
     }
 
     @NonNull
@@ -52,10 +53,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         recipeList.addAll(list);
 
         notifyDataSetChanged();
-    }
-
-    public void setItemClickedListener(ItemClickedListener itemClickedListener) {
-        this.itemClickedListener = itemClickedListener;
     }
 
     public class MainRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

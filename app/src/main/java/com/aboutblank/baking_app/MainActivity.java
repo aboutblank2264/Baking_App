@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
 
     @BindView(R.id.main_recycler_view)
     RecyclerView mainRecyclerView;
+
     MainRecyclerViewAdapter adapter;
 
     @Override
@@ -53,10 +54,9 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
      * Initial list of recipes is set to empty until full list can be retrieved.
      */
     private void initializeRecyclerView() {
-        adapter = new MainRecyclerViewAdapter(new ArrayList<MinimalRecipe>());
+        adapter = new MainRecyclerViewAdapter(new ArrayList<MinimalRecipe>(), this);
         mainRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mainRecyclerView.setAdapter(adapter);
-        adapter.setItemClickedListener(this);
     }
 
     private MainViewModel getViewModel() {
