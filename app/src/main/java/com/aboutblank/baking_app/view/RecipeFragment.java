@@ -16,11 +16,11 @@ import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
+import com.aboutblank.baking_app.view.adapters.StepsRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class RecipeFragment extends BaseFragment implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -57,16 +57,13 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.steps_fragment, container, false);
-
-        ButterKnife.bind(this, view);
-
+        View view = super.onCreateView(inflater, container, savedInstanceState);
         mainViewModel = ((BakingApplication) requireActivity().getApplication()).getMainViewModel();
 
         recipe = mainViewModel.getRecipe(id);
 
         initializeRecyclerView();
-        
+
         return view;
     }
 
@@ -92,17 +89,12 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    @Override
     public int getLayout() {
-        return 0;
+        return R.layout.fragment_recipe;
     }
 
     @Override
     public void onItemClick(View view, int position) {
-
+        //Launch the detailed step fragment
     }
 }

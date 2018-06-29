@@ -1,3 +1,5 @@
 <resources>
     <string name = "app_name">Baking_App</string>
+
+    <string name = "intent_recipe_id">intent_id</string>
 </resources>

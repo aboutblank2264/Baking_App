@@ -2,9 +2,9 @@ package com.aboutblank.baking_app;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,8 +13,7 @@ import android.view.View;
 
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.view.ItemClickedListener;
-import com.aboutblank.baking_app.view.MainRecyclerViewAdapter;
-import com.aboutblank.baking_app.view.RecipeFragment;
+import com.aboutblank.baking_app.view.adapters.MainRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,10 +80,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
     public void onItemClick(View view, int position) {
         Log.d(LOG_TAG, String.format("Position %d clicked", position));
 
-        RecipeFragment recipeFragment = RecipeFragment.newInstance(position);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_placeholder, recipeFragment);
+        Intent launchRecipeIntent = new Intent(this, RecipeActivity.class);
 
-        fragmentTransaction.commit();
     }
 }
