@@ -12,7 +12,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
-public class RecipeServiceGenerator {
+public abstract class RecipeServiceGenerator {
     private final static String BASE_URL = "http://go.udacity.com";
 
     private final static HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor()
@@ -31,7 +31,7 @@ public class RecipeServiceGenerator {
 
     @Singleton
     @Provides
-    public RecipeService getRecipeService() {
+    public static RecipeService getRecipeService() {
         return retrofit.create(RecipeService.class);
     }
 }

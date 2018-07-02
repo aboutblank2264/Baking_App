@@ -58,12 +58,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
         mainRecyclerView.setAdapter(adapter);
     }
 
-    private MainViewModel getViewModel() {
-        return ((BakingApplication) getApplication()).getMainViewModel();
-    }
-
     private void initializeData() {
-        mainViewModel = getViewModel();
+        mainViewModel = ((BakingApplication) getApplication()).getMainViewModel();
         mainViewModel.update();
 
         LiveData<List<MinimalRecipe>> minimalRecipes = mainViewModel.getMinimalRecipes();
@@ -78,9 +74,12 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.d(LOG_TAG, String.format("Position %d clicked", position));
+        int actualId = position + 1;
+        Log.d(LOG_TAG, String.format("Position %d clicked, sending recipe %d", position, actualId));
 
         Intent launchRecipeIntent = new Intent(this, RecipeActivity.class);
+        launchRecipeIntent.putExtra(getString(R.string.intent_recipe_id), actualId);
 
+        startActivity(launchRecipeIntent);
     }
 }

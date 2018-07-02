@@ -34,6 +34,11 @@ public class Ingredient {
         return ingredient;
     }
 
+    public String toPrint() {
+        return String.format("%s %s of %s", String.valueOf(quantity),
+                measurement.toLowerCase(), ingredient);
+    }
+
     @Override
     public String toString() {
         return "Ingredient{" +

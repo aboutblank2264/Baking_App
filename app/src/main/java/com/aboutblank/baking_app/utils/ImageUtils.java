@@ -7,24 +7,22 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import java.lang.ref.WeakReference;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class ImageUtils {
     private static final String LOG_TAG = ImageUtils.class.getSimpleName();
-    private static WeakReference<Context> context;
+    private Context context;
 
     @Inject
     public ImageUtils(Context context) {
-        ImageUtils.context = new WeakReference<>(context);
+        this.context = context;
     }
 
-    public static void loadImage(@NonNull ImageView imageView, @NonNull String url) {
-        if(context.get() != null) {
-            Glide.with(context.get())
+    public void loadImage(@NonNull ImageView imageView, @NonNull String url) {
+        if(context != null) {
+            Glide.with(context)
                     .load(url)
                     .into(imageView);
         } else {

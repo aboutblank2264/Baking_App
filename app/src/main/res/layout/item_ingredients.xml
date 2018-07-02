@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android = "http://schemas.android.com/apk/res/android"
-    android:layout_width = "match_parent" android:layout_height = "match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ingredient_item"
+    android:layout_width = "match_parent"
+    android:layout_height = "wrap_content"
+    android:padding = "8dp"
+    >
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/ingredient_recycler"
-        android:layout_width = "match_parent"
-        android:layout_height = "match_parent"
+    <ImageView
+        android:id = "@+id/icon"
+        android:layout_width = "25dp"
+        android:layout_height = "25dp"
+        android:background = "@drawable/ic_done_black_24dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="4dp"
+        app:layout_constraintStart_toStartOf = "parent"
+        android:contentDescription = "@string/icon"
         />
-</FrameLayout>
+
+    <TextView
+        android:id = "@+id/ingredient_text"
+        style = "@style/IngredientStyle"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        app:layout_constraintStart_toEndOf = "@id/icon"
+        />
+
+
+</android.support.constraint.ConstraintLayout>

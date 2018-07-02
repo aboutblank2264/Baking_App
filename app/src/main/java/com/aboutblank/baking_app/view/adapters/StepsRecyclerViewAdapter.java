@@ -20,7 +20,6 @@ public class StepsRecyclerViewAdapter extends RecyclerView.Adapter<StepsRecycler
     private List<Step> steps;
     private ItemClickedListener itemClickedListener;
 
-
     public StepsRecyclerViewAdapter(List<Step> steps, ItemClickedListener itemClickedListener) {
         this.steps = steps;
         this.itemClickedListener = itemClickedListener;
@@ -30,7 +29,7 @@ public class StepsRecyclerViewAdapter extends RecyclerView.Adapter<StepsRecycler
     @Override
     public StepsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_step_recycler, parent, false);
+                .inflate(R.layout.item_step, parent, false);
 
         return new StepsViewHolder(view);
     }
@@ -71,7 +70,7 @@ public class StepsRecyclerViewAdapter extends RecyclerView.Adapter<StepsRecycler
 
         @Override
         public void onClick(View v) {
-            itemClickedListener.onItemClick(v, getAdapterPosition());
+
         }
     }
 }

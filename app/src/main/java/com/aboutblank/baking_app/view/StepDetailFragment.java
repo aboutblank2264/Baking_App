@@ -1,10 +1,10 @@
 package com.aboutblank.baking_app.view;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +15,9 @@ import com.aboutblank.baking_app.BakingApplication;
 import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Step;
-import com.aboutblank.baking_app.utils.ImageUtils;
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 
@@ -36,12 +25,13 @@ public class StepDetailFragment extends BaseFragment {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
+    private final static String ID = "id";
     private final static String DESCRIPTION = "description";
     private final static String THUMBNAIL_URL = "thumbnail";
     private final static String VIDEO_URL = "player";
 
-    private MainViewModel mainViewModel;
-
+    @BindView(R.id.step_layout)
+    ConstraintLayout constraintLayout;
     @BindView(R.id.step_player)
     PlayerView player;
     @BindView(R.id.step_thumbnail)
@@ -52,6 +42,8 @@ public class StepDetailFragment extends BaseFragment {
     private String description;
     private String thumbnailUrl;
     private String videoUrl;
+
+    private MainViewModel mainViewModel;
 
     private ExoPlayer exoPlayer;
 
@@ -83,31 +75,26 @@ public class StepDetailFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);;
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+
         mainViewModel = ((BakingApplication) requireActivity().getApplication()).getMainViewModel();
 
         descriptionView.setText(description);
 
-        setExoPlayer(requireContext());
+        setExoPlayer();
 
         return view;
     }
 
-    private void setExoPlayer(@NonNull Context context) {
+    private void setExoPlayer() {
         if (videoUrl != null && !videoUrl.isEmpty()) {
 
             //Remove image view as it is not needed
             thumbnailView.setVisibility(View.GONE);
 
-            //Create ExoPlayer
-            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-            TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector(trackSelectionFactory));
+            exoPlayer = mainViewModel.getExoPlayer();
 
-            //Create DataSource Factory
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                    Util.getUserAgent(context, context.getString(R.string.app_name)));
-            MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+            MediaSource mediaSource = mainViewModel.getMediaSourceFactory()
                     .createMediaSource(Uri.parse(videoUrl));
 
             //Prepare the video
@@ -116,15 +103,11 @@ public class StepDetailFragment extends BaseFragment {
             player.setPlayer(exoPlayer);
 
         } else if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
-            // Else attempt to load a static image
-            ImageUtils.loadImage(thumbnailView, thumbnailUrl);
-        }
-    }
+            player.setVisibility(View.GONE);
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        exoPlayer.release();
+            // Else attempt to load a static image
+            mainViewModel.getImageUtils().loadImage(thumbnailView, thumbnailUrl);
+        }
     }
 
     @Override

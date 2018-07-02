@@ -48,7 +48,7 @@ public class DataModel implements IDataModel {
                 .subscribeOn(schedulerProvider.computation())
                 .subscribe(new Consumer<List<Recipe>>() {
                     @Override
-                    public void accept(List<Recipe> recipes) throws Exception {
+                    public void accept(List<Recipe> recipes) {
                         localRepository.insertRecipes(recipes.toArray(new Recipe[0]));
                     }
                 }));

@@ -6,9 +6,10 @@ import android.support.annotation.NonNull;
 import com.aboutblank.baking_app.data.IDataModel;
 import com.aboutblank.baking_app.di.components.ApplicationComponent;
 import com.aboutblank.baking_app.di.components.DaggerApplicationComponent;
-import com.aboutblank.baking_app.di.modules.ApplicationModule;
 import com.aboutblank.baking_app.di.modules.ContextModule;
+import com.aboutblank.baking_app.di.modules.ExoPlayerModule;
 import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
+import com.google.android.exoplayer2.util.Util;
 
 public class BakingApplication extends Application {
     private ApplicationComponent applicationComponent;
@@ -19,8 +20,8 @@ public class BakingApplication extends Application {
     private ApplicationComponent getApplicationComponent() {
         if (applicationComponent == null) {
             applicationComponent = DaggerApplicationComponent.builder()
-                    .applicationModule(new ApplicationModule())
                     .contextModule(new ContextModule(this))
+                    .exoPlayerModule(new ExoPlayerModule(Util.getUserAgent(this, getString(R.string.app_name))))
                     .build();
         }
         return applicationComponent;

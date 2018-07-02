@@ -9,6 +9,10 @@ import com.aboutblank.baking_app.data.IDataModel;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
+import com.aboutblank.baking_app.utils.ExoPlayerUtils;
+import com.aboutblank.baking_app.utils.ImageUtils;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
 
 import java.util.List;
 
@@ -29,6 +33,12 @@ public class MainViewModel extends ViewModel {
     @NonNull
     private CompositeDisposable compositeDisposable;
 
+    @NonNull
+    private ImageUtils imageUtils;
+
+    @NonNull
+    private ExoPlayerUtils exoPlayerUtils;
+
     private LiveData<List<MinimalRecipe>> minimalRecipes;
 
     private int currentId;
@@ -36,13 +46,17 @@ public class MainViewModel extends ViewModel {
 
     @Inject
     public MainViewModel(@NonNull DataModel dataModel, @NonNull ISchedulerProvider schedulerProvider,
-                         @NonNull CompositeDisposable compositeDisposable) {
+                         @NonNull CompositeDisposable compositeDisposable,
+                         @NonNull ImageUtils imageUtils, @NonNull ExoPlayerUtils exoPlayerUtils) {
         this.dataModel = dataModel;
         this.schedulerProvider = schedulerProvider;
         this.compositeDisposable = compositeDisposable;
+        this.imageUtils = imageUtils;
+        this.exoPlayerUtils = exoPlayerUtils;
     }
 
     public void update() {
+        //TODO DataModel returns an observable to subscribe to for error reporting.
         dataModel.update();
     }
 
@@ -59,6 +73,21 @@ public class MainViewModel extends ViewModel {
             currentId = id;
         }
         return currentRecipe;
+    }
+
+    @NonNull
+    public ImageUtils getImageUtils() {
+        return  imageUtils;
+    }
+
+    @NonNull
+    public ExoPlayer getExoPlayer() {
+        return exoPlayerUtils.getExoPlayer();
+    }
+
+    @NonNull
+    public ExtractorMediaSource.Factory getMediaSourceFactory() {
+        return exoPlayerUtils.getExtractorMediaSource();
     }
 
     @Override

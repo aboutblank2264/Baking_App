@@ -5,12 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
-import com.aboutblank.baking_app.utils.ImageUtils;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 
 import java.util.List;
@@ -32,15 +30,14 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @NonNull
     @Override
     public MainRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_main_recycler, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main, parent, false);
 
         return new MainRecyclerViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MainRecyclerViewHolder holder, int position) {
-        holder.setTitle(recipeList.get(position).getName());stat
+        holder.setTitle(recipeList.get(position).getName());
     }
 
     @Override
@@ -56,8 +53,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     }
 
     public class MainRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        @BindView(R.id.image)
-        ImageView imageView;
         @BindView(R.id.title)
         TextView titleTextView;
 
@@ -70,12 +65,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         public void setTitle(String title) {
             titleTextView.setText(title);
-        }
-
-        public void setImage(String imageUrl) {
-            if (imageUrl != null && !imageUrl.isEmpty()) {
-                ImageUtils.loadImage(imageView, imageUrl);
-            }
         }
 
         @Override
