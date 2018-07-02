@@ -8,10 +8,10 @@
     >
 
     <ImageView
-        android:id = "@+id/icon"
+        android:id = "@+id/ingredient_icon"
         android:layout_width = "25dp"
         android:layout_height = "25dp"
-        android:background = "@drawable/ic_done_black_24dp"
+        android:background = "@drawable/ic_add_black_24dp"
         android:paddingStart="0dp"
         android:paddingEnd="4dp"
         app:layout_constraintStart_toStartOf = "parent"
@@ -23,7 +23,7 @@
         style = "@style/IngredientStyle"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
-        app:layout_constraintStart_toEndOf = "@id/icon"
+        app:layout_constraintStart_toEndOf = "@id/ingredient_icon"
         />
 
 
