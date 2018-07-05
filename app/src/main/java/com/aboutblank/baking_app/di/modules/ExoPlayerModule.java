@@ -2,8 +2,6 @@ package com.aboutblank.baking_app.di.modules;
 
 import android.content.Context;
 
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -38,11 +36,6 @@ public class ExoPlayerModule {
     @Provides
     public static TrackSelector providesTrackSelector(TrackSelection.Factory trackSelectionFactory) {
         return new DefaultTrackSelector(trackSelectionFactory);
-    }
-
-    @Provides
-    public static ExoPlayer providesExoPlayer(Context context, TrackSelector trackSelector) {
-        return ExoPlayerFactory.newSimpleInstance(context, trackSelector);
     }
 
     @Provides

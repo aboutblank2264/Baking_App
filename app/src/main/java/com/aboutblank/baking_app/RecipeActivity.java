@@ -6,14 +6,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.view.IngredientListFragment;
-import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.view.RecipeFragment;
 
-public class RecipeActivity extends AppCompatActivity implements ItemClickedListener {
+import io.reactivex.disposables.CompositeDisposable;
+
+public class RecipeActivity extends AppCompatActivity {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -24,15 +24,20 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     private LiveData<Recipe> recipe;
     private int recipeId = -1;
 
+    private CompositeDisposable compositeDisposable;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
+        compositeDisposable = new CompositeDisposable();
+
         ingredientListFragment = (IngredientListFragment) getSupportFragmentManager().findFragmentById(R.id.ingredient_list);
+        ingredientListFragment.setCompositeDisposable(compositeDisposable);
 
         recipeFragment = (RecipeFragment) getSupportFragmentManager().findFragmentById(R.id.recipe_steps);
-        recipeFragment.setItemClickedListener(this);
+        recipeFragment.setCompositeDisposable(compositeDisposable);
 
         mainViewModel = ((BakingApplication) getApplication()).getMainViewModel();
 
@@ -43,13 +48,13 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
 
             recipe = mainViewModel.getRecipe(recipeId);
 
-            recipeFragment.setRecipe(recipeId, recipe);
+            recipeFragment.setRecipe(recipe);
 
             recipe.observe(this, new Observer<Recipe>() {
                 @Override
                 public void onChanged(@Nullable Recipe recipe) {
                     if (recipe != null) {
-                        ingredientListFragment.setIngredientList(recipe.getIngredients());
+                        ingredientListFragment.setRecipe(recipe);
                     }
                 }
             });
@@ -60,26 +65,8 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-//        List<Step> steps = recipe.getValue().getSteps();
-//
-//        if(steps != null && !steps.isEmpty()) {
-//            loadRecipeDetailFragment(steps.get(position));
-//        }
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
     }
-
-//    private void loadRecipeDetailFragment(Step step) {
-//        StepDetailFragment stepDetailFragment = StepDetailFragment.newInstance(step);
-//
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//        fragmentManager.beginTransaction()
-//                .hide(fragmentManager.findFragmentById(R.id.recipe_steps))
-//                .commit();
-//
-//        fragmentManager.beginTransaction()
-//                .replace(R.id.fragment_placeholder, stepDetailFragment)
-//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                .commit();
-//    }
 }

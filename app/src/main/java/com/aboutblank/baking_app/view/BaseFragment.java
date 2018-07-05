@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.disposables.CompositeDisposable;
 
 public abstract class BaseFragment extends Fragment {
 
     private Unbinder unbinder;
+    private CompositeDisposable compositeDisposable;
 
     @Nullable
     @Override
@@ -29,6 +31,17 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    public CompositeDisposable getCompositeDisposable() {
+        if(compositeDisposable == null) {
+            compositeDisposable = new CompositeDisposable();
+        }
+        return compositeDisposable;
+    }
+
+    public void setCompositeDisposable(@NonNull CompositeDisposable compositeDisposable) {
+        this.compositeDisposable = compositeDisposable;
     }
 
     public abstract int getLayout();

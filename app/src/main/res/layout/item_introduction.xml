@@ -10,18 +10,10 @@
     >
 
     <TextView
-        android:id = "@+id/step_short_description"
+        android:id = "@+id/intro_description"
         style = "@style/TitleStyle"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
-        />
-
-    <TextView
-        android:id = "@+id/step_description"
-        style = "@style/StepStyle"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        app:layout_constraintTop_toBottomOf = "@id/step_short_description"
         />
 
     <net.cachapa.expandablelayout.ExpandableLayout
@@ -29,18 +21,11 @@
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         app:el_expanded = "false"
-        app:layout_constraintTop_toBottomOf = "@id/step_description"
+        app:layout_constraintTop_toBottomOf = "@id/intro_description"
         >
 
-        <ImageView
-            android:id = "@+id/step_thumbnail"
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            app:layout_constraintStart_toStartOf = "parent"
-            />
-
         <com.aboutblank.baking_app.player.MediaPlayerView
-            android:id = "@+id/step_player"
+            android:id = "@+id/intro_player"
             android:layout_width = "match_parent"
             android:layout_height = "350dp"
             app:layout_constraintStart_toStartOf = "parent"

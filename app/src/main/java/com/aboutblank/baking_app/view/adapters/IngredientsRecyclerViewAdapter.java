@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Ingredient;
+import com.aboutblank.baking_app.view.ItemClickedListener;
 
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -23,9 +25,13 @@ public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<Ingredi
     private final static float NORMAL = 1.0f;
 
     private List<Ingredient> ingredientList;
+    private ItemClickedListener itemClickedListener;
 
-    public IngredientsRecyclerViewAdapter(List<Ingredient> ingredientList) {
+    private Set<Integer> indexedIngredients;
+
+    public IngredientsRecyclerViewAdapter(List<Ingredient> ingredientList, ItemClickedListener itemClickedListener) {
         this.ingredientList = ingredientList;
+        this.itemClickedListener = itemClickedListener;
     }
 
     @NonNull
@@ -39,11 +45,17 @@ public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<Ingredi
     @Override
     public void onBindViewHolder(@NonNull IngredientsViewHolder holder, int position) {
         holder.setIngredient(ingredientList.get(position));
+
+        if(indexedIngredients != null) {
+            holder.toggleActive(indexedIngredients.contains(position));
+        }
     }
 
-    public void update(List<Ingredient> list) {
+    public void update(List<Ingredient> list, Set<Integer> indexedIngredients) {
         ingredientList.clear();
         ingredientList.addAll(list);
+
+        this.indexedIngredients = indexedIngredients;
         notifyDataSetChanged();
     }
 
@@ -77,10 +89,18 @@ public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<Ingredi
             this.ingredient.setText(ingredient.toPrint());
         }
 
-        //TODO store state of clicked ingredients.
+        private void toggleActive(boolean isIndexed) {
+            checkIfActive(itemView, isIndexed);
+        }
+
         @Override
         public void onClick(View item) {
-            if(item.getAlpha() == NORMAL) {
+            checkIfActive(item, item.getAlpha() == NORMAL);
+            itemClickedListener.onItemClick(item, getAdapterPosition());
+        }
+
+        private void checkIfActive(View item, boolean check) {
+            if(check) {
                 item.setAlpha(GREYED);
                 iconView.setBackground(doneIcon);
             } else {

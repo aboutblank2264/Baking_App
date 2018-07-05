@@ -12,69 +12,52 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aboutblank.baking_app.BakingApplication;
+import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
+import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.view.adapters.StepsRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 public class RecipeFragment extends BaseFragment implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
     private final static String ID = "id";
 
-    private ItemClickedListener itemClickedListener;
     private LiveData<Recipe> recipe;
-    private int id = -1;
 
     @BindView(R.id.steps_recycler)
     RecyclerView stepsRecyclerView;
     StepsRecyclerViewAdapter stepsRecyclerViewAdapter;
 
-    public static RecipeFragment newInstance(int id) {
-        RecipeFragment recipeFragment = new RecipeFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(ID, id);
-
-        recipeFragment.setArguments(bundle);
-
-        return recipeFragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-
-        if (bundle != null) {
-            id = bundle.getInt(ID);
-        }
-    }
+    private MainViewModel mainViewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        initializeRecyclerView();
+
+        mainViewModel = ((BakingApplication) requireActivity().getApplication()).getMainViewModel();
+        initializeRecyclerView(mainViewModel);
 
         return view;
     }
 
-    private void initializeRecyclerView() {
-        stepsRecyclerViewAdapter = new StepsRecyclerViewAdapter(new ArrayList<Step>(), this);
+    private void initializeRecyclerView(MainViewModel mainViewModel) {
+        stepsRecyclerViewAdapter = new StepsRecyclerViewAdapter(mainViewModel, new ArrayList<Step>(),
+                stepsRecyclerView, getCompositeDisposable(), this);
 
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         stepsRecyclerView.setAdapter(stepsRecyclerViewAdapter);
     }
 
-    public void setItemClickedListener(ItemClickedListener itemClickedListener) {
-        this.itemClickedListener = itemClickedListener;
-    }
-
-    public void setRecipe(int id, LiveData<Recipe> newRecipe) {
-        this.id = id;
+    public void setRecipe(LiveData<Recipe> newRecipe) {
         this.recipe = newRecipe;
 
         if (this.recipe != null) {
@@ -90,6 +73,19 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        Disposable disposable = mainViewModel.getPlayer().subscribe(new Consumer<MediaPlayer>() {
+            @Override
+            public void accept(MediaPlayer mediaPlayer) throws Exception {
+                mediaPlayer.release();
+            }
+        });
+
+        getCompositeDisposable().add(disposable);
+    }
+
+    @Override
     public int getLayout() {
         return R.layout.fragment_recipe;
     }
@@ -98,9 +94,5 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     public void onItemClick(View view, int position) {
         //Launch the detailed step fragment
         Log.d(LOG_TAG, String.format("Step %d clicked", position));
-
-        if(itemClickedListener != null) {
-            itemClickedListener.onItemClick(view, position);
-        }
     }
 }

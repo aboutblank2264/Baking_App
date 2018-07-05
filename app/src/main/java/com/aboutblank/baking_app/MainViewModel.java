@@ -8,18 +8,18 @@ import com.aboutblank.baking_app.data.DataModel;
 import com.aboutblank.baking_app.data.IDataModel;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
+import com.aboutblank.baking_app.player.MediaPlayer;
+import com.aboutblank.baking_app.player.MediaPlayerPool;
 import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
-import com.aboutblank.baking_app.utils.ExoPlayerUtils;
 import com.aboutblank.baking_app.utils.ImageUtils;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.Single;
 
 @Singleton
 public class MainViewModel extends ViewModel {
@@ -31,13 +31,10 @@ public class MainViewModel extends ViewModel {
     private ISchedulerProvider schedulerProvider;
 
     @NonNull
-    private CompositeDisposable compositeDisposable;
-
-    @NonNull
     private ImageUtils imageUtils;
 
     @NonNull
-    private ExoPlayerUtils exoPlayerUtils;
+    private MediaPlayerPool mediaPlayerPool;
 
     private LiveData<List<MinimalRecipe>> minimalRecipes;
 
@@ -46,13 +43,11 @@ public class MainViewModel extends ViewModel {
 
     @Inject
     public MainViewModel(@NonNull DataModel dataModel, @NonNull ISchedulerProvider schedulerProvider,
-                         @NonNull CompositeDisposable compositeDisposable,
-                         @NonNull ImageUtils imageUtils, @NonNull ExoPlayerUtils exoPlayerUtils) {
+                         @NonNull ImageUtils imageUtils, @NonNull MediaPlayerPool mediaPlayerPool) {
         this.dataModel = dataModel;
         this.schedulerProvider = schedulerProvider;
-        this.compositeDisposable = compositeDisposable;
         this.imageUtils = imageUtils;
-        this.exoPlayerUtils = exoPlayerUtils;
+        this.mediaPlayerPool = mediaPlayerPool;
     }
 
     public void update() {
@@ -61,14 +56,14 @@ public class MainViewModel extends ViewModel {
     }
 
     public LiveData<List<MinimalRecipe>> getMinimalRecipes() {
-        if(minimalRecipes == null) {
+        if (minimalRecipes == null) {
             minimalRecipes = dataModel.getMinimalRecipes();
         }
         return minimalRecipes;
     }
 
     public LiveData<Recipe> getRecipe(int id) {
-        if(currentId != id || currentRecipe == null) {
+        if (currentId != id || currentRecipe == null) {
             currentRecipe = dataModel.getRecipe(id);
             currentId = id;
         }
@@ -77,22 +72,25 @@ public class MainViewModel extends ViewModel {
 
     @NonNull
     public ImageUtils getImageUtils() {
-        return  imageUtils;
+        return imageUtils;
+    }
+
+    public void indexIngredient(int recipeIndex, int ingredientIndex) {
+        dataModel.indexIngredient(recipeIndex, ingredientIndex);
+    }
+
+    public Set<Integer> getIndexedIngredients(int recipeIndex) {
+        return dataModel.getIndexedIngredients(recipeIndex);
     }
 
     @NonNull
-    public ExoPlayer getExoPlayer() {
-        return exoPlayerUtils.getExoPlayer();
-    }
-
-    @NonNull
-    public ExtractorMediaSource.Factory getMediaSourceFactory() {
-        return exoPlayerUtils.getExtractorMediaSource();
+    public Single<MediaPlayer> getPlayer() {
+        return mediaPlayerPool.getPlayer().subscribeOn(schedulerProvider.computation());
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        compositeDisposable.dispose();
+        mediaPlayerPool.cleanup();
     }
 }

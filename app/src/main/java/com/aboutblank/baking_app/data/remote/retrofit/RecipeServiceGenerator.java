@@ -16,7 +16,7 @@ public abstract class RecipeServiceGenerator {
     private final static String BASE_URL = "http://go.udacity.com";
 
     private final static HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY);
+            .setLevel(HttpLoggingInterceptor.Level.BASIC);
 
     private final static OkHttpClient httpClient = new OkHttpClient().newBuilder()
             .addInterceptor(httpLoggingInterceptor)

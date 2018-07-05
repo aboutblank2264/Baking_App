@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:app = "http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ingredient_item"
+    android:id = "@+id/ingredient_item"
     android:layout_width = "match_parent"
     android:layout_height = "wrap_content"
-    android:padding = "8dp"
     >
 
     <ImageView
@@ -12,10 +11,10 @@
         android:layout_width = "25dp"
         android:layout_height = "25dp"
         android:background = "@drawable/ic_add_black_24dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="4dp"
-        app:layout_constraintStart_toStartOf = "parent"
         android:contentDescription = "@string/icon"
+        android:paddingEnd = "4dp"
+        android:paddingStart = "4dp"
+        app:layout_constraintStart_toStartOf = "parent"
         />
 
     <TextView
@@ -23,7 +22,9 @@
         style = "@style/IngredientStyle"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
-        app:layout_constraintStart_toEndOf = "@id/ingredient_icon"
+        android:paddingEnd = "2dp"
+        android:paddingStart = "0dp"
+        app:layout_constraintLeft_toRightOf = "@id/ingredient_icon"
         />
 
 

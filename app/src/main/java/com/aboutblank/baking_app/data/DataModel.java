@@ -2,6 +2,7 @@ package com.aboutblank.baking_app.data;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 
 import com.aboutblank.baking_app.data.local.LocalRepository;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
@@ -9,7 +10,9 @@ import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.remote.RemoteRepository;
 import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,6 +34,8 @@ public class DataModel implements IDataModel {
     @NonNull
     private CompositeDisposable compositeDisposable;
 
+    private SparseArray<Set<Integer>> ownedRecipeIngredientsMap;
+
     @Inject
     public DataModel(@NonNull LocalRepository localRepository, @NonNull RemoteRepository remoteRepository,
                      @NonNull ISchedulerProvider schedulerProvider, @NonNull CompositeDisposable compositeDisposable) {
@@ -38,6 +43,8 @@ public class DataModel implements IDataModel {
         this.remoteRepository = remoteRepository;
         this.schedulerProvider = schedulerProvider;
         this.compositeDisposable = compositeDisposable;
+
+        ownedRecipeIngredientsMap = new SparseArray<>();
     }
 
     @Override
@@ -62,6 +69,28 @@ public class DataModel implements IDataModel {
     @Override
     public LiveData<Recipe> getRecipe(int id) {
         return localRepository.getRecipe(id);
+    }
+
+    //TODO return an Observable
+    @Override
+    public void indexIngredient(int recipeIndex, int ingredientIndex) {
+        Set<Integer> ingredientList = ownedRecipeIngredientsMap.get(recipeIndex);
+
+        if (ingredientList == null) {
+            ingredientList = new HashSet<>();
+        }
+
+        if (ingredientList.contains(ingredientIndex)) {
+            ingredientList.remove(ingredientIndex);
+        } else {
+            ingredientList.add(ingredientIndex);
+        }
+    }
+
+    //TODO return an Observable
+    @Override
+    public Set<Integer> getIndexedIngredients(int recipeIndex) {
+        return ownedRecipeIngredientsMap.get(recipeIndex);
     }
 
     @Override
