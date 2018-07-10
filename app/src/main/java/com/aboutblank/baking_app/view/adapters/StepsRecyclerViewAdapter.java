@@ -21,19 +21,16 @@ public class StepsRecyclerViewAdapter extends RecyclerView.Adapter<StepViewHolde
     private List<Step> steps;
     private ItemClickedListener itemClickedListener;
 
-    private RecyclerView recyclerView;
     private MainViewModel mainViewModel;
 
     private CompositeDisposable compositeDisposable;
 
     public StepsRecyclerViewAdapter(MainViewModel mainViewModel, List<Step> steps,
-                                    RecyclerView recyclerView, CompositeDisposable compositeDisposable,
-                                    ItemClickedListener itemClickedListener) {
+                                    CompositeDisposable compositeDisposable, ItemClickedListener itemClickedListener) {
         this.mainViewModel = mainViewModel;
         this.steps = steps;
         this.compositeDisposable = compositeDisposable;
         this.itemClickedListener = itemClickedListener;
-        this.recyclerView = recyclerView;
     }
 
     @NonNull

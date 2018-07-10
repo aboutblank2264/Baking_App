@@ -1,13 +1,16 @@
 package com.aboutblank.baking_app.view.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.aboutblank.baking_app.R;
+import com.aboutblank.baking_app.data.model.Recipe;
+import com.aboutblank.baking_app.data.model.Step;
 import com.aboutblank.baking_app.player.MediaPlayer;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.aboutblank.baking_app.player.MediaPlayerView;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
@@ -20,7 +23,7 @@ import io.reactivex.functions.Consumer;
 
 public class IntroViewHolder extends RecyclerView.ViewHolder
         implements IRecipeViewHolder, View.OnClickListener, ExpandableLayout.OnExpansionUpdateListener {
-    
+
     private final String LOG_TAG = getClass().getSimpleName();
 
     @BindView(R.id.expandable_layout)
@@ -30,7 +33,7 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
     TextView description;
 
     @BindView(R.id.intro_player)
-    PlayerView playerView;
+    MediaPlayerView playerView;
 
     private String videoUrl;
 
@@ -45,29 +48,14 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
         this.compositeDisposable = compositeDisposable;
     }
 
-//    void setStep(Step step) {
-//        shortDescription.setText(step.getShortDescription());
-//        description.setText(step.getDescription());
-//        setThumbnail(step.getThumbnailUrl());
-//        boolean saveToExpand = setVideoUrl(step.getVideoUrl());
-//
-//        if (saveToExpand) {
-//            expandableLayout.expand(false);
-//            shortDescription.setClickable(false);
-//        }
-//    }
-
-    boolean setVideoUrl(String videoUrl) {
-        boolean isSafeToExpand = false;
-
-        if (videoUrl != null && !videoUrl.isEmpty()) {
-            this.videoUrl = videoUrl;
-        } else {
-            playerView.setVisibility(View.GONE);
-            isSafeToExpand = true;
-        }
-
-        return isSafeToExpand;
+    private void subscribeToMedia(final String videoUrl) {
+        compositeDisposable.add(mediaPlayerObservable.subscribe(new Consumer<MediaPlayer>() {
+            @Override
+            public void accept(MediaPlayer mediaPlayer) throws Exception {
+                mediaPlayer.prepare(videoUrl);
+                playerView.setPlayer(mediaPlayer);
+            }
+        }));
     }
 
     @Override
@@ -110,7 +98,9 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
-    public void bindViewHolder() {
-
+    public void bindViewHolder(@NonNull Recipe recipe, int position) {
+        Step intro = recipe.getSteps().get(0);
+        description.setText(intro.getDescription());
+//        subscribeToMedia(intro.getVideoUrl());
     }
 }

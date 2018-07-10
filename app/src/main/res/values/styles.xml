@@ -26,4 +26,9 @@
         <item name = "android:textSize">18sp</item>
     </style>
 
+    <style name = "VideoStyle">
+        <item name = "android:paddingStart">16dp</item>
+        <item name = "android:paddingEnd">16dp</item>
+    </style>
+
 </resources>

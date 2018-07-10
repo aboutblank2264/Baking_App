@@ -28,7 +28,6 @@ import io.reactivex.functions.Consumer;
 
 public class RecipeFragment extends BaseFragment implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
-    private final static String ID = "id";
 
     private LiveData<Recipe> recipe;
 
@@ -50,8 +49,8 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     }
 
     private void initializeRecyclerView(MainViewModel mainViewModel) {
-        stepsRecyclerViewAdapter = new StepsRecyclerViewAdapter(mainViewModel, new ArrayList<Step>(),
-                stepsRecyclerView, getCompositeDisposable(), this);
+        stepsRecyclerViewAdapter = new StepsRecyclerViewAdapter(mainViewModel,
+                new ArrayList<Step>(), getCompositeDisposable(), this);
 
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         stepsRecyclerView.setAdapter(stepsRecyclerViewAdapter);
@@ -60,8 +59,8 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     public void setRecipe(LiveData<Recipe> newRecipe) {
         this.recipe = newRecipe;
 
-        if (this.recipe != null) {
-            this.recipe.observe(this, new Observer<Recipe>() {
+        if (recipe != null) {
+            recipe.observe(this, new Observer<Recipe>() {
                 @Override
                 public void onChanged(@Nullable Recipe recipe) {
                     if (recipe != null && recipe.getSteps() != null) {

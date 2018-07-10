@@ -42,8 +42,9 @@
         <com.aboutblank.baking_app.player.MediaPlayerView
             android:id = "@+id/step_player"
             android:layout_width = "match_parent"
-            android:layout_height = "350dp"
+            android:layout_height = "@dimen/video_height"
             app:layout_constraintStart_toStartOf = "parent"
+            style="@style/VideoStyle"
             />
 
     </net.cachapa.expandablelayout.ExpandableLayout>

@@ -23,6 +23,10 @@ public class MediaPlayer {
         exoPlayer.prepare(mediaSource);
     }
 
+    public ExoPlayer getExoPlayer() {
+        return exoPlayer;
+    }
+
     public void release() {
         exoPlayer.release();
     }

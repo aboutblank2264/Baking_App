@@ -17,4 +17,8 @@ public class MediaPlayerView extends PlayerView {
     public MediaPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
+
+    public void setPlayer(MediaPlayer player) {
+        super.setPlayer(player.getExoPlayer());
+    }
 }

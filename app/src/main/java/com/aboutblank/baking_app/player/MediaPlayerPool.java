@@ -13,8 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleObserver;
 
 @Singleton
 public class MediaPlayerPool {
@@ -37,9 +36,9 @@ public class MediaPlayerPool {
     }
 
     public Single<MediaPlayer> getPlayer() {
-        return Single.create(new SingleOnSubscribe<MediaPlayer>() {
+        Single<MediaPlayer> single = new Single<MediaPlayer>() {
             @Override
-            public void subscribe(SingleEmitter<MediaPlayer> emitter) throws Exception {
+            protected void subscribeActual(SingleObserver<? super MediaPlayer> observer) {
                 MediaPlayer mediaPlayer;
                 if (mediaPlayers.size() < MAX_PLAYERS) {
                     //If pool is not maxed out, create a new ExoPlayer and add it to the queue
@@ -50,9 +49,25 @@ public class MediaPlayerPool {
                     mediaPlayer = mediaPlayers.remove();
                     mediaPlayers.add(mediaPlayer);
                 }
-                emitter.onSuccess(mediaPlayer);
             }
-        });
+        };
+        return single;
+//        return Single.create(new SingleOnSubscribe<MediaPlayer>() {
+//            @Override
+//            public void subscribe(SingleEmitter<MediaPlayer> emitter) throws Exception {
+//                MediaPlayer mediaPlayer;
+//                if (mediaPlayers.size() < MAX_PLAYERS) {
+//                    //If pool is not maxed out, create a new ExoPlayer and add it to the queue
+//                    mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector), extractorMediaSource);
+//                    mediaPlayers.add(mediaPlayer);
+//                } else {
+//                    //Else pop the head of the queue and add it to the back then return the mediaPlayer.
+//                    mediaPlayer = mediaPlayers.remove();
+//                    mediaPlayers.add(mediaPlayer);
+//                }
+//                emitter.onSuccess(mediaPlayer);
+//            }
+//        });
     }
 
     // Release all the mediaPlayers and clears the queue

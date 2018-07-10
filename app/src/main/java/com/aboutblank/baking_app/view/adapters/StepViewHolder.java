@@ -1,5 +1,6 @@
 package com.aboutblank.baking_app.view.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -7,9 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aboutblank.baking_app.R;
+import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
 import com.aboutblank.baking_app.player.MediaPlayer;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.aboutblank.baking_app.player.MediaPlayerView;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
@@ -38,7 +40,7 @@ class StepViewHolder extends RecyclerView.ViewHolder
     ImageView thumbnail;
 
     @BindView(R.id.step_player)
-    PlayerView playerView;
+    MediaPlayerView playerView;
 
     private String videoUrl;
     private String thumbnailUrl;
@@ -54,39 +56,6 @@ class StepViewHolder extends RecyclerView.ViewHolder
         this.compositeDisposable = compositeDisposable;
 
         shortDescription.setOnClickListener(this);
-    }
-
-    void setStep(Step step) {
-        shortDescription.setText(step.getShortDescription());
-        fullDescription.setText(step.getDescription());
-        setThumbnail(step.getThumbnailUrl());
-        boolean saveToExpand = setVideoUrl(step.getVideoUrl());
-
-        if(saveToExpand) {
-            expandableLayout.expand(false);
-            shortDescription.setClickable(false);
-        }
-    }
-
-    void setThumbnail(String imageUrl) {
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            thumbnailUrl = imageUrl;
-        } else {
-            thumbnail.setVisibility(View.GONE);
-        }
-    }
-
-    boolean setVideoUrl(String videoUrl) {
-        boolean isSafeToExpand = false;
-
-        if (videoUrl != null && !videoUrl.isEmpty()) {
-            this.videoUrl = videoUrl;
-        } else {
-            playerView.setVisibility(View.GONE);
-            isSafeToExpand = true;
-        }
-
-        return isSafeToExpand;
     }
 
     @Override
@@ -129,7 +98,43 @@ class StepViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
-    public void bindViewHolder() {
+    public void bindViewHolder(@NonNull Recipe recipe, int position) {
+        Step step = recipe.getSteps().get(position);
 
+        shortDescription.setText(step.getShortDescription());
+        fullDescription.setText(step.getDescription());
+        setThumbnail(step.getThumbnailUrl());
+        boolean saveToExpand = setVideoUrl(step.getVideoUrl());
+
+        if(saveToExpand) {
+            expandableLayout.expand(false);
+            shortDescription.setClickable(false);
+        }
+    }
+
+    public void setStep(Step step) {
+        setThumbnail(step.getThumbnailUrl());
+        setVideoUrl(step.getVideoUrl());
+    }
+
+    private void setThumbnail(String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            thumbnailUrl = imageUrl;
+        } else {
+            thumbnail.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean setVideoUrl(String videoUrl) {
+        boolean isSafeToExpand = false;
+
+        if (videoUrl != null && !videoUrl.isEmpty()) {
+            this.videoUrl = videoUrl;
+        } else {
+            playerView.setVisibility(View.GONE);
+            isSafeToExpand = true;
+        }
+
+        return isSafeToExpand;
     }
 }
