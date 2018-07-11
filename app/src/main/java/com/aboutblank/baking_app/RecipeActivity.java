@@ -25,7 +25,6 @@ public class RecipeActivity extends AppCompatActivity {
 
     private MainViewModel mainViewModel;
     private LiveData<Recipe> recipe;
-    private int recipeId = -1;
 
     private CompositeDisposable compositeDisposable;
 
@@ -41,21 +40,22 @@ public class RecipeActivity extends AppCompatActivity {
         mainViewModel = ((BakingApplication) getApplication()).getMainViewModel();
 
         if (getIntent() != null) {
-            recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
+            int recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
 
-            Log.d(LOG_TAG, String.format("Id provided: %d", recipeId));
-
-            recipe = mainViewModel.getRecipe(recipeId);
-
-            observeRecipe();
-
+            if (recipeId <= 0) {
+                throw new IllegalArgumentException("Unable to load recipe, recipe Id not properly set, was given: " + recipeId);
+            } else {
+                Log.d(LOG_TAG, String.format("Id provided: %d", recipeId));
+                observeRecipe(recipeId);
+            }
         } else {
-            Log.e(LOG_TAG, "Launching intent must have a recipe id");
+            throw new IllegalArgumentException("Unable to load recipe, recipe Id not properly set, no recipe id was given");
         }
     }
 
-    private void observeRecipe() {
-        if(recipeRecyclerViewAdapter == null) {
+    private void observeRecipe(int recipeId) {
+        recipe = mainViewModel.getRecipe(recipeId);
+        if (recipeRecyclerViewAdapter == null) {
             recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(mainViewModel, compositeDisposable);
             recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
             recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));

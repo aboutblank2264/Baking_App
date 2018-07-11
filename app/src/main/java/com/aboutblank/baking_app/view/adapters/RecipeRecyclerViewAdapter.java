@@ -79,9 +79,10 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
-        Log.d(LOG_TAG, "BindViewHolder called at position " + holder.getAdapterPosition());
+        Log.d(LOG_TAG, "BindViewHolder called at position " + position);
         Log.d(LOG_TAG, "Class of ViewHolder: " + holder.getClass());
-        ((IRecipeViewHolder) holder).bindViewHolder(recipe, holder.getAdapterPosition());
+        Log.d(LOG_TAG, "Position: " + position);
+        ((IRecipeViewHolder) holder).bindViewHolder(recipe, position);
     }
 
     @Override
@@ -91,7 +92,6 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemViewType(int position) {
-        Log.d(LOG_TAG, "Item view position: " + position);
         switch (position) {
             case INTRODUCTION:
                 return INTRODUCTION;

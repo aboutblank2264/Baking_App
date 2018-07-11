@@ -12,11 +12,10 @@ import java.util.Queue;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-
 @Singleton
 public class MediaPlayerPool {
+    private final String LOG_TAG = getClass().getSimpleName();
+
     private static final int MAX_PLAYERS = 2;
 
     private Context context;
@@ -35,39 +34,19 @@ public class MediaPlayerPool {
         mediaPlayers = new ArrayDeque<>();
     }
 
-    public Single<MediaPlayer> getPlayer() {
-        Single<MediaPlayer> single = new Single<MediaPlayer>() {
-            @Override
-            protected void subscribeActual(SingleObserver<? super MediaPlayer> observer) {
-                MediaPlayer mediaPlayer;
-                if (mediaPlayers.size() < MAX_PLAYERS) {
-                    //If pool is not maxed out, create a new ExoPlayer and add it to the queue
-                    mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector), extractorMediaSource);
-                    mediaPlayers.add(mediaPlayer);
-                } else {
-                    //Else pop the head of the queue and add it to the back then return the mediaPlayer.
-                    mediaPlayer = mediaPlayers.remove();
-                    mediaPlayers.add(mediaPlayer);
-                }
-            }
-        };
-        return single;
-//        return Single.create(new SingleOnSubscribe<MediaPlayer>() {
-//            @Override
-//            public void subscribe(SingleEmitter<MediaPlayer> emitter) throws Exception {
-//                MediaPlayer mediaPlayer;
-//                if (mediaPlayers.size() < MAX_PLAYERS) {
-//                    //If pool is not maxed out, create a new ExoPlayer and add it to the queue
-//                    mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector), extractorMediaSource);
-//                    mediaPlayers.add(mediaPlayer);
-//                } else {
-//                    //Else pop the head of the queue and add it to the back then return the mediaPlayer.
-//                    mediaPlayer = mediaPlayers.remove();
-//                    mediaPlayers.add(mediaPlayer);
-//                }
-//                emitter.onSuccess(mediaPlayer);
-//            }
-//        });
+    public MediaPlayer getPlayer() {
+        MediaPlayer mediaPlayer;
+        if (mediaPlayers.size() < MAX_PLAYERS) {
+            //If pool is not maxed out, create a new ExoPlayer and add it to the queue
+            mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector), extractorMediaSource);
+            mediaPlayers.add(mediaPlayer);
+        } else {
+            //Else pop the head of the queue and add it to the back then return the mediaPlayer.
+            mediaPlayer = mediaPlayers.remove();
+            mediaPlayers.add(mediaPlayer);
+        }
+
+        return mediaPlayer;
     }
 
     // Release all the mediaPlayers and clears the queue

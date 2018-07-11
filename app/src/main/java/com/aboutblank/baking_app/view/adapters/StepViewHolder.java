@@ -65,6 +65,7 @@ public class StepViewHolder extends RecyclerView.ViewHolder
             handlePlayer(false);
         } else {
             expandableLayout.expand();
+            playerView.setVisibility(View.VISIBLE);
 
             handlePlayer(true);
         }

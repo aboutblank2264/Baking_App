@@ -58,8 +58,8 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
-        ingredientsRecyclerViewAdapter.update(recipe.getIngredients(),
-                mainViewModel.getIndexedIngredients(recipe.getId()));
+//        ingredientsRecyclerViewAdapter.update(recipe.getIngredients(),
+//                mainViewModel.getIndexedIngredients(recipe.getId()));
     }
 
     @Override

@@ -4,13 +4,13 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.aboutblank.baking_app.data.DataModel;
-import com.aboutblank.baking_app.data.IDataModel;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.player.MediaPlayer;
-import com.aboutblank.baking_app.player.MediaPlayerPool;
 import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
+import com.aboutblank.baking_app.usecases.LoadIngredientsUseCase;
+import com.aboutblank.baking_app.usecases.LoadMediaPlayerUseCase;
+import com.aboutblank.baking_app.usecases.LoadRecipesUseCase;
 import com.aboutblank.baking_app.utils.ImageUtils;
 
 import java.util.List;
@@ -19,13 +19,20 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 @Singleton
 public class MainViewModel extends ViewModel {
 
     @NonNull
-    private IDataModel dataModel;
+    private LoadRecipesUseCase loadRecipesUseCase;
+
+    @NonNull
+    private LoadIngredientsUseCase loadIngredientsUseCase;
+
+    @NonNull
+    private LoadMediaPlayerUseCase loadMediaPlayerUseCase;
 
     @NonNull
     private ISchedulerProvider schedulerProvider;
@@ -33,41 +40,29 @@ public class MainViewModel extends ViewModel {
     @NonNull
     private ImageUtils imageUtils;
 
-    @NonNull
-    private MediaPlayerPool mediaPlayerPool;
-
-    private LiveData<List<MinimalRecipe>> minimalRecipes;
-
-    private int currentId;
-    private LiveData<Recipe> currentRecipe;
-
     @Inject
-    public MainViewModel(@NonNull DataModel dataModel, @NonNull ISchedulerProvider schedulerProvider,
-                         @NonNull ImageUtils imageUtils, @NonNull MediaPlayerPool mediaPlayerPool) {
-        this.dataModel = dataModel;
+    public MainViewModel(@NonNull LoadRecipesUseCase loadRecipesUseCase,
+                         @NonNull LoadIngredientsUseCase loadIngredientsUseCase,
+                         @NonNull LoadMediaPlayerUseCase loadMediaPlayerUseCase,
+                         @NonNull ISchedulerProvider schedulerProvider,
+                         @NonNull ImageUtils imageUtils) {
+        this.loadRecipesUseCase = loadRecipesUseCase;
+        this.loadIngredientsUseCase = loadIngredientsUseCase;
+        this.loadMediaPlayerUseCase = loadMediaPlayerUseCase;
         this.schedulerProvider = schedulerProvider;
         this.imageUtils = imageUtils;
-        this.mediaPlayerPool = mediaPlayerPool;
     }
 
     public void update() {
-        //TODO DataModel returns an observable to subscribe to for error reporting.
-        dataModel.update();
+        loadRecipesUseCase.update();
     }
 
     public LiveData<List<MinimalRecipe>> getMinimalRecipes() {
-        if (minimalRecipes == null) {
-            minimalRecipes = dataModel.getMinimalRecipes();
-        }
-        return minimalRecipes;
+        return loadRecipesUseCase.getMinimalRecipe();
     }
 
     public LiveData<Recipe> getRecipe(int id) {
-        if (currentId != id || currentRecipe == null) {
-            currentRecipe = dataModel.getRecipe(id);
-            currentId = id;
-        }
-        return currentRecipe;
+        return loadRecipesUseCase.getRecipe(id);
     }
 
     @NonNull
@@ -76,21 +71,21 @@ public class MainViewModel extends ViewModel {
     }
 
     public void indexIngredient(int recipeIndex, int ingredientIndex) {
-        dataModel.indexIngredient(recipeIndex, ingredientIndex);
+        loadIngredientsUseCase.indexIngredient(recipeIndex, ingredientIndex);
     }
 
-    public Set<Integer> getIndexedIngredients(int recipeIndex) {
-        return dataModel.getIndexedIngredients(recipeIndex);
+    public Observable<Set<Integer>> getIndexedIngredients(int recipeIndex) {
+        return loadIngredientsUseCase.getIndexedIngredients(recipeIndex);
     }
 
     @NonNull
     public Single<MediaPlayer> getPlayer() {
-        return mediaPlayerPool.getPlayer().subscribeOn(schedulerProvider.computation());
+        return loadMediaPlayerUseCase.getPlayer();
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        mediaPlayerPool.cleanup();
+        loadMediaPlayerUseCase.clear();
     }
 }
