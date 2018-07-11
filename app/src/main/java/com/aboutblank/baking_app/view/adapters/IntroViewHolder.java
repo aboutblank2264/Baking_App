@@ -40,7 +40,7 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
     private Single<MediaPlayer> mediaPlayerObservable;
     private CompositeDisposable compositeDisposable;
 
-    IntroViewHolder(View view, Single<MediaPlayer> mediaPlayerObservable, CompositeDisposable compositeDisposable) {
+    public IntroViewHolder(View view, Single<MediaPlayer> mediaPlayerObservable, CompositeDisposable compositeDisposable) {
         super(view);
         ButterKnife.bind(this, view);
 
@@ -95,6 +95,13 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
         if (state == ExpandableLayout.State.EXPANDING) {
 //            recyclerView.smoothScrollToPosition(getAdapterPosition());
         }
+    }
+
+    @Override
+    public void update(Recipe recipe) {
+        Step intro = recipe.getSteps().get(0);
+        description.setText(intro.getDescription());
+//        subscribeToMedia(intro.getVideoUrl());
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.aboutblank.baking_app.schedulers.SchedulerProvider;
 
 import dagger.Module;
 import dagger.Provides;
-import io.reactivex.disposables.CompositeDisposable;
 
 @Module
 public abstract class ApplicationModule {
@@ -20,10 +19,5 @@ public abstract class ApplicationModule {
     @Provides
     public static ISchedulerProvider providesSchedulerProvider(SchedulerProvider schedulerProvider) {
         return schedulerProvider;
-    }
-
-    @Provides
-    public static CompositeDisposable providesCompositeDisposable() {
-        return new CompositeDisposable();
     }
 }

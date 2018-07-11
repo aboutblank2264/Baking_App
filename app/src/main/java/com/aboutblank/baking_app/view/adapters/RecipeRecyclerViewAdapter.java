@@ -1,6 +1,5 @@
 package com.aboutblank.baking_app.view.adapters;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,24 +21,28 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private MainViewModel mainViewModel;
     private CompositeDisposable compositeDisposable;
 
-    private final int recipeId;
-    private int numberOfSteps = 1;
+    private Recipe recipe;
+    private int numberOfSteps;
 
-    private LiveData<Recipe> recipe;
-
-    public RecipeRecyclerViewAdapter(int recipeId, MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
-        this.recipeId = recipeId;
+    public RecipeRecyclerViewAdapter(MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
         this.mainViewModel = mainViewModel;
         this.compositeDisposable = compositeDisposable;
     }
 
-    private void getRecipe() {
-        recipe.observeForever(new Observer<Recipe>() {
+    // Create an observer to observe the LiveData recipe.
+    public Observer<Recipe> getObserver() {
+        return new Observer<Recipe>() {
             @Override
             public void onChanged(@Nullable Recipe recipe) {
+                if (recipe != null) {
+                    // get the total number of items in RecyclerView including Ingredients
+                    numberOfSteps = recipe.getSteps().size();
+                    RecipeRecyclerViewAdapter.this.recipe = recipe;
 
+                    notifyDataSetChanged();
+                }
             }
-        });
+        };
     }
 
     @NonNull
@@ -66,29 +69,19 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private RecyclerView.ViewHolder getIngredientsViewHolder(@NonNull ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ingredient, parent, false);
-
         return new IngredientsViewHolder(view);
     }
 
     private RecyclerView.ViewHolder getStepViewHolder(@NonNull ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_step, parent, false);
-
         return new StepViewHolder(view, mainViewModel.getPlayer(), compositeDisposable);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         Log.d(LOG_TAG, "BindViewHolder called at position " + holder.getAdapterPosition());
-        mainViewModel.getRecipe(recipeId).observeForever(new Observer<Recipe>() {
-            @Override
-            public void onChanged(@Nullable Recipe recipe) {
-                int totalNumberOfSteps = recipe.getSteps().size() + 2;
-                if (numberOfSteps != totalNumberOfSteps) {
-                    numberOfSteps = totalNumberOfSteps;
-                }
-                ((IRecipeViewHolder) holder).bindViewHolder(recipe, holder.getAdapterPosition());
-            }
-        });
+        Log.d(LOG_TAG, "Class of ViewHolder: " + holder.getClass());
+        ((IRecipeViewHolder) holder).bindViewHolder(recipe, holder.getAdapterPosition());
     }
 
     @Override
@@ -98,7 +91,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemViewType(int position) {
-        Log.d(LOG_TAG, "Item view type: " + position);
+        Log.d(LOG_TAG, "Item view position: " + position);
         switch (position) {
             case INTRODUCTION:
                 return INTRODUCTION;

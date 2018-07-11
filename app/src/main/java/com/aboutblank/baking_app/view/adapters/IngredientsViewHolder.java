@@ -58,6 +58,11 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
+    public void update(Recipe recipe) {
+        ingredientsRecyclerViewAdapter.update(recipe.getIngredients(), null);
+    }
+
+    @Override
     public void bindViewHolder(@NonNull Recipe recipe, int position) {
         ingredientsRecyclerViewAdapter.update(recipe.getIngredients(), null);
     }

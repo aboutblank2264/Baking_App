@@ -22,7 +22,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
-class StepViewHolder extends RecyclerView.ViewHolder
+public class StepViewHolder extends RecyclerView.ViewHolder
         implements IRecipeViewHolder, View.OnClickListener, ExpandableLayout.OnExpansionUpdateListener {
 
     private final String LOG_TAG = getClass().getSimpleName();
@@ -48,7 +48,7 @@ class StepViewHolder extends RecyclerView.ViewHolder
     private Single<MediaPlayer> mediaPlayerObservable;
     private CompositeDisposable compositeDisposable;
 
-    StepViewHolder(View view, Single<MediaPlayer> mediaPlayerObservable, CompositeDisposable compositeDisposable) {
+    public StepViewHolder(View view, Single<MediaPlayer> mediaPlayerObservable, CompositeDisposable compositeDisposable) {
         super(view);
         ButterKnife.bind(this, view);
 
@@ -95,6 +95,11 @@ class StepViewHolder extends RecyclerView.ViewHolder
         if (state == ExpandableLayout.State.EXPANDING) {
 //            recyclerView.smoothScrollToPosition(getAdapterPosition());
         }
+    }
+
+    @Override
+    public void update(Recipe recipe) {
+
     }
 
     @Override

@@ -19,11 +19,9 @@ public class RecipeActivity extends AppCompatActivity {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
-//    IngredientListFragment ingredientListFragment;
-//    RecipeFragment recipeFragment;
-
     @BindView(R.id.recipe_recycler)
     RecyclerView recipeRecyclerView;
+    private RecipeRecyclerViewAdapter recipeRecyclerViewAdapter;
 
     private MainViewModel mainViewModel;
     private LiveData<Recipe> recipe;
@@ -49,19 +47,26 @@ public class RecipeActivity extends AppCompatActivity {
 
             recipe = mainViewModel.getRecipe(recipeId);
 
-            RecipeRecyclerViewAdapter recipeRecyclerViewAdapter =
-                    new RecipeRecyclerViewAdapter(recipeId, mainViewModel, compositeDisposable);
-            recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
-            recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            observeRecipe();
 
         } else {
             Log.e(LOG_TAG, "Launching intent must have a recipe id");
         }
     }
 
+    private void observeRecipe() {
+        if(recipeRecyclerViewAdapter == null) {
+            recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(mainViewModel, compositeDisposable);
+            recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
+            recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }
+        recipe.observe(this, recipeRecyclerViewAdapter.getObserver());
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.clear();
+        recipe.removeObservers(this);
     }
 }

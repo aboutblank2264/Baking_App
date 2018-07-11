@@ -14,7 +14,6 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import io.reactivex.disposables.CompositeDisposable;
 
 @Singleton
 @Component(modules = {ContextModule.class, ExoPlayerModule.class,
@@ -23,7 +22,6 @@ public interface ApplicationComponent {
     Context context();
     IDataModel dataModel();
     ISchedulerProvider schedulerProvider();
-    CompositeDisposable compositeDisposable();
     ExtractorMediaSource.Factory mediaSourceFactory();
     MainViewModel mainViewModel();
 }

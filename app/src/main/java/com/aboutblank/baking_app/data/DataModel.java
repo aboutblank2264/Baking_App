@@ -38,12 +38,12 @@ public class DataModel implements IDataModel {
 
     @Inject
     public DataModel(@NonNull LocalRepository localRepository, @NonNull RemoteRepository remoteRepository,
-                     @NonNull ISchedulerProvider schedulerProvider, @NonNull CompositeDisposable compositeDisposable) {
+                     @NonNull ISchedulerProvider schedulerProvider) {
         this.localRepository = localRepository;
         this.remoteRepository = remoteRepository;
         this.schedulerProvider = schedulerProvider;
-        this.compositeDisposable = compositeDisposable;
 
+        compositeDisposable = new CompositeDisposable();
         ownedRecipeIngredientsMap = new SparseArray<>();
     }
 
