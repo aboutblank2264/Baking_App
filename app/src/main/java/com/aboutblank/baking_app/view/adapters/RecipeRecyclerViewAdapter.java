@@ -69,7 +69,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private RecyclerView.ViewHolder getIngredientsViewHolder(@NonNull ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ingredient, parent, false);
-        return new IngredientsViewHolder(view);
+        return new IngredientsViewHolder(view, mainViewModel, compositeDisposable);
     }
 
     private RecyclerView.ViewHolder getStepViewHolder(@NonNull ViewGroup parent) {

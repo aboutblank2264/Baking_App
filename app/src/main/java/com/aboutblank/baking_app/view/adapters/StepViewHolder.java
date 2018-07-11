@@ -99,11 +99,6 @@ public class StepViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
-    public void update(Recipe recipe) {
-
-    }
-
-    @Override
     public void bindViewHolder(@NonNull Recipe recipe, int position) {
         Step step = recipe.getSteps().get(position);
 

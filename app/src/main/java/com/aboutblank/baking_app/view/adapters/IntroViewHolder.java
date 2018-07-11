@@ -98,13 +98,6 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
-    public void update(Recipe recipe) {
-        Step intro = recipe.getSteps().get(0);
-        description.setText(intro.getDescription());
-//        subscribeToMedia(intro.getVideoUrl());
-    }
-
-    @Override
     public void bindViewHolder(@NonNull Recipe recipe, int position) {
         Step intro = recipe.getSteps().get(0);
         description.setText(intro.getDescription());
