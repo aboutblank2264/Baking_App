@@ -22,7 +22,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 public class IntroViewHolder extends RecyclerView.ViewHolder
-        implements IRecipeViewHolder, View.OnClickListener, ExpandableLayout.OnExpansionUpdateListener {
+        implements IRecipeViewHolder, View.OnClickListener {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -90,12 +90,6 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
         }
     }
 
-    @Override
-    public void onExpansionUpdate(float expansionFraction, int state) {
-        if (state == ExpandableLayout.State.EXPANDING) {
-//            recyclerView.smoothScrollToPosition(getAdapterPosition());
-        }
-    }
 
     @Override
     public void bindViewHolder(@NonNull Recipe recipe, int position) {

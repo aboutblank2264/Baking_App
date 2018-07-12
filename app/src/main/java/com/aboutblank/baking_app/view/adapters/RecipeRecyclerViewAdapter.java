@@ -30,6 +30,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     // Create an observer to observe the LiveData recipe.
+    // Returning the observer rather than being passed in a
+    // LiveData lets caller provide LifeCycleOwner
     public Observer<Recipe> getObserver() {
         return new Observer<Recipe>() {
             @Override

@@ -54,12 +54,12 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     private void observeRecipe(int recipeId) {
-        recipe = mainViewModel.getRecipe(recipeId);
         if (recipeRecyclerViewAdapter == null) {
             recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(mainViewModel, compositeDisposable);
             recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
             recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         }
+        recipe = mainViewModel.getRecipe(recipeId);
         recipe.observe(this, recipeRecyclerViewAdapter.getObserver());
     }
 
