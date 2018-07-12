@@ -38,7 +38,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             public void onChanged(@Nullable Recipe recipe) {
                 if (recipe != null) {
                     // get the total number of items in RecyclerView including Ingredients
-                    numberOfSteps = recipe.getSteps().size();
+                    numberOfSteps = recipe.getSteps().size() + 1;
                     RecipeRecyclerViewAdapter.this.recipe = recipe;
 
                     notifyDataSetChanged();
@@ -76,7 +76,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private RecyclerView.ViewHolder getStepViewHolder(@NonNull ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_step, parent, false);
-        return new StepViewHolder(view, mainViewModel.getPlayer(), compositeDisposable);
+        return new StepViewHolder(view, mainViewModel, compositeDisposable);
     }
 
     @Override
@@ -84,7 +84,9 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         Log.d(LOG_TAG, "BindViewHolder called at position " + position);
         Log.d(LOG_TAG, "Class of ViewHolder: " + holder.getClass());
         Log.d(LOG_TAG, "Position: " + position);
-        ((IRecipeViewHolder) holder).bindViewHolder(recipe, position);
+
+        int tempPosition = position >= 2 ? position - 1 : position;
+        ((IRecipeViewHolder) holder).bindViewHolder(recipe, tempPosition);
     }
 
     @Override

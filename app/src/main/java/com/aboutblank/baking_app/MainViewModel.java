@@ -27,16 +27,12 @@ public class MainViewModel extends ViewModel {
 
     @NonNull
     private LoadRecipesUseCase loadRecipesUseCase;
-
     @NonNull
     private LoadIngredientsUseCase loadIngredientsUseCase;
-
     @NonNull
     private LoadMediaPlayerUseCase loadMediaPlayerUseCase;
-
     @NonNull
     private ISchedulerProvider schedulerProvider;
-
     @NonNull
     private ImageUtils imageUtils;
 
@@ -87,5 +83,9 @@ public class MainViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
         loadMediaPlayerUseCase.clear();
+    }
+
+    public void clearLocalDatabase() {
+        loadRecipesUseCase.clearLocalDatabase();
     }
 }

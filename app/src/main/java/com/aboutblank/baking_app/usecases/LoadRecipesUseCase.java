@@ -32,4 +32,8 @@ public class LoadRecipesUseCase {
     public LiveData<Recipe> getRecipe(int id) {
         return dataModel.getRecipe(id);
     }
+
+    public void clearLocalDatabase() {
+        dataModel.clear();
+    }
 }

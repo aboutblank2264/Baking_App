@@ -71,7 +71,6 @@ public class DataModel implements IDataModel {
         return localRepository.getRecipe(id);
     }
 
-    //TODO return an Observable
     @Override
     public void indexIngredient(int recipeIndex, int ingredientIndex) {
         Set<Integer> ingredientList = ownedRecipeIngredientsMap.get(recipeIndex);

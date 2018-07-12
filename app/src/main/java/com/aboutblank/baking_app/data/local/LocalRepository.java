@@ -2,7 +2,9 @@ package com.aboutblank.baking_app.data.local;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.aboutblank.baking_app.data.local.room.RecipeDao;
 import com.aboutblank.baking_app.data.local.room.RecipeDatabase;
@@ -49,6 +51,12 @@ public class LocalRepository {
     }
 
     public void deleteAll() {
-        recipeDao.deleteAll();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("TESTING", "Deleting local database");
+                recipeDao.deleteAll();
+            }
+        });
     }
 }

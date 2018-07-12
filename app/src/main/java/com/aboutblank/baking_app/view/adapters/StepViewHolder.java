@@ -4,9 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
@@ -27,14 +29,17 @@ public class StepViewHolder extends RecyclerView.ViewHolder
 
     private final String LOG_TAG = getClass().getSimpleName();
 
+    @BindView(R.id.step_description)
+    TextView fullDescription;
+
+    @BindView(R.id.step_expand_carrot)
+    ImageView expandCarrot;
+
     @BindView(R.id.step_short_description)
     TextView shortDescription;
 
     @BindView(R.id.expandable_layout)
     ExpandableLayout expandableLayout;
-
-    @BindView(R.id.step_description)
-    TextView fullDescription;
 
     @BindView(R.id.step_thumbnail)
     ImageView thumbnail;
@@ -43,32 +48,43 @@ public class StepViewHolder extends RecyclerView.ViewHolder
     MediaPlayerView playerView;
 
     private String videoUrl;
-    private String thumbnailUrl;
 
     private Single<MediaPlayer> mediaPlayerObservable;
     private CompositeDisposable compositeDisposable;
+    private MainViewModel mainViewModel;
 
-    public StepViewHolder(View view, Single<MediaPlayer> mediaPlayerObservable, CompositeDisposable compositeDisposable) {
+    public StepViewHolder(View view, MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
         super(view);
         ButterKnife.bind(this, view);
 
-        this.mediaPlayerObservable = mediaPlayerObservable;
+        this.mainViewModel = mainViewModel;
         this.compositeDisposable = compositeDisposable;
 
-        shortDescription.setOnClickListener(this);
+        fullDescription.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
+        rotateAnimation(expandableLayout.isExpanded());
         if (expandableLayout.isExpanded()) {
             expandableLayout.collapse();
-            handlePlayer(false);
+//            handlePlayer(false);
         } else {
             expandableLayout.expand();
-            playerView.setVisibility(View.VISIBLE);
-
-            handlePlayer(true);
+//            playerView.setVisibility(View.VISIBLE);
+//            handlePlayer(true);
         }
+    }
+
+    private void rotateAnimation(boolean expand) {
+        int rotateValue = 180;
+        if(expand) {
+            rotateValue = 0;
+        }
+        expandCarrot.animate()
+                .rotation(rotateValue)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
     }
 
     private void handlePlayer(boolean toExpand) {
@@ -109,18 +125,12 @@ public class StepViewHolder extends RecyclerView.ViewHolder
 
         if(saveToExpand) {
             expandableLayout.expand(false);
-            shortDescription.setClickable(false);
         }
-    }
-
-    public void setStep(Step step) {
-        setThumbnail(step.getThumbnailUrl());
-        setVideoUrl(step.getVideoUrl());
     }
 
     private void setThumbnail(String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            thumbnailUrl = imageUrl;
+            mainViewModel.getImageUtils().loadImage(thumbnail, imageUrl);
         } else {
             thumbnail.setVisibility(View.GONE);
         }
