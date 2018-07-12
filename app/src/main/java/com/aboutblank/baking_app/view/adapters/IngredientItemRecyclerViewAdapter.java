@@ -20,7 +20,7 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<IngredientsRecyclerViewAdapter.IngredientsViewHolder> {
+public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<IngredientItemRecyclerViewAdapter.IngredientItemViewHolder> {
     private final static float GREYED = .3f;
     private final static float NORMAL = 1.0f;
 
@@ -29,21 +29,21 @@ public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<Ingredi
 
     private Set<Integer> indexedIngredients;
 
-    public IngredientsRecyclerViewAdapter(List<Ingredient> ingredientList, ItemClickedListener itemClickedListener) {
+    public IngredientItemRecyclerViewAdapter(List<Ingredient> ingredientList, ItemClickedListener itemClickedListener) {
         this.ingredientList = ingredientList;
         this.itemClickedListener = itemClickedListener;
     }
 
     @NonNull
     @Override
-    public IngredientsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public IngredientItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingredient, parent, false);
 
-        return new IngredientsViewHolder(view);
+        return new IngredientItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull IngredientsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull IngredientItemViewHolder holder, int position) {
         holder.setIngredient(ingredientList.get(position));
 
         if(indexedIngredients != null) {
@@ -64,7 +64,7 @@ public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<Ingredi
         return ingredientList.size();
     }
 
-    public class IngredientsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class IngredientItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.ingredient_icon)
         ImageView iconView;
 
@@ -77,7 +77,7 @@ public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<Ingredi
         @BindDrawable(R.drawable.ic_add_black_24dp)
         Drawable addIcon;
 
-        IngredientsViewHolder(View view) {
+        IngredientItemViewHolder(View view) {
             super(view);
 
             ButterKnife.bind(this, view);
@@ -89,7 +89,7 @@ public class IngredientsRecyclerViewAdapter extends RecyclerView.Adapter<Ingredi
             this.ingredient.setText(ingredient.toPrint());
         }
 
-        private void toggleActive(boolean isIndexed) {
+        void toggleActive(boolean isIndexed) {
             checkIfActive(itemView, isIndexed);
         }
 

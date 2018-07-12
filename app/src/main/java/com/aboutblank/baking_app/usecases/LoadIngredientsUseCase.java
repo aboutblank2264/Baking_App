@@ -23,6 +23,6 @@ public class LoadIngredientsUseCase {
     }
 
     public Observable<Set<Integer>> getIndexedIngredients(int recipeIndex) {
-        return Observable.just(dataModel.getIndexedIngredients(recipeIndex));
+        return dataModel.getIndexedIngredients(recipeIndex);
     }
 }

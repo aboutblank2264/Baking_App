@@ -88,13 +88,13 @@ public class DataModel implements IDataModel {
     }
 
     @Override
-    public Set<Integer> getIndexedIngredients(int recipeIndex) {
+    public Observable<Set<Integer>> getIndexedIngredients(int recipeIndex) {
         Set<Integer> currentSet = ownedRecipeIngredientsMap.get(recipeIndex);
         if (currentSet == null) {
             currentSet = new HashSet<>();
             ownedRecipeIngredientsMap.append(recipeIndex, currentSet);
         }
-        return ownedRecipeIngredientsMap.get(recipeIndex);
+        return Observable.just(ownedRecipeIngredientsMap.get(recipeIndex));
     }
 
     @Override

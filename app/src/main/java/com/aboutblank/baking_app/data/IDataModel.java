@@ -8,6 +8,8 @@ import com.aboutblank.baking_app.data.model.Recipe;
 import java.util.List;
 import java.util.Set;
 
+import io.reactivex.Observable;
+
 public interface IDataModel {
     void update();
 
@@ -17,7 +19,7 @@ public interface IDataModel {
 
     void indexIngredient(int recipeIndex, int ingredientIndex);
 
-    Set<Integer> getIndexedIngredients(int recipeIndex);
+    Observable<Set<Integer>> getIndexedIngredients(int recipeIndex);
 
     void clear();
 }

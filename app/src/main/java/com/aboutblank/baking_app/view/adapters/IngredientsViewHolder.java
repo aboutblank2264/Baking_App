@@ -25,7 +25,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
 public class IngredientsViewHolder extends RecyclerView.ViewHolder
-        implements IRecipeViewHolder, View.OnClickListener, ExpandableLayout.OnExpansionUpdateListener, ItemClickedListener {
+        implements IRecipeViewHolder, View.OnClickListener, ItemClickedListener {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -37,7 +37,7 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
 
     @BindView(R.id.ingredient_recycler)
     RecyclerView ingredientRecycler;
-    private IngredientsRecyclerViewAdapter ingredientsRecyclerViewAdapter;
+    private IngredientItemRecyclerViewAdapter ingredientItemRecyclerViewAdapter;
 
     private int recipeId;
 
@@ -46,20 +46,18 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
 
     public IngredientsViewHolder(View view, MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
         super(view);
-        this.compositeDisposable = compositeDisposable;
-
         ButterKnife.bind(this, view);
 
         this.mainViewModel = mainViewModel;
+        this.compositeDisposable = compositeDisposable;
 
-        loadIngredientsRecyclerViewAdapter();
-
+        createIngredientItemRecyclerViewAdapter();
         title.setOnClickListener(this);
     }
 
-    private void loadIngredientsRecyclerViewAdapter() {
-        ingredientsRecyclerViewAdapter = new IngredientsRecyclerViewAdapter(new ArrayList<Ingredient>(), this);
-        ingredientRecycler.setAdapter(ingredientsRecyclerViewAdapter);
+    private void createIngredientItemRecyclerViewAdapter() {
+        ingredientItemRecyclerViewAdapter = new IngredientItemRecyclerViewAdapter(new ArrayList<Ingredient>(), this);
+        ingredientRecycler.setAdapter(ingredientItemRecyclerViewAdapter);
         ingredientRecycler.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
 
     }
@@ -74,11 +72,6 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
-    public void onExpansionUpdate(float expansionFraction, int state) {
-
-    }
-
-    @Override
     public void bindViewHolder(@NonNull final Recipe recipe, int position) {
         recipeId = recipe.getId();
 
@@ -88,7 +81,7 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
                     public void onNext(Set<Integer> integers) {
                         Log.d(LOG_TAG, "This is called");
 
-                        ingredientsRecyclerViewAdapter.update(recipe.getIngredients(), integers);
+                        ingredientItemRecyclerViewAdapter.update(recipe.getIngredients(), integers);
                     }
 
                     @Override
