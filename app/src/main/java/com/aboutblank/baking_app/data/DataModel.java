@@ -19,7 +19,6 @@ import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 
 @Singleton
 public class DataModel implements IDataModel {
@@ -53,12 +52,7 @@ public class DataModel implements IDataModel {
 
         compositeDisposable.add(recipes.observeOn(schedulerProvider.computation())
                 .subscribeOn(schedulerProvider.computation())
-                .subscribe(new Consumer<List<Recipe>>() {
-                    @Override
-                    public void accept(List<Recipe> recipes) {
-                        localRepository.insertRecipes(recipes.toArray(new Recipe[0]));
-                    }
-                }));
+                .subscribe(recipes1 -> localRepository.insertRecipes(recipes1.toArray(new Recipe[0]))));
     }
 
     @Override

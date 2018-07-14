@@ -9,20 +9,17 @@ import android.widget.TextView;
 
 import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
-import com.aboutblank.baking_app.data.model.Ingredient;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 
 public class IngredientsViewHolder extends RecyclerView.ViewHolder
         implements IRecipeViewHolder, View.OnClickListener, ItemClickedListener {
@@ -56,7 +53,7 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
     }
 
     private void createIngredientItemRecyclerViewAdapter() {
-        ingredientItemRecyclerViewAdapter = new IngredientItemRecyclerViewAdapter(new ArrayList<Ingredient>(), this);
+        ingredientItemRecyclerViewAdapter = new IngredientItemRecyclerViewAdapter(new ArrayList<>(), this);
         ingredientRecycler.setAdapter(ingredientItemRecyclerViewAdapter);
         ingredientRecycler.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
 
@@ -76,21 +73,9 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
         recipeId = recipe.getId();
 
         Disposable disposable = mainViewModel.getIndexedIngredients(recipeId)
-                .subscribeWith(new DisposableObserver<Set<Integer>>() {
-                    @Override
-                    public void onNext(Set<Integer> integers) {
-                        Log.d(LOG_TAG, "This is called");
-
-                        ingredientItemRecyclerViewAdapter.update(recipe.getIngredients(), integers);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
+                .subscribe(ingredientSet -> {
+                    Log.d(LOG_TAG, "This is called");
+                    ingredientItemRecyclerViewAdapter.update(recipe.getIngredients(), ingredientSet);
                 });
         compositeDisposable.add(disposable);
     }

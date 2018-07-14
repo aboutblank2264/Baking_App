@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,21 +21,24 @@ import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class StepViewHolder extends RecyclerView.ViewHolder
         implements IRecipeViewHolder, View.OnClickListener, ExpandableLayout.OnExpansionUpdateListener {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
+    @BindView(R.id.step_item)
+    View layout;
+
     @BindView(R.id.step_description)
     TextView fullDescription;
 
-    @BindView(R.id.step_expand_carrot)
-    ImageView expandCarrot;
+    @BindView(R.id.step_ellipses)
+    TextView ellipses;
 
-    @BindView(R.id.step_short_description)
-    TextView shortDescription;
+//    @BindView(R.id.step_short_description)
+//    TextView shortDescription;
 
     @BindView(R.id.expandable_layout)
     ExpandableLayout expandableLayout;
@@ -60,44 +62,41 @@ public class StepViewHolder extends RecyclerView.ViewHolder
         this.mainViewModel = mainViewModel;
         this.compositeDisposable = compositeDisposable;
 
-        fullDescription.setOnClickListener(this);
+        layout.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        rotateAnimation(expandableLayout.isExpanded());
-        if (expandableLayout.isExpanded()) {
-            expandableLayout.collapse();
-//            handlePlayer(false);
+        boolean isExpanded = expandableLayout.isExpanded();
+
+        hideOrShowEllipses(isExpanded);
+        expandableLayout.setExpanded(!isExpanded);
+
+        handlePlayer(isExpanded);
+    }
+
+    private void hideOrShowEllipses(boolean isExpanded) {
+        if (isExpanded) {
+            ellipses.setVisibility(View.GONE);
         } else {
-            expandableLayout.expand();
-//            playerView.setVisibility(View.VISIBLE);
-//            handlePlayer(true);
+            ellipses.setVisibility(View.VISIBLE);
         }
     }
 
-    private void rotateAnimation(boolean expand) {
-        int rotateValue = 180;
-        if(expand) {
-            rotateValue = 0;
-        }
-        expandCarrot.animate()
-                .rotation(rotateValue)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .start();
-    }
-
-    private void handlePlayer(boolean toExpand) {
-        if (toExpand) {
+    private void handlePlayer(boolean expand) {
+        if (expand) {
             if (videoUrl != null && !videoUrl.isEmpty()) {
                 Log.d(LOG_TAG, "Playing video: " + videoUrl);
 
-                Disposable disposable = mediaPlayerObservable.subscribe(new Consumer<MediaPlayer>() {
-                    @Override
-                    public void accept(MediaPlayer mediaPlayer) {
-                        mediaPlayer.prepare(videoUrl);
-                    }
-                });
+                if (mediaPlayerObservable == null) {
+                    mediaPlayerObservable = mainViewModel.getPlayer();
+                }
+
+                Disposable disposable = mediaPlayerObservable.subscribeOn(Schedulers.computation())
+                        .subscribe(mediaPlayer -> {
+                            playerView.setPlayer(mediaPlayer);
+                            playerView.setVisibility(View.VISIBLE);
+                        });
 
                 compositeDisposable.add(disposable);
 
@@ -105,6 +104,7 @@ public class StepViewHolder extends RecyclerView.ViewHolder
                 playerView.setVisibility(View.GONE);
             }
         }
+
     }
 
     @Override
@@ -118,12 +118,12 @@ public class StepViewHolder extends RecyclerView.ViewHolder
     public void bindViewHolder(@NonNull Recipe recipe, int position) {
         Step step = recipe.getSteps().get(position);
 
-        shortDescription.setText(step.getShortDescription());
+//        shortDescription.setText(step.getShortDescription());
         fullDescription.setText(step.getDescription());
         setThumbnail(step.getThumbnailUrl());
         boolean saveToExpand = setVideoUrl(step.getVideoUrl());
 
-        if(saveToExpand) {
+        if (saveToExpand) {
             expandableLayout.expand(false);
         }
     }

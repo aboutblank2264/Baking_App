@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
@@ -19,7 +20,6 @@ import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 public class IntroViewHolder extends RecyclerView.ViewHolder
         implements IRecipeViewHolder, View.OnClickListener {
@@ -39,22 +39,20 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
 
     private Single<MediaPlayer> mediaPlayerObservable;
     private CompositeDisposable compositeDisposable;
+    private MainViewModel mainViewModel;
 
-    public IntroViewHolder(View view, Single<MediaPlayer> mediaPlayerObservable, CompositeDisposable compositeDisposable) {
+    public IntroViewHolder(View view, MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
         super(view);
         ButterKnife.bind(this, view);
 
-        this.mediaPlayerObservable = mediaPlayerObservable;
+        this.mainViewModel = mainViewModel;
         this.compositeDisposable = compositeDisposable;
     }
 
     private void subscribeToMedia(final String videoUrl) {
-        compositeDisposable.add(mediaPlayerObservable.subscribe(new Consumer<MediaPlayer>() {
-            @Override
-            public void accept(MediaPlayer mediaPlayer) throws Exception {
-                mediaPlayer.prepare(videoUrl);
-                playerView.setPlayer(mediaPlayer);
-            }
+        compositeDisposable.add(mediaPlayerObservable.subscribe(mediaPlayer -> {
+            mediaPlayer.prepare(videoUrl);
+            playerView.setPlayer(mediaPlayer);
         }));
     }
 
@@ -74,27 +72,26 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
         if (toExpand) {
             if (videoUrl != null && !videoUrl.isEmpty()) {
                 Log.d(LOG_TAG, "Playing video: " + videoUrl);
-
-                Disposable disposable = mediaPlayerObservable.subscribe(new Consumer<MediaPlayer>() {
-                    @Override
-                    public void accept(MediaPlayer mediaPlayer) {
-                        mediaPlayer.prepare(videoUrl);
-                    }
-                });
-
-                compositeDisposable.add(disposable);
-
+                preparePlayer(videoUrl);
             } else {
                 playerView.setVisibility(View.GONE);
             }
         }
     }
 
+    private void preparePlayer(@NonNull final String videoUrl) {
+        if(mediaPlayerObservable == null) {
+            mediaPlayerObservable = mainViewModel.getPlayer();
+        }
+        Disposable disposable = mediaPlayerObservable.subscribe(mediaPlayer -> mediaPlayer.prepare(videoUrl));
+
+        compositeDisposable.add(disposable);
+    }
 
     @Override
     public void bindViewHolder(@NonNull Recipe recipe, int position) {
         Step intro = recipe.getSteps().get(0);
         description.setText(intro.getDescription());
-//        subscribeToMedia(intro.getVideoUrl());
+        videoUrl = recipe.getSteps().get(0).getVideoUrl();
     }
 }

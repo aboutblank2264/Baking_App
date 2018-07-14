@@ -2,7 +2,6 @@ package com.aboutblank.baking_app.view.adapters;
 
 import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,16 +32,13 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     // Returning the observer rather than being passed in a
     // LiveData lets caller provide LifeCycleOwner
     public Observer<Recipe> getObserver() {
-        return new Observer<Recipe>() {
-            @Override
-            public void onChanged(@Nullable Recipe recipe) {
-                if (recipe != null) {
-                    // get the total number of items in RecyclerView including Ingredients
-                    numberOfSteps = recipe.getSteps().size() + 1;
-                    RecipeRecyclerViewAdapter.this.recipe = recipe;
+        return recipe -> {
+            if (recipe != null) {
+                // get the total number of items in RecyclerView including Ingredients
+                numberOfSteps = recipe.getSteps().size() + 1;
+                RecipeRecyclerViewAdapter.this.recipe = recipe;
 
-                    notifyDataSetChanged();
-                }
+                notifyDataSetChanged();
             }
         };
     }
@@ -66,7 +62,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private RecyclerView.ViewHolder getIntroViewHolder(@NonNull ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_introduction, parent, false);
-        return new IntroViewHolder(view, mainViewModel.getPlayer(), compositeDisposable);
+        return new IntroViewHolder(view, mainViewModel, compositeDisposable);
     }
 
     private RecyclerView.ViewHolder getIngredientsViewHolder(@NonNull ViewGroup parent) {
@@ -85,6 +81,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         Log.d(LOG_TAG, "Class of ViewHolder: " + holder.getClass());
         Log.d(LOG_TAG, "Position: " + position);
 
+        //If position is past Intro and Ingredients, reduce by 1 to keep inline with Steps
         int tempPosition = position >= 2 ? position - 1 : position;
         ((IRecipeViewHolder) holder).bindViewHolder(recipe, tempPosition);
     }

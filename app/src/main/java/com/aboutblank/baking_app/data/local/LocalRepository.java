@@ -51,12 +51,9 @@ public class LocalRepository {
     }
 
     public void deleteAll() {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("TESTING", "Deleting local database");
-                recipeDao.deleteAll();
-            }
+        AsyncTask.execute(() -> {
+            Log.d("TESTING", "Deleting local database");
+            recipeDao.deleteAll();
         });
     }
 }

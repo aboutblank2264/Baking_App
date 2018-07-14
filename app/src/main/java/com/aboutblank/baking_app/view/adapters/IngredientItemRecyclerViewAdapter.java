@@ -100,7 +100,7 @@ public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<Ingr
         }
 
         private void checkIfActive(View item, boolean check) {
-            if(check) {
+            if (check) {
                 item.setAlpha(GREYED);
                 iconView.setBackground(doneIcon);
             } else {

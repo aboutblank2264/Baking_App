@@ -2,8 +2,10 @@ package com.aboutblank.baking_app;
 
 import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,6 +40,7 @@ public class RecipeActivity extends AppCompatActivity {
         compositeDisposable = new CompositeDisposable();
 
         mainViewModel = ((BakingApplication) getApplication()).getMainViewModel();
+        setupRecyclerView(mainViewModel, compositeDisposable);
 
         if (getIntent() != null) {
             int recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
@@ -54,18 +57,25 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     private void observeRecipe(int recipeId) {
-        if (recipeRecyclerViewAdapter == null) {
-            recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(mainViewModel, compositeDisposable);
-            recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
-            recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        }
         recipe = mainViewModel.getRecipe(recipeId);
         recipe.observe(this, recipeRecyclerViewAdapter.getObserver());
     }
 
+    private void setupRecyclerView(@NonNull MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
+        recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(mainViewModel, compositeDisposable);
+        recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
+        recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        recipeRecyclerView.addItemDecoration(getRecyclerDecoration());
+    }
+
+    private DividerItemDecoration getRecyclerDecoration() {
+        return new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+    }
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         compositeDisposable.clear();
         recipe.removeObservers(this);
     }

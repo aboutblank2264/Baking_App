@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:app = "http://schemas.android.com/apk/res-auto"
+    android:id="@+id/step_item"
     android:layout_width = "match_parent"
     android:layout_height = "wrap_content"
     android:layout_gravity = "center"
@@ -17,28 +18,30 @@
         app:layout_constraintTop_toTopOf = "parent"
         />
 
-    <ImageView
-        android:id="@+id/step_expand_carrot"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:background="@drawable/ic_expand_black_24dp"
-        app:layout_constraintBottom_toBottomOf="@id/step_description"
-        app:layout_constraintRight_toRightOf="parent"
-        />
+    <!--<ImageView-->
+        <!--android:id="@+id/step_expand_carrot"-->
+        <!--android:layout_width = "wrap_content"-->
+        <!--android:layout_height = "wrap_content"-->
+        <!--android:background="@drawable/ic_expand_black_24dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="@id/step_description"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--/>-->
+
+    <!--<TextView-->
+        <!--android:id = "@+id/step_short_description"-->
+        <!--style = "@style/TitleStyle"-->
+        <!--android:layout_width = "match_parent"-->
+        <!--android:layout_height = "wrap_content"-->
+        <!--android:visibility="gone"-->
+        <!--app:layout_constraintTop_toBottomOf="@id/step_description"-->
+        <!--/>-->
 
     <TextView
-        android:id = "@+id/step_short_description"
-        style = "@style/TitleStyle"
+        android:id="@+id/step_ellipses"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/step_description"
-        />
-
-    <ImageView
-        android:id = "@+id/step_thumbnail"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
+        android:text="@string/text_ellipses"
+        style="@style/StepStyle"
         app:layout_constraintTop_toBottomOf="@id/step_description"
         />
 
@@ -47,8 +50,15 @@
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         app:el_expanded = "false"
-        app:layout_constraintTop_toBottomOf = "@id/step_thumbnail"
+        app:layout_constraintTop_toBottomOf = "@id/step_description"
         >
+
+        <ImageView
+            android:id = "@+id/step_thumbnail"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/step_description"
+            />
 
         <com.aboutblank.baking_app.player.MediaPlayerView
             android:id = "@+id/step_player"

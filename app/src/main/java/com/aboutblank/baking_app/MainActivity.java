@@ -1,11 +1,10 @@
 package com.aboutblank.baking_app;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -53,9 +52,10 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
      * Initial list of recipes is set to empty until full list can be retrieved.
      */
     private void initializeRecyclerView() {
-        adapter = new MainRecyclerViewAdapter(new ArrayList<MinimalRecipe>(), this);
+        adapter = new MainRecyclerViewAdapter(new ArrayList<>(), this);
         mainRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mainRecyclerView.setAdapter(adapter);
+        mainRecyclerView.addItemDecoration(getRecyclerDecoration());
     }
 
     private void initializeData() {
@@ -68,12 +68,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
 
         LiveData<List<MinimalRecipe>> minimalRecipes = mainViewModel.getMinimalRecipes();
 
-        minimalRecipes.observe(this, new Observer<List<MinimalRecipe>>() {
-            @Override
-            public void onChanged(@Nullable List<MinimalRecipe> minimalRecipes) {
-                adapter.updateRecipeList(minimalRecipes);
-            }
-        });
+        minimalRecipes.observe(this, minimalRecipes1 -> adapter.updateRecipeList(minimalRecipes1));
+    }
+
+    private DividerItemDecoration getRecyclerDecoration() {
+        return new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
     }
 
     @Override
