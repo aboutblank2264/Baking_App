@@ -74,7 +74,6 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
 
         Disposable disposable = mainViewModel.getIndexedIngredients(recipeId)
                 .subscribe(ingredientSet -> {
-                    Log.d(LOG_TAG, "This is called");
                     ingredientItemRecyclerViewAdapter.update(recipe.getIngredients(), ingredientSet);
                 });
         compositeDisposable.add(disposable);

@@ -1,6 +1,7 @@
 package com.aboutblank.baking_app.player;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -11,6 +12,8 @@ import java.util.Queue;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import io.reactivex.Single;
 
 @Singleton
 public class MediaPlayerPool {
@@ -34,19 +37,24 @@ public class MediaPlayerPool {
         mediaPlayers = new ArrayDeque<>();
     }
 
-    public MediaPlayer getPlayer() {
-        MediaPlayer mediaPlayer;
-        if (mediaPlayers.size() < MAX_PLAYERS) {
-            //If pool is not maxed out, create a new ExoPlayer and add it to the queue
-            mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector), extractorMediaSource);
-            mediaPlayers.add(mediaPlayer);
-        } else {
-            //Else pop the head of the queue and add it to the back then return the mediaPlayer.
-            mediaPlayer = mediaPlayers.remove();
-            mediaPlayers.add(mediaPlayer);
-        }
-
-        return mediaPlayer;
+    public Single<MediaPlayer> getPlayer() {
+        return Single.create(
+                emitter -> {
+                    MediaPlayer mediaPlayer;
+                    if (mediaPlayers.size() < MAX_PLAYERS) {
+                        //If pool is not maxed out, create a new ExoPlayer and add it to the queue
+                        Log.d(LOG_TAG, "Pool not maxed, creating a new player");
+                        mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector),
+                                extractorMediaSource);
+                        mediaPlayers.add(mediaPlayer);
+                    } else {
+                        //Else pop the head of the queue and add it to the back then return the mediaPlayer.
+                        Log.d(LOG_TAG, "Pool maxed, reusing old player");
+                        mediaPlayer = mediaPlayers.remove();
+                        mediaPlayers.add(mediaPlayer);
+                    }
+                    emitter.onSuccess(mediaPlayer);
+                });
     }
 
     // Release all the mediaPlayers and clears the queue

@@ -28,7 +28,7 @@ public class StepViewHolder extends RecyclerView.ViewHolder
 
     private final String LOG_TAG = getClass().getSimpleName();
 
-    @BindView(R.id.step_item)
+    @BindView(R.id.step_view)
     View layout;
 
     @BindView(R.id.step_description)

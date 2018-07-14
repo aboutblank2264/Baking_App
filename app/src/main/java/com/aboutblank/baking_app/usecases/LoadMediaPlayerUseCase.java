@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class LoadMediaPlayerUseCase {
@@ -18,7 +20,9 @@ public class LoadMediaPlayerUseCase {
     }
 
     public Single<MediaPlayer> getPlayer() {
-        return Single.just(mediaPlayerPool.getPlayer());
+        return mediaPlayerPool.getPlayer()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
     }
     
     public void clear() {

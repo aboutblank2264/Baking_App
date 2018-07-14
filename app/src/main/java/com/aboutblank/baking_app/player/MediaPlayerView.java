@@ -21,10 +21,4 @@ public class MediaPlayerView extends PlayerView {
     public void setPlayer(MediaPlayer player) {
         super.setPlayer(player.getExoPlayer());
     }
-
-    public void setPlayer(Object player) {
-        if(player.getClass() == MediaPlayer.class) {
-            super.setPlayer(((MediaPlayer)player).getExoPlayer());
-        }
-    }
 }
