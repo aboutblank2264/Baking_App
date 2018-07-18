@@ -2,7 +2,6 @@ package com.aboutblank.baking_app.view.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,17 +10,14 @@ import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
-import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.player.MediaPlayerView;
+import com.aboutblank.baking_app.view.PlayerHandler;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class StepViewHolder extends RecyclerView.ViewHolder
         implements IRecipeViewHolder, View.OnClickListener, ExpandableLayout.OnExpansionUpdateListener {
@@ -51,8 +47,7 @@ public class StepViewHolder extends RecyclerView.ViewHolder
 
     private String videoUrl;
 
-    private Single<MediaPlayer> mediaPlayerObservable;
-    private CompositeDisposable compositeDisposable;
+    private PlayerHandler playerHandler;
     private MainViewModel mainViewModel;
 
     public StepViewHolder(View view, MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
@@ -60,8 +55,8 @@ public class StepViewHolder extends RecyclerView.ViewHolder
         ButterKnife.bind(this, view);
 
         this.mainViewModel = mainViewModel;
-        this.compositeDisposable = compositeDisposable;
 
+        playerHandler = new PlayerHandler(playerView, compositeDisposable);
         layout.setOnClickListener(this);
     }
 
@@ -69,10 +64,25 @@ public class StepViewHolder extends RecyclerView.ViewHolder
     public void onClick(View view) {
         boolean isExpanded = expandableLayout.isExpanded();
 
-        hideOrShowEllipses(isExpanded);
-        expandableLayout.setExpanded(!isExpanded);
+        expand(isExpanded);
+    }
 
-        handlePlayer(isExpanded);
+    private void expand(boolean isExpanded) {
+        hideOrShowEllipses(isExpanded);
+        expandableLayout.toggle();
+        playerHandler.pause();
+        showPlayer();
+    }
+
+    private void showPlayer() {
+
+        boolean videoToPlay = playerHandler.preparePlayer(mainViewModel.getPlayer(),
+               videoUrl);
+
+        if(!videoToPlay) {
+            // if there's no video url, don't show the player.
+            playerView.setVisibility(View.GONE);
+        }
     }
 
     private void hideOrShowEllipses(boolean isExpanded) {
@@ -81,30 +91,6 @@ public class StepViewHolder extends RecyclerView.ViewHolder
         } else {
             ellipses.setVisibility(View.VISIBLE);
         }
-    }
-
-    private void handlePlayer(boolean expand) {
-        if (expand) {
-            if (videoUrl != null && !videoUrl.isEmpty()) {
-                Log.d(LOG_TAG, "Playing video: " + videoUrl);
-
-                if (mediaPlayerObservable == null) {
-                    mediaPlayerObservable = mainViewModel.getPlayer();
-                }
-
-                Disposable disposable = mediaPlayerObservable.subscribeOn(Schedulers.computation())
-                        .subscribe(mediaPlayer -> {
-                            playerView.setPlayer(mediaPlayer);
-                            playerView.setVisibility(View.VISIBLE);
-                        });
-
-                compositeDisposable.add(disposable);
-
-            } else {
-                playerView.setVisibility(View.GONE);
-            }
-        }
-
     }
 
     @Override
@@ -121,11 +107,7 @@ public class StepViewHolder extends RecyclerView.ViewHolder
 //        shortDescription.setText(step.getShortDescription());
         fullDescription.setText(step.getDescription());
         setThumbnail(step.getThumbnailUrl());
-        boolean saveToExpand = setVideoUrl(step.getVideoUrl());
-
-        if (saveToExpand) {
-            expandableLayout.expand(false);
-        }
+        videoUrl = step.getVideoUrl();
     }
 
     private void setThumbnail(String imageUrl) {
@@ -134,18 +116,5 @@ public class StepViewHolder extends RecyclerView.ViewHolder
         } else {
             thumbnail.setVisibility(View.GONE);
         }
-    }
-
-    private boolean setVideoUrl(String videoUrl) {
-        boolean isSafeToExpand = false;
-
-        if (videoUrl != null && !videoUrl.isEmpty()) {
-            this.videoUrl = videoUrl;
-        } else {
-            playerView.setVisibility(View.GONE);
-            isSafeToExpand = true;
-        }
-
-        return isSafeToExpand;
     }
 }
