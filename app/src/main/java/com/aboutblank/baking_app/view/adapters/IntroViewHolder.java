@@ -10,6 +10,7 @@ import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
 import com.aboutblank.baking_app.player.MediaPlayerView;
+import com.aboutblank.baking_app.view.IRecipeHolderListener;
 import com.aboutblank.baking_app.view.PlayerHandler;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -36,21 +37,31 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
     MediaPlayerView playerView;
 
     private PlayerHandler playerHandler;
+    private IRecipeHolderListener recipeHolderListener;
     private MainViewModel mainViewModel;
 
-    public IntroViewHolder(View view, MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
+    private String videoUrl;
+    private boolean expanded = true;
+
+    public IntroViewHolder(View view,
+                           MainViewModel mainViewModel,
+                           IRecipeHolderListener recipeHolderListener,
+                           CompositeDisposable compositeDisposable) {
         super(view);
+        this.recipeHolderListener = recipeHolderListener;
         ButterKnife.bind(this, view);
         this.mainViewModel = mainViewModel;
 
+        expandableLayout.setOnExpansionUpdateListener(recipeHolderListener);
         playerHandler = new PlayerHandler(playerView, compositeDisposable);
         layout.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        expandableLayout.toggle();
-        playerHandler.pause();
+//        expandableLayout.toggle();
+//        playerHandler.pause();
+        recipeHolderListener.onItemClick(view, getAdapterPosition());
     }
 
     @Override
@@ -58,6 +69,33 @@ public class IntroViewHolder extends RecyclerView.ViewHolder
         Step intro = recipe.getSteps().get(0);
         description.setText(intro.getDescription());
 
-        playerHandler.preparePlayer(mainViewModel.getPlayer(), recipe.getSteps().get(0).getVideoUrl());
+        boolean hasVideo = setVideoAndView(intro.getVideoUrl());
+        if(hasVideo) {
+            playerHandler.preparePlayer(mainViewModel.getPlayer(), videoUrl);
+        }
+    }
+
+    private boolean setVideoAndView(String videoUrl) {
+        boolean hasVideo = false;
+        if (videoUrl != null && !videoUrl.isEmpty()) {
+            hasVideo = true;
+            this.videoUrl = videoUrl;
+        } else {
+            playerView.setVisibility(View.GONE);
+        }
+
+        return hasVideo;
+    }
+
+    @Override
+    public void expand(boolean expand) {
+        expanded = expand;
+        expandableLayout.toggle();
+        playerHandler.pause();
+    }
+
+    @Override
+    public boolean isExpanded() {
+        return expanded;
     }
 }

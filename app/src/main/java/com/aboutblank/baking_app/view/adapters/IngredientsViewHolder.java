@@ -3,13 +3,13 @@ package com.aboutblank.baking_app.view.adapters;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
+import com.aboutblank.baking_app.view.IRecipeHolderListener;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -37,16 +37,24 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
     private IngredientItemRecyclerViewAdapter ingredientItemRecyclerViewAdapter;
 
     private int recipeId;
+    private boolean expanded = true;
 
     private MainViewModel mainViewModel;
     private CompositeDisposable compositeDisposable;
+    private IRecipeHolderListener recipeHolderListener;
 
-    public IngredientsViewHolder(View view, MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
+    public IngredientsViewHolder(View view,
+                                 MainViewModel mainViewModel,
+                                 IRecipeHolderListener recipeHolderListener,
+                                 CompositeDisposable compositeDisposable) {
         super(view);
+        this.recipeHolderListener = recipeHolderListener;
         ButterKnife.bind(this, view);
 
         this.mainViewModel = mainViewModel;
         this.compositeDisposable = compositeDisposable;
+
+        expandableLayout.setOnExpansionUpdateListener(recipeHolderListener);
 
         createIngredientItemRecyclerViewAdapter();
         title.setOnClickListener(this);
@@ -60,12 +68,10 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
-    public void onClick(View v) {
-        if (expandableLayout.isExpanded()) {
-            expandableLayout.collapse();
-        } else {
-            expandableLayout.expand();
-        }
+    public void onClick(View view) {
+        expanded = !expandableLayout.isExpanded();
+        expandableLayout.toggle();
+//        recipeHolderListener.onItemClick(view, getAdapterPosition());
     }
 
     @Override
@@ -77,6 +83,16 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
                     ingredientItemRecyclerViewAdapter.update(recipe.getIngredients(), ingredientSet);
                 });
         compositeDisposable.add(disposable);
+    }
+
+    @Override
+    public void expand(boolean expand) {
+        //Do nothing for now. Ingredient expand behavior is different from other views
+    }
+
+    @Override
+    public boolean isExpanded() {
+        return expanded;
     }
 
     @Override

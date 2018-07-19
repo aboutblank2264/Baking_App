@@ -51,6 +51,7 @@ public class MediaPlayerPool {
                         //Else pop the head of the queue and add it to the back then return the mediaPlayer.
                         Log.d(LOG_TAG, "Pool maxed, reusing old player");
                         mediaPlayer = mediaPlayers.remove();
+
                         mediaPlayers.add(mediaPlayer);
                     }
                     emitter.onSuccess(mediaPlayer);

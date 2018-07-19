@@ -62,7 +62,7 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull MainViewModel mainViewModel, CompositeDisposable compositeDisposable) {
-        recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(mainViewModel, compositeDisposable);
+        recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(mainViewModel, recipeRecyclerView, compositeDisposable);
         recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
         recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -79,4 +79,5 @@ public class RecipeActivity extends AppCompatActivity {
         compositeDisposable.clear();
         recipe.removeObservers(this);
     }
+
 }
