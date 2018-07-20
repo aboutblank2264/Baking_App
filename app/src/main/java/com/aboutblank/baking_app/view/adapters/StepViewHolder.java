@@ -9,6 +9,7 @@ import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.model.Step;
+import com.aboutblank.baking_app.view.ExpandableCardView;
 import com.aboutblank.baking_app.view.IRecipeHolderListener;
 
 import butterknife.BindView;
@@ -21,7 +22,7 @@ public class StepViewHolder extends RecyclerView.ViewHolder
     private final String LOG_TAG = getClass().getSimpleName();
 
     @BindView(R.id.step_view)
-    View layout;
+    ExpandableCardView cardView;
 
     @BindView(R.id.step_short_description)
     TextView shortDescription;
@@ -43,7 +44,7 @@ public class StepViewHolder extends RecyclerView.ViewHolder
 
         this.mainViewModel = mainViewModel;
 
-        layout.setOnClickListener(this);
+        cardView.setOnClickListener(this);
     }
 
     @Override
@@ -53,6 +54,8 @@ public class StepViewHolder extends RecyclerView.ViewHolder
 
     @Override
     public void expand(boolean expand) {
+        expanded = expand;
+        cardView.toggleView(expand);
     }
 
     @Override

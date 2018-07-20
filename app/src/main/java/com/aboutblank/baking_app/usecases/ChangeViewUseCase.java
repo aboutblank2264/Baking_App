@@ -6,8 +6,15 @@ import android.content.Intent;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.RecipeActivity;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class ChangeViewUseCase {
 
+    @Inject
+    public ChangeViewUseCase() {
+    }
 
     public void startRecipeActivity(Context context, int recipeId) {
 
