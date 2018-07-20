@@ -56,9 +56,9 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d(LOG_TAG, "Creating view holder with view type: " + viewType);
         switch (viewType) {
-            case INTRODUCTION: {
-                return getIntroViewHolder(parent);
-            }
+//            case INTRODUCTION: {
+//                return getIntroViewHolder(parent);
+//            }
             case INGREDIENTS: {
                 return getIngredientsViewHolder(parent);
             }
@@ -66,11 +66,6 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 return getStepViewHolder(parent);
             }
         }
-    }
-
-    private RecyclerView.ViewHolder getIntroViewHolder(@NonNull ViewGroup parent) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_introduction, parent, false);
-        return new IntroViewHolder(view, mainViewModel, this, compositeDisposable);
     }
 
     private RecyclerView.ViewHolder getIngredientsViewHolder(@NonNull ViewGroup parent) {
@@ -89,8 +84,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         Log.d(LOG_TAG, "Class of ViewHolder: " + holder.getClass());
         Log.d(LOG_TAG, "Position: " + position);
 
-        //If position is past Intro and Ingredients, reduce by 1 to keep inline with Steps
-        int tempPosition = position > 2 ? position - 1 : position;
+        //If position is past index 0, Ingredients, reduce by 1 to keep inline with Steps
+        int tempPosition = position > 0 ? position - 1 : position;
         ((IRecipeViewHolder) holder).bindViewHolder(recipe, tempPosition);
     }
 
@@ -102,8 +97,6 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
         switch (position) {
-            case INTRODUCTION:
-                return INTRODUCTION;
             case INGREDIENTS:
                 return INGREDIENTS;
             default:
@@ -111,9 +104,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
-    private final static int INTRODUCTION = 0;
-    private final static int INGREDIENTS = 1;
-    private final static int STEPS = 2;
+    private final static int INGREDIENTS = 0;
+    private final static int STEPS = 1;
 
     private int selectedPosition = 0;
 

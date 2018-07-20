@@ -24,6 +24,8 @@
         android:layout_height = "wrap_content"
         android:paddingEnd = "2dp"
         android:paddingStart = "0dp"
+        android:paddingBottom="2dp"
+
         app:layout_constraintLeft_toRightOf = "@id/ingredient_icon"
         />
 

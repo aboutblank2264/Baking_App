@@ -1,10 +1,8 @@
 package com.aboutblank.baking_app;
 
 import android.arch.lifecycle.LiveData;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -55,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
         adapter = new MainRecyclerViewAdapter(new ArrayList<>(), this);
         mainRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mainRecyclerView.setAdapter(adapter);
-        mainRecyclerView.addItemDecoration(getRecyclerDecoration());
     }
 
     private void initializeData() {
@@ -71,18 +68,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
         minimalRecipes.observe(this, minimalRecipes1 -> adapter.updateRecipeList(minimalRecipes1));
     }
 
-    private DividerItemDecoration getRecyclerDecoration() {
-        return new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-    }
-
     @Override
     public void onItemClick(View view, int position) {
         int actualId = position + 1;
         Log.d(LOG_TAG, String.format("Position %d clicked, sending recipe %d", position, actualId));
 
-        Intent launchRecipeIntent = new Intent(this, RecipeActivity.class);
-        launchRecipeIntent.putExtra(getString(R.string.intent_recipe_id), actualId);
-
-        startActivity(launchRecipeIntent);
+        mainViewModel.changeToRecipeView(this, actualId);
     }
 }

@@ -2,12 +2,14 @@ package com.aboutblank.baking_app;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
+import com.aboutblank.baking_app.usecases.ChangeViewUseCase;
 import com.aboutblank.baking_app.usecases.LoadIngredientsUseCase;
 import com.aboutblank.baking_app.usecases.LoadMediaPlayerUseCase;
 import com.aboutblank.baking_app.usecases.LoadRecipesUseCase;
@@ -32,6 +34,8 @@ public class MainViewModel extends ViewModel {
     @NonNull
     private LoadMediaPlayerUseCase loadMediaPlayerUseCase;
     @NonNull
+    private ChangeViewUseCase changeViewUseCase;
+    @NonNull
     private ISchedulerProvider schedulerProvider;
     @NonNull
     private ImageUtils imageUtils;
@@ -40,11 +44,13 @@ public class MainViewModel extends ViewModel {
     public MainViewModel(@NonNull LoadRecipesUseCase loadRecipesUseCase,
                          @NonNull LoadIngredientsUseCase loadIngredientsUseCase,
                          @NonNull LoadMediaPlayerUseCase loadMediaPlayerUseCase,
+                         @NonNull ChangeViewUseCase changeViewUseCase,
                          @NonNull ISchedulerProvider schedulerProvider,
                          @NonNull ImageUtils imageUtils) {
         this.loadRecipesUseCase = loadRecipesUseCase;
         this.loadIngredientsUseCase = loadIngredientsUseCase;
         this.loadMediaPlayerUseCase = loadMediaPlayerUseCase;
+        this.changeViewUseCase = changeViewUseCase;
         this.schedulerProvider = schedulerProvider;
         this.imageUtils = imageUtils;
     }
@@ -77,6 +83,10 @@ public class MainViewModel extends ViewModel {
     @NonNull
     public Single<MediaPlayer> getPlayer() {
         return loadMediaPlayerUseCase.getPlayer();
+    }
+
+    public void changeToRecipeView(Context context, int recipeId) {
+        changeViewUseCase.startRecipeActivity(context, recipeId);
     }
 
     @Override

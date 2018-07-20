@@ -41,14 +41,12 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
 
     private MainViewModel mainViewModel;
     private CompositeDisposable compositeDisposable;
-    private IRecipeHolderListener recipeHolderListener;
 
     public IngredientsViewHolder(View view,
                                  MainViewModel mainViewModel,
                                  IRecipeHolderListener recipeHolderListener,
                                  CompositeDisposable compositeDisposable) {
         super(view);
-        this.recipeHolderListener = recipeHolderListener;
         ButterKnife.bind(this, view);
 
         this.mainViewModel = mainViewModel;
@@ -71,7 +69,6 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
     public void onClick(View view) {
         expanded = !expandableLayout.isExpanded();
         expandableLayout.toggle();
-//        recipeHolderListener.onItemClick(view, getAdapterPosition());
     }
 
     @Override
