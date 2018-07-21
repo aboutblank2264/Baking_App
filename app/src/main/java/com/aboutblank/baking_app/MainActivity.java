@@ -11,6 +11,7 @@ import android.view.View;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.view.adapters.MainRecyclerViewAdapter;
+import com.aboutblank.baking_app.viewmodels.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
 
     @BindView(R.id.main_recycler_view)
     RecyclerView mainRecyclerView;
-
     MainRecyclerViewAdapter adapter;
 
     @Override
@@ -59,9 +59,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
         mainViewModel = ((BakingApplication) getApplication()).getMainViewModel();
 
         //TODO: TESTING
-        mainViewModel.clearLocalDatabase();
+//        mainViewModel.clearLocalDatabase();
 
-        mainViewModel.update();
+
+        //TODO does not handle no network connection
+//        mainViewModel.update();
 
         LiveData<List<MinimalRecipe>> minimalRecipes = mainViewModel.getMinimalRecipes();
 

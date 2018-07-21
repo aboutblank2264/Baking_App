@@ -21,6 +21,7 @@ public class ExpandableCardView extends CardView {
 
     private int screenHeight;
     private int minHeight;
+    private int maxHeight;
 
     public ExpandableCardView(@NonNull Context context) {
         super(context);
@@ -35,10 +36,12 @@ public class ExpandableCardView extends CardView {
         screenHeight = getScreenHeight(context);
 
         runJustBeforeBeingDrawn(() -> {
-                    minHeight = getHeight();
-                    screenHeight -= minHeight;
-                    Log.d(LOG_TAG, String.format("Setting height values: %d, %d", screenHeight, minHeight));
-                });
+            if (minHeight == 0) {
+                minHeight = getHeight();
+            }
+            screenHeight -= minHeight;
+//            Log.d(LOG_TAG, String.format("Setting height values: %d, %d", screenHeight, minHeight));
+        });
     }
 
     // https://stackoverflow.com/questions/3779173/determining-the-size-of-an-android-view-at-runtime
@@ -81,5 +84,12 @@ public class ExpandableCardView extends CardView {
 
         });
         anim.start();
+    }
+
+    public void setMinHeight(int minHeight) {
+        this.minHeight = minHeight;
+    }
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
     }
 }

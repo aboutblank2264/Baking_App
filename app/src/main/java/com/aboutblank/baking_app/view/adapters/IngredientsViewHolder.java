@@ -1,16 +1,17 @@
 package com.aboutblank.baking_app.view.adapters;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
-import com.aboutblank.baking_app.data.model.Recipe;
+import com.aboutblank.baking_app.states.IngredientViewState;
+import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.IRecipeHolderListener;
 import com.aboutblank.baking_app.view.ItemClickedListener;
+import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 public class IngredientsViewHolder extends RecyclerView.ViewHolder
         implements IRecipeViewHolder, View.OnClickListener, ItemClickedListener {
@@ -36,20 +36,21 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
     RecyclerView ingredientRecycler;
     private IngredientItemRecyclerViewAdapter ingredientItemRecyclerViewAdapter;
 
-    private int recipeId;
-    private boolean expanded = true;
+    private IngredientViewState ingredientViewState;
 
-    private MainViewModel mainViewModel;
+    private RecipeViewModel recipeViewModel;
     private CompositeDisposable compositeDisposable;
+    private IRecipeHolderListener recipeHolderListener;
 
     public IngredientsViewHolder(View view,
-                                 MainViewModel mainViewModel,
+                                 RecipeViewModel recipeViewModel,
                                  IRecipeHolderListener recipeHolderListener,
                                  CompositeDisposable compositeDisposable) {
         super(view);
+        this.recipeHolderListener = recipeHolderListener;
         ButterKnife.bind(this, view);
 
-        this.mainViewModel = mainViewModel;
+        this.recipeViewModel = recipeViewModel;
         this.compositeDisposable = compositeDisposable;
 
         expandableLayout.setOnExpansionUpdateListener(recipeHolderListener);
@@ -62,38 +63,42 @@ public class IngredientsViewHolder extends RecyclerView.ViewHolder
         ingredientItemRecyclerViewAdapter = new IngredientItemRecyclerViewAdapter(new ArrayList<>(), this);
         ingredientRecycler.setAdapter(ingredientItemRecyclerViewAdapter);
         ingredientRecycler.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
-
     }
 
     @Override
     public void onClick(View view) {
-        expanded = !expandableLayout.isExpanded();
-        expandableLayout.toggle();
-    }
-
-    @Override
-    public void bindViewHolder(@NonNull final Recipe recipe, int position) {
-        recipeId = recipe.getId();
-
-        Disposable disposable = mainViewModel.getIndexedIngredients(recipeId)
-                .subscribe(ingredientSet -> {
-                    ingredientItemRecyclerViewAdapter.update(recipe.getIngredients(), ingredientSet);
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    @Override
-    public void expand(boolean expand) {
-        //Do nothing for now. Ingredient expand behavior is different from other views
+        recipeHolderListener.onItemClick(view, getAdapterPosition());
     }
 
     @Override
     public boolean isExpanded() {
-        return expanded;
+        return ingredientViewState.getState() == ViewState.EXTENDED;
+    }
+
+    @Override
+    public ViewState getViewState() {
+        return ingredientViewState;
+    }
+
+    @Override
+    public void setViewState(ViewState viewState) {
+        if(viewState.getClass() == IngredientViewState.class) {
+            ingredientViewState = (IngredientViewState) viewState;
+
+            ingredientItemRecyclerViewAdapter.update(ingredientViewState.getIngredients(),
+                    ingredientViewState.getIndexedIngredients());
+            expand();
+        }
+    }
+
+    private void expand() {
+        Log.d(LOG_TAG, "Expand: " + isExpanded());
+        expandableLayout.setExpanded(isExpanded());
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        mainViewModel.indexIngredient(recipeId, position);
+        Log.d(LOG_TAG, "Adding item position to indexed ingredients " + position);
+        recipeViewModel.indexIngredient(ingredientViewState.getRecipeId(), position);
     }
 }

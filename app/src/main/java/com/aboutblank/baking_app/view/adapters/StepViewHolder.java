@@ -1,16 +1,20 @@
 package com.aboutblank.baking_app.view.adapters;
 
-import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.aboutblank.baking_app.MainViewModel;
 import com.aboutblank.baking_app.R;
-import com.aboutblank.baking_app.data.model.Recipe;
-import com.aboutblank.baking_app.data.model.Step;
-import com.aboutblank.baking_app.view.ExpandableCardView;
+import com.aboutblank.baking_app.states.DetailViewState;
+import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.IRecipeHolderListener;
+import com.aboutblank.baking_app.view.ParentView;
+import com.aboutblank.baking_app.view.fragments.DetailFragment;
+import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
+
+import net.cachapa.expandablelayout.ExpandableLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,27 +26,35 @@ public class StepViewHolder extends RecyclerView.ViewHolder
     private final String LOG_TAG = getClass().getSimpleName();
 
     @BindView(R.id.step_view)
-    ExpandableCardView cardView;
+    CardView cardView;
 
     @BindView(R.id.step_short_description)
     TextView shortDescription;
 
+    @BindView(R.id.expandable_layout)
+    ExpandableLayout expandableLayout;
+
+    @BindView(R.id.frame_holder)
+    View holder;
+
+    private DetailViewState detailViewState;
+    private DetailFragment detailFragment;
 
     private IRecipeHolderListener recipeHolderListener;
-    private MainViewModel mainViewModel;
-
-    private boolean needToExpand = false;
-    private boolean expanded = false;
+    private ParentView parentView;
+    private RecipeViewModel recipeViewModel;
 
     public StepViewHolder(View view,
-                          MainViewModel mainViewModel,
+                          RecipeViewModel recipeViewModel,
                           IRecipeHolderListener recipeHolderListener,
+                          ParentView parentView,
                           CompositeDisposable compositeDisposable) {
         super(view);
         this.recipeHolderListener = recipeHolderListener;
+        this.parentView = parentView;
         ButterKnife.bind(this, view);
 
-        this.mainViewModel = mainViewModel;
+        this.recipeViewModel = recipeViewModel;
 
         cardView.setOnClickListener(this);
     }
@@ -53,45 +65,40 @@ public class StepViewHolder extends RecyclerView.ViewHolder
     }
 
     @Override
-    public void expand(boolean expand) {
-        expanded = expand;
-        cardView.toggleView(expand);
-    }
-
-    @Override
     public boolean isExpanded() {
-        return expanded;
+        return detailViewState.getState() == ViewState.EXTENDED;
     }
-
 
     @Override
-    public void bindViewHolder(@NonNull Recipe recipe, int position) {
-        Step step = recipe.getSteps().get(position);
-
-        shortDescription.setText(step.getShortDescription());
+    public ViewState getViewState() {
+        return detailViewState;
     }
 
-//    private boolean setVideoAndView(String videoUrl) {
-//        boolean hasVideo = false;
-//        if (videoUrl != null && !videoUrl.isEmpty()) {
-//            hasVideo = true;
-//            this.videoUrl = videoUrl;
-//        } else {
-//            playerView.setVisibility(View.GONE);
-//        }
-//
-//        return hasVideo;
-//    }
-//
-//    private boolean setThumbnailAndView(String imageUrl) {
-//        boolean hasImage = false;
-//        if (imageUrl != null && !imageUrl.isEmpty()) {
-//            mainViewModel.getImageUtils().loadImage(thumbnail, imageUrl);
-//            hasImage = true;
-//        } else {
-//            thumbnail.setVisibility(View.GONE);
-//        }
-//
-//        return hasImage;
-//    }
+    @Override
+    public void setViewState(ViewState viewState) {
+        if (viewState.getClass() == DetailViewState.class) {
+            detailViewState = (DetailViewState) viewState;
+
+            Log.d(LOG_TAG, "New view state: " + viewState.toString());
+
+            if (detailViewState.hasShortDescription()) {
+                shortDescription.setText(detailViewState.getShortDescription());
+            }
+            if (isExpanded()) {
+                if (detailFragment == null) {
+                    detailFragment = new DetailFragment();
+
+                    int uniqueId = getUniqueId();
+                    holder.setId(uniqueId);
+                    parentView.attachFragment(uniqueId, detailFragment);
+                } else {
+                    detailFragment.setViewState(detailViewState);
+                }
+            }
+        }
+    }
+
+    private int getUniqueId() {
+        return (int) System.currentTimeMillis();
+    }
 }

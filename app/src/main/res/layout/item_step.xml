@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.aboutblank.baking_app.view.ExpandableCardView xmlns:android = "http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:app = "http://schemas.android.com/apk/res-auto"
     android:id = "@+id/step_view"
     android:layout_width = "match_parent"
     android:layout_height = "wrap_content"
     android:layout_gravity = "center"
-    app:contentPadding = "2dp"
+    android:layout_margin = "4dp"
     app:cardCornerRadius = "4dp"
-    app:cardElevation="6dp"
-    android:layout_margin="4dp"
+    app:cardElevation = "6dp"
+    app:contentPadding = "2dp"
     >
 
     <TextView
@@ -16,6 +16,19 @@
         style = "@style/TitleStyle"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf = "parent"
         />
-</com.aboutblank.baking_app.view.ExpandableCardView>
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id = "@+id/expandable_layout"
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        >
+
+        <FrameLayout
+            android:id = "@+id/frame_holder"
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content"
+            />
+    </net.cachapa.expandablelayout.ExpandableLayout>
+</android.support.v7.widget.CardView>

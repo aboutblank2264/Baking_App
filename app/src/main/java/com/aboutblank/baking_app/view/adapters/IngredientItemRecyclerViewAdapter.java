@@ -3,6 +3,7 @@ package com.aboutblank.baking_app.view.adapters;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,6 @@ public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<Ingr
     @Override
     public IngredientItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingredient, parent, false);
-
         return new IngredientItemViewHolder(view);
     }
 
@@ -46,15 +46,27 @@ public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<Ingr
     public void onBindViewHolder(@NonNull IngredientItemViewHolder holder, int position) {
         holder.setIngredient(ingredientList.get(position));
 
-        if(indexedIngredients != null) {
+        if (indexedIngredients != null) {
             holder.toggleActive(indexedIngredients.contains(position));
         }
     }
 
-    public void update(List<Ingredient> list, Set<Integer> indexedIngredients) {
+    public void update(List<Ingredient> ingredients, Set<Integer> indexedIngredients) {
+        ingredientList.clear();
+        ingredientList.addAll(ingredients);
+        this.indexedIngredients = indexedIngredients;
+        notifyDataSetChanged();
+    }
+
+    public void update(List<Ingredient> list) {
+        Log.d("Testing Ingredient", "notifyDataSetChanged called");
         ingredientList.clear();
         ingredientList.addAll(list);
+        notifyDataSetChanged();
+    }
 
+    public void updateIndexedIngredients(Set<Integer> indexedIngredients) {
+        Log.d("Testing Indexed", "notifyDataSetChanged called");
         this.indexedIngredients = indexedIngredients;
         notifyDataSetChanged();
     }

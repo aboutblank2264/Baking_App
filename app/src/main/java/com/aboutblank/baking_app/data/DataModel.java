@@ -8,7 +8,6 @@ import com.aboutblank.baking_app.data.local.LocalRepository;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.remote.RemoteRepository;
-import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +18,7 @@ import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class DataModel implements IDataModel {
@@ -29,18 +29,14 @@ public class DataModel implements IDataModel {
     @NonNull
     private RemoteRepository remoteRepository;
     @NonNull
-    private ISchedulerProvider schedulerProvider;
-    @NonNull
     private CompositeDisposable compositeDisposable;
 
     private SparseArray<Set<Integer>> ownedRecipeIngredientsMap;
 
     @Inject
-    public DataModel(@NonNull LocalRepository localRepository, @NonNull RemoteRepository remoteRepository,
-                     @NonNull ISchedulerProvider schedulerProvider) {
+    public DataModel(@NonNull LocalRepository localRepository, @NonNull RemoteRepository remoteRepository) {
         this.localRepository = localRepository;
         this.remoteRepository = remoteRepository;
-        this.schedulerProvider = schedulerProvider;
 
         compositeDisposable = new CompositeDisposable();
         ownedRecipeIngredientsMap = new SparseArray<>();
@@ -50,8 +46,7 @@ public class DataModel implements IDataModel {
     public void update() {
         Observable<List<Recipe>> recipes = remoteRepository.getRecipes();
 
-        compositeDisposable.add(recipes.observeOn(schedulerProvider.computation())
-                .subscribeOn(schedulerProvider.computation())
+        compositeDisposable.add(recipes.subscribeOn(Schedulers.computation())
                 .subscribe(recipes1 -> localRepository.insertRecipes(recipes1.toArray(new Recipe[0]))));
     }
 

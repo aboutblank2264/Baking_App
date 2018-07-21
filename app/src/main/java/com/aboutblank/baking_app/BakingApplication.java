@@ -8,7 +8,8 @@ import com.aboutblank.baking_app.di.components.ApplicationComponent;
 import com.aboutblank.baking_app.di.components.DaggerApplicationComponent;
 import com.aboutblank.baking_app.di.modules.ContextModule;
 import com.aboutblank.baking_app.di.modules.ExoPlayerModule;
-import com.aboutblank.baking_app.schedulers.ISchedulerProvider;
+import com.aboutblank.baking_app.viewmodels.MainViewModel;
+import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 import com.google.android.exoplayer2.util.Util;
 
 public class BakingApplication extends Application {
@@ -33,8 +34,8 @@ public class BakingApplication extends Application {
     }
 
     @NonNull
-    public ISchedulerProvider getSchedulerProvider() {
-        return getApplicationComponent().schedulerProvider();
+    public RecipeViewModel getRecipeViewModel() {
+        return getApplicationComponent().recipeViewModel();
     }
 
     @NonNull
