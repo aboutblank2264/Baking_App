@@ -8,4 +8,5 @@ public interface ParentView {
     IRecipeViewHolder findViewHolderAtPosition(int position);
     void scrollToPosition(int position);
     void attachFragment(int layout, Fragment fragment);
+    void detachFragment(Fragment fragment);
 }

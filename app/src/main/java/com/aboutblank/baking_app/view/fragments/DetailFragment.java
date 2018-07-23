@@ -17,9 +17,7 @@ import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 import butterknife.BindView;
 
 public class DetailFragment extends BaseFragment {
-    private final static String DESCRIPTION = "description";
-    private final static String VIDEO = "video";
-    private final static String IMAGE = "image";
+    private final String LOG_TAG = getClass().getSimpleName();
 
     @BindView(R.id.detail_description)
     TextView description;
@@ -31,54 +29,52 @@ public class DetailFragment extends BaseFragment {
     MediaPlayerView playerView;
 
     private RecipeViewModel recipeViewModel;
+    private DetailViewState detailViewState;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
 
-        return view;
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        playerView.getPlayer().release();
     }
 
     public void setRecipeViewModel(RecipeViewModel recipeViewModel) {
         this.recipeViewModel = recipeViewModel;
     }
 
-    private boolean setDescription(String descriptionString) {
-        boolean hasDescription = false;
-        if (descriptionString != null && !descriptionString.isEmpty()) {
-            hasDescription = true;
+    private void setDescription(String descriptionString, boolean hasDescription) {
+        if(hasDescription) {
             description.setText(descriptionString);
+        } else {
+            description.setVisibility(View.GONE);
         }
-
-        return hasDescription;
     }
 
-    private boolean setVideoAndView(String videoUrl) {
-        boolean hasVideo = false;
-        if (videoUrl != null && !videoUrl.isEmpty()) {
-            hasVideo = true;
+    private void setVideoAndView(String videoUrl, boolean hasVideo) {
+        if (hasVideo) {
+            //TODO
         } else {
             playerView.setVisibility(View.GONE);
         }
-
-        return hasVideo;
     }
 
-    private boolean setThumbnailAndView(String imageUrl) {
-        boolean hasImage = false;
-        if (recipeViewModel != null && imageUrl != null && !imageUrl.isEmpty()) {
+    private void setThumbnailAndView(String imageUrl, boolean hasThumbnail) {
+        if (hasThumbnail) {
             recipeViewModel.loadImage(thumbnail, imageUrl);
-            hasImage = true;
         } else {
             thumbnail.setVisibility(View.GONE);
         }
-
-        return hasImage;
     }
 
     public void setViewState(DetailViewState viewState) {
-
+        setDescription(viewState.getDescription(), viewState.hasDescription());
+        setThumbnailAndView(viewState.getThumbnailUrl(), viewState.hasThumbnail());
+        setVideoAndView(viewState.getVideoUrl(), viewState.hasVideoUrl());
     }
 
     @Override

@@ -86,16 +86,26 @@ public class StepViewHolder extends RecyclerView.ViewHolder
             }
             if (isExpanded()) {
                 if (detailFragment == null) {
-                    detailFragment = new DetailFragment();
-
-                    int uniqueId = getUniqueId();
-                    holder.setId(uniqueId);
-                    parentView.attachFragment(uniqueId, detailFragment);
-                } else {
-                    detailFragment.setViewState(detailViewState);
+                    detailFragment = createDetailFragment();
+                }
+                detailFragment.setViewState(detailViewState);
+            } else {
+                if (detailFragment != null) {
+                    parentView.detachFragment(detailFragment);
                 }
             }
         }
+    }
+
+    private DetailFragment createDetailFragment() {
+        detailFragment = new DetailFragment();
+
+        int uniqueId = getUniqueId();
+        holder.setId(uniqueId);
+        parentView.attachFragment(uniqueId, detailFragment);
+        detailFragment.setRecipeViewModel(recipeViewModel);
+
+        return detailFragment;
     }
 
     private int getUniqueId() {

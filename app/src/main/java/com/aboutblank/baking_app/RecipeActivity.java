@@ -117,6 +117,13 @@ public class RecipeActivity extends AppCompatActivity implements ParentView {
         ft.commit();
     }
 
+    @Override
+    public void detachFragment(Fragment fragment) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.remove(fragment);
+        ft.commit();
+    }
+
     public void setViewState(RecipeViewState viewState) {
         recipeRecyclerViewAdapter.setState(viewState);
     }

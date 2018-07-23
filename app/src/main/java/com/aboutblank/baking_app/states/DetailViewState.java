@@ -7,6 +7,7 @@ public class DetailViewState extends ViewState {
     private String description;
     private String videoUrl;
     private String thumbnailUrl;
+    private long currentPlaybackPosition;
 
     public DetailViewState(Step step, @State int state) {
         setState(state);
@@ -30,6 +31,14 @@ public class DetailViewState extends ViewState {
 
     public String getThumbnailUrl() {
         return thumbnailUrl;
+    }
+
+    public long getCurrentPlaybackPosition() {
+        return currentPlaybackPosition;
+    }
+
+    public void setCurrentPlaybackPosition(long currentPlaybackPosition) {
+        this.currentPlaybackPosition = currentPlaybackPosition;
     }
 
     public boolean hasShortDescription() {
@@ -59,6 +68,7 @@ public class DetailViewState extends ViewState {
                 ", description='" + description + '\'' +
                 ", videoUrl='" + videoUrl + '\'' +
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", currentPlaybackPosition='" + currentPlaybackPosition + '\'' +
                 ", expanded=" + getState() +
                 '}';
     }
