@@ -40,8 +40,8 @@ public class RecipeViewModel extends ViewModel {
         this.loadMediaPlayerUseCase = loadMediaPlayerUseCase;
     }
 
-    public void changeToRecipeView(Context context, int recipeId) {
-        changeViewUseCase.startRecipeActivity(context, recipeId);
+    public void changeToDetailView(Context context, int recipeId, int position) {
+        changeViewUseCase.startDetailActivity(context, recipeId, position);
     }
 
     public void loadImage(ImageView imageView, String imageUrl) {

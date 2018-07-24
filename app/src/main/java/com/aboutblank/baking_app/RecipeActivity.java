@@ -68,7 +68,7 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     }
 
     public void observeRecipe(int recipeId) {
-        recipeViewModel.getRecipe(recipeId).observe(this, recipe -> {
+        getRecipeViewModel().getRecipe(recipeId).observe(this, recipe -> {
             if (recipe != null) {
                 this.recipe = recipe;
                 setState(new RecipeViewState(recipe));
@@ -89,13 +89,8 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
 
     @Override
     public void onItemClick(View view, int position) {
-        if (position == 0) {
-            IngredientListFragment ingredientListFragment = new IngredientListFragment();
-            attachFragment(ingredientListFragment);
-            loadIngredientListFragment(ingredientListFragment);
-        } else {
-            loadStepDetailFragment(position);
-        }
+        Log.d(LOG_TAG, "Loading detail view with position " + position);
+        getRecipeViewModel().changeToDetailView(this, recipe.getId(), position);
     }
 
     //TODO make animation to expand the view.

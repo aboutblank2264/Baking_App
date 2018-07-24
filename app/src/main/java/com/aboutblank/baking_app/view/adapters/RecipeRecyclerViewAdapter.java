@@ -102,6 +102,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
     public void onItemClick(View view, int position) {
         //pass the item click up to the parent
         itemClickedListener.onItemClick(view, position);
+//        expand(view, 500);
     }
 
     public void setState(RecipeViewState recipeViewState) {
@@ -123,4 +124,15 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
     private int getRealStepPosition(int position) {
         return position > 0 ? position - 1 : position;
     }
+
+//    public void expand(final View v, final int height) {
+//        ValueAnimator va = ValueAnimator.ofInt(v.getHeight(), height);
+//        va.setDuration(700);
+//        va.addUpdateListener(animation -> {
+//            v.getLayoutParams().height = (Integer) animation.getAnimatedValue();
+//            v.requestLayout();
+//        });
+//
+//        va.start();
+//    }
 }

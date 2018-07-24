@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aboutblank.baking_app.DetailActivity;
 import com.aboutblank.baking_app.R;
-import com.aboutblank.baking_app.RecipeActivity;
 import com.aboutblank.baking_app.states.IngredientViewState;
 import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
@@ -20,10 +20,8 @@ import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Set;
 
 import butterknife.BindView;
-import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -42,12 +40,14 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =  super.onCreateView(inflater, container, savedInstanceState);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        RecipeActivity recipeActivity = (RecipeActivity) Objects.requireNonNull(getActivity());
-        recipeViewModel = recipeActivity.getRecipeViewModel();
-        compositeDisposable = recipeActivity.getCompositeDisposable();
+        DetailActivity detailActivity = (DetailActivity) Objects.requireNonNull(getActivity());
+        recipeViewModel = detailActivity.getRecipeViewModel();
+        compositeDisposable = detailActivity.getCompositeDisposable();
         setupRecyclerView();
+
+        subscribeToIndexedIngredients();
 
         return view;
     }
@@ -61,20 +61,21 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     }
 
     public void setViewState(ViewState viewState) {
-        if(viewState.getClass() == IngredientViewState.class) {
+        if (viewState.getClass() == IngredientViewState.class) {
             ingredientViewState = (IngredientViewState) viewState;
         }
         loadViewAdapter();
     }
 
-    public void subscribeToIndexedIngredients(Observable<Set<Integer>> observable) {
-        Disposable disposable = observable.subscribe(indexedIngredients ->
-                ingredientItemRecyclerViewAdapter.updateIndexedIngredients(indexedIngredients));
+    public void subscribeToIndexedIngredients() {
+        Disposable disposable = recipeViewModel.getIndexedIngredients(ingredientViewState.getRecipeId())
+                .subscribe(indexedIngredients ->
+                        ingredientItemRecyclerViewAdapter.updateIndexedIngredients(indexedIngredients));
         compositeDisposable.add(disposable);
     }
 
     private void loadViewAdapter() {
-        if(ingredientItemRecyclerViewAdapter != null) {
+        if (ingredientItemRecyclerViewAdapter != null) {
             ingredientItemRecyclerViewAdapter.update(ingredientViewState.getIngredients(),
                     ingredientViewState.getIndexedIngredients());
         }
