@@ -16,7 +16,7 @@ import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import butterknife.BindView;
 
-public class DetailFragment extends BaseFragment {
+public class StepDetailFragment extends BaseFragment {
     private final String LOG_TAG = getClass().getSimpleName();
 
     @BindView(R.id.detail_description)
@@ -79,6 +79,6 @@ public class DetailFragment extends BaseFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.frag_detail;
+        return R.layout.fragment_step_detail;
     }
 }

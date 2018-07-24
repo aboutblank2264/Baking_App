@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:app = "http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_ingredient_view"
     android:layout_width = "match_parent"
     android:layout_height = "wrap_content"
     android:layout_margin = "4dp"
@@ -9,37 +10,11 @@
     app:contentPadding = "2dp"
     >
 
-    <android.support.constraint.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
-        xmlns:app = "http://schemas.android.com/apk/res-auto"
+    <TextView
+        android:id = "@+id/ingredients_title"
+        style = "@style/TitleStyle"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
-        >
-
-        <TextView
-            android:id = "@+id/ingredients_title"
-            style = "@style/TitleStyle"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:text = "@string/ingredients"
-
-            />
-
-        <net.cachapa.expandablelayout.ExpandableLayout
-            android:id = "@+id/ingredient_expandable"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:padding = "8dp"
-            app:el_expanded = "true"
-            app:layout_constraintTop_toBottomOf = "@id/ingredients_title"
-            >
-
-            <android.support.v7.widget.RecyclerView
-                android:id = "@+id/ingredient_recycler"
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                android:overScrollMode = "never"
-                />
-        </net.cachapa.expandablelayout.ExpandableLayout>
-
-    </android.support.constraint.ConstraintLayout>
+        android:text = "@string/ingredients"
+        />
 </android.support.v7.widget.CardView>

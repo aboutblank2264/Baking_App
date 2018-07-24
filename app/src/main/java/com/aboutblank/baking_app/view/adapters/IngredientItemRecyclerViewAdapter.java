@@ -14,6 +14,7 @@ import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Ingredient;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,7 @@ public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<Ingr
     public IngredientItemRecyclerViewAdapter(List<Ingredient> ingredientList, ItemClickedListener itemClickedListener) {
         this.ingredientList = ingredientList;
         this.itemClickedListener = itemClickedListener;
+        this.indexedIngredients = new HashSet<>();
     }
 
     @NonNull
@@ -54,20 +56,15 @@ public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<Ingr
     public void update(List<Ingredient> ingredients, Set<Integer> indexedIngredients) {
         ingredientList.clear();
         ingredientList.addAll(ingredients);
-        this.indexedIngredients = indexedIngredients;
-        notifyDataSetChanged();
+
+        updateIndexedIngredients(indexedIngredients);
     }
 
-    public void update(List<Ingredient> list) {
-        Log.d("Testing Ingredient", "notifyDataSetChanged called");
-        ingredientList.clear();
-        ingredientList.addAll(list);
-        notifyDataSetChanged();
-    }
-
-    public void updateIndexedIngredients(Set<Integer> indexedIngredients) {
+    public void updateIndexedIngredients(Set<Integer> newIndexedIngredients) {
         Log.d("Testing Indexed", "notifyDataSetChanged called");
-        this.indexedIngredients = indexedIngredients;
+        indexedIngredients.clear();
+        indexedIngredients.addAll(newIndexedIngredients);
+
         notifyDataSetChanged();
     }
 

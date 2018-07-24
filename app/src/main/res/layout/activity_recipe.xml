@@ -4,9 +4,10 @@
     android:layout_height = "match_parent"
     >
 
-    <android.support.v7.widget.RecyclerView
-        android:id = "@+id/recipe_recycler"
+    <fragment
+        android:id = "@+id/recipe_fragment"
+        android:name = "com.aboutblank.baking_app.view.fragments.RecipeFragment"
         android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
+        android:layout_height = "match_parent"
         />
 </FrameLayout>

@@ -9,8 +9,7 @@ public class DetailViewState extends ViewState {
     private String thumbnailUrl;
     private long currentPlaybackPosition;
 
-    public DetailViewState(Step step, @State int state) {
-        setState(state);
+    public DetailViewState(Step step) {
         shortDescription = step.getShortDescription();
         description = step.getDescription();
         videoUrl = step.getVideoUrl();
@@ -69,7 +68,6 @@ public class DetailViewState extends ViewState {
                 ", videoUrl='" + videoUrl + '\'' +
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
                 ", currentPlaybackPosition='" + currentPlaybackPosition + '\'' +
-                ", expanded=" + getState() +
                 '}';
     }
 }
