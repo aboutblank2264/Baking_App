@@ -46,8 +46,8 @@ public class RecipeViewModel extends ViewModel {
         changeViewUseCase.startDetailActivity(context, recipeId, position);
     }
 
-    public Single<MediaPlayer> getPlayer() {
-        return loadMediaPlayerUseCase.getPlayer();
+    public Single<MediaPlayer> getPlayer(boolean samePlayer) {
+        return loadMediaPlayerUseCase.getPlayer(samePlayer);
     }
 
     public void loadImage(ImageView imageView, String imageUrl) {

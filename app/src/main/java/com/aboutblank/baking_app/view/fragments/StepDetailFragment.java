@@ -29,6 +29,7 @@ public class StepDetailFragment extends BaseFragment {
     private final static String VIDEO = "video";
     private final static String THUMBNAIL = "thumbnail";
     private final static String POSITION = "position";
+    private final static String SAMEPLAYER = "same_player";
 
     @BindView(R.id.detail_description)
     TextView description;
@@ -42,6 +43,8 @@ public class StepDetailFragment extends BaseFragment {
     private RecipeViewModel recipeViewModel;
     private DetailViewState detailViewState;
     private CompositeDisposable compositeDisposable;
+
+    private boolean samePlayer = false;
 
     @Nullable
     @Override
@@ -77,6 +80,7 @@ public class StepDetailFragment extends BaseFragment {
             detailViewState.setVideoUrl(savedInstanceState.getString(VIDEO));
             detailViewState.setThumbnailUrl(savedInstanceState.getString(THUMBNAIL));
             detailViewState.setCurrentPlaybackPosition(savedInstanceState.getLong(POSITION));
+            samePlayer = savedInstanceState.getBoolean(SAMEPLAYER);
 
             Log.d(LOG_TAG, "Loading saved DetailViewState: " + detailViewState.toString());
         }
@@ -89,6 +93,7 @@ public class StepDetailFragment extends BaseFragment {
         outState.putString(DESCRIPTION, detailViewState.getDescription());
         outState.putString(VIDEO, detailViewState.getVideoUrl());
         outState.putString(THUMBNAIL, detailViewState.getThumbnailUrl());
+        outState.putBoolean(SAMEPLAYER, true);
 
         if (playerView.getPlayer() != null) {
             outState.putLong(POSITION, playerView.getPlayer().getCurrentPosition());
@@ -105,9 +110,11 @@ public class StepDetailFragment extends BaseFragment {
 
     private void setVideoAndView(String videoUrl, boolean hasVideo) {
         if (hasVideo) {
-            Disposable disposable = recipeViewModel.getPlayer().subscribe(player -> {
-                Log.d(LOG_TAG, "Preparing player with: " + videoUrl);
-                player.prepare(videoUrl);
+            Disposable disposable = recipeViewModel.getPlayer(samePlayer).subscribe(player -> {
+                if (!samePlayer) {
+                    Log.d(LOG_TAG, "Preparing player with: " + videoUrl);
+                    player.prepare(videoUrl);
+                }
                 player.seekToPosition(detailViewState.getCurrentPlaybackPosition());
                 playerView.setPlayer(player);
                 playerView.setPlayWhenReady(true);

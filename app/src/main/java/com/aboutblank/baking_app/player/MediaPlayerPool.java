@@ -7,9 +7,6 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -19,13 +16,11 @@ import io.reactivex.Single;
 public class MediaPlayerPool {
     private final String LOG_TAG = getClass().getSimpleName();
 
-    private static final int MAX_PLAYERS = 2;
-
     private Context context;
     private TrackSelector trackSelector;
     private ExtractorMediaSource.Factory extractorMediaSource;
 
-    private Queue<MediaPlayer> mediaPlayers;
+    private MediaPlayer mediaPlayer;
 
     @Inject
     public MediaPlayerPool(Context context, TrackSelector trackSelector,
@@ -33,36 +28,29 @@ public class MediaPlayerPool {
         this.context = context;
         this.trackSelector = trackSelector;
         this.extractorMediaSource = extractorMediaSource;
-
-        mediaPlayers = new ArrayDeque<>();
     }
 
-    public Single<MediaPlayer> getPlayer() {
+    public Single<MediaPlayer> getPlayer(boolean samePlayer) {
         return Single.create(
                 emitter -> {
-                    MediaPlayer mediaPlayer;
-                    if (mediaPlayers.size() < MAX_PLAYERS) {
-                        //If pool is not maxed out, create a new ExoPlayer and add it to the queue
-                        Log.d(LOG_TAG, "Pool not maxed, creating a new player");
+                    if (mediaPlayer != null) {
+                        Log.d(LOG_TAG, "Retrieving player, reset: " + samePlayer);
+                        if (!samePlayer) {
+                            mediaPlayer.getExoPlayer().stop(true);
+                        }
+                    } else {
+                        Log.d(LOG_TAG, "Creating new player");
                         mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector),
                                 extractorMediaSource);
-                        mediaPlayers.add(mediaPlayer);
-                    } else {
-                        //Else pop the head of the queue and add it to the back then return the mediaPlayer.
-                        Log.d(LOG_TAG, "Pool maxed, reusing old player");
-                        mediaPlayer = mediaPlayers.remove();
-
-                        mediaPlayers.add(mediaPlayer);
                     }
                     emitter.onSuccess(mediaPlayer);
                 });
     }
 
-    // Release all the mediaPlayers and clears the queue
+    // Release the mediaPlayer and set to null.
     // Must call this method at some point to make sure
     public void cleanup() {
-        while (!mediaPlayers.isEmpty()) {
-            mediaPlayers.remove().release();
-        }
+        mediaPlayer.release();
+        mediaPlayer = null;
     }
 }

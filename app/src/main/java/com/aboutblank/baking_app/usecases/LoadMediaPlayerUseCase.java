@@ -19,8 +19,8 @@ public class LoadMediaPlayerUseCase {
         this.mediaPlayerPool = mediaPlayerPool;
     }
 
-    public Single<MediaPlayer> getPlayer() {
-        return mediaPlayerPool.getPlayer()
+    public Single<MediaPlayer> getPlayer(boolean samePlayer) {
+        return mediaPlayerPool.getPlayer(samePlayer)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
