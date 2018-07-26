@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.RecipeActivity;
-import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.states.RecipeViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.view.adapters.RecipeRecyclerViewAdapter;
@@ -30,10 +29,8 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
 
     private ItemClickedListener itemClickedListener;
     private RecipeViewModel recipeViewModel;
-    private Recipe recipe;
 
     private CompositeDisposable compositeDisposable;
-    private RecipeViewState state;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +64,6 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     }
 
     public void setState(RecipeViewState state) {
-        this.state = state;
         recipeRecyclerViewAdapter.setState(state);
     }
 

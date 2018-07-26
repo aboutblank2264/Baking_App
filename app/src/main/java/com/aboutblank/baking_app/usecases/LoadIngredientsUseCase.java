@@ -2,7 +2,7 @@ package com.aboutblank.baking_app.usecases;
 
 import com.aboutblank.baking_app.data.IDataModel;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,7 +22,7 @@ public class LoadIngredientsUseCase {
         dataModel.indexIngredient(recipeIndex, ingredientIndex);
     }
 
-    public Observable<Set<Integer>> getIndexedIngredients(int recipeIndex) {
+    public Observable<List<Integer>> getIndexedIngredients(int recipeIndex) {
         return dataModel.getIndexedIngredients(recipeIndex);
     }
 }

@@ -9,9 +9,8 @@ import com.aboutblank.baking_app.data.model.MinimalRecipe;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.data.remote.RemoteRepository;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,7 +30,7 @@ public class DataModel implements IDataModel {
     @NonNull
     private CompositeDisposable compositeDisposable;
 
-    private SparseArray<Set<Integer>> ownedRecipeIngredientsMap;
+    private SparseArray<List<Integer>> ownedRecipeIngredientsMap;
 
     @Inject
     public DataModel(@NonNull LocalRepository localRepository, @NonNull RemoteRepository remoteRepository) {
@@ -62,10 +61,10 @@ public class DataModel implements IDataModel {
 
     @Override
     public void indexIngredient(int recipeIndex, int ingredientIndex) {
-        Set<Integer> ingredientList = ownedRecipeIngredientsMap.get(recipeIndex);
+        List<Integer> ingredientList = ownedRecipeIngredientsMap.get(recipeIndex);
 
         if (ingredientList == null) {
-            ingredientList = new HashSet<>();
+            ingredientList = new ArrayList<>();
         }
 
         if (ingredientList.contains(ingredientIndex)) {
@@ -76,10 +75,10 @@ public class DataModel implements IDataModel {
     }
 
     @Override
-    public Observable<Set<Integer>> getIndexedIngredients(int recipeIndex) {
-        Set<Integer> currentSet = ownedRecipeIngredientsMap.get(recipeIndex);
+    public Observable<List<Integer>> getIndexedIngredients(int recipeIndex) {
+        List<Integer> currentSet = ownedRecipeIngredientsMap.get(recipeIndex);
         if (currentSet == null) {
-            currentSet = new HashSet<>();
+            currentSet = new ArrayList<>();
             ownedRecipeIngredientsMap.append(recipeIndex, currentSet);
         }
         return Observable.just(ownedRecipeIngredientsMap.get(recipeIndex));

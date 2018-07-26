@@ -4,13 +4,13 @@ import android.support.annotation.NonNull;
 
 import com.aboutblank.baking_app.data.model.Recipe;
 
-import java.util.Set;
+import java.util.List;
 
 public class RecipeViewState extends ViewState {
     private Recipe recipe;
     private int numberOfSteps;
     private int currentPosition;
-    private Set<Integer> indexedIngredients;
+    private List<Integer> indexedIngredients;
 
     public RecipeViewState() {
     }
@@ -36,11 +36,11 @@ public class RecipeViewState extends ViewState {
         this.currentPosition = currentPosition;
     }
 
-    public Set<Integer> getIndexedIngredients() {
+    public List<Integer> getIndexedIngredients() {
         return indexedIngredients;
     }
 
-    public void setIndexedIngredients(Set<Integer> indexedIngredients) {
+    public void setIndexedIngredients(List<Integer> indexedIngredients) {
         this.indexedIngredients = indexedIngredients;
     }
 }

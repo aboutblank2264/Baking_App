@@ -27,6 +27,10 @@ public class MediaPlayer {
         return exoPlayer;
     }
 
+    public void seekToPosition(long position) {
+        exoPlayer.seekTo(position);
+    }
+
     public void release() {
         exoPlayer.release();
     }

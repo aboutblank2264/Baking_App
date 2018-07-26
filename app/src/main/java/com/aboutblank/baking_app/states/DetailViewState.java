@@ -9,6 +9,9 @@ public class DetailViewState extends ViewState {
     private String thumbnailUrl;
     private long currentPlaybackPosition;
 
+    public DetailViewState() {
+    }
+
     public DetailViewState(Step step) {
         shortDescription = step.getShortDescription();
         description = step.getDescription();
@@ -20,16 +23,32 @@ public class DetailViewState extends ViewState {
         return shortDescription;
     }
 
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getVideoUrl() {
         return videoUrl;
     }
 
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
     public String getThumbnailUrl() {
         return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public long getCurrentPlaybackPosition() {

@@ -5,15 +5,22 @@ import android.support.annotation.NonNull;
 import com.aboutblank.baking_app.data.model.Ingredient;
 import com.aboutblank.baking_app.data.model.Recipe;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class IngredientViewState extends ViewState {
     private int recipeId;
     private List<Ingredient> ingredients;
-    private Set<Integer> indexedIngredients;
+    private List<Integer> indexedIngredients;
 
-    public IngredientViewState(@NonNull Recipe recipe, @NonNull Set<Integer> indexedIngredients) {
+    public IngredientViewState() {
+    }
+
+    public IngredientViewState(@NonNull Recipe recipe) {
+        this(recipe, new ArrayList<>());
+    }
+
+    public IngredientViewState(@NonNull Recipe recipe, @NonNull List<Integer> indexedIngredients) {
         this.recipeId = recipe.getId();
         this.ingredients = recipe.getIngredients();
         this.indexedIngredients = indexedIngredients;
@@ -31,11 +38,11 @@ public class IngredientViewState extends ViewState {
         this.ingredients = ingredients;
     }
 
-    public Set<Integer> getIndexedIngredients() {
+    public List<Integer> getIndexedIngredients() {
         return indexedIngredients;
     }
 
-    public void setIndexedIngredients(Set<Integer> indexedIngredients) {
+    public void setIndexedIngredients(List<Integer> indexedIngredients) {
         this.indexedIngredients = indexedIngredients;
     }
 

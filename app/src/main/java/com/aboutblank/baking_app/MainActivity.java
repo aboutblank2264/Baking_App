@@ -59,11 +59,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
         mainViewModel = ((BakingApplication) getApplication()).getMainViewModel();
 
         //TODO: TESTING
-//        mainViewModel.clearLocalDatabase();
+        mainViewModel.clearLocalDatabase();
 
 
         //TODO does not handle no network connection
-//        mainViewModel.update();
+        mainViewModel.update();
 
         LiveData<List<MinimalRecipe>> minimalRecipes = mainViewModel.getMinimalRecipes();
 

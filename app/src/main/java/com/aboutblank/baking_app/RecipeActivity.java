@@ -2,35 +2,27 @@ package com.aboutblank.baking_app;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import com.aboutblank.baking_app.data.model.Recipe;
-import com.aboutblank.baking_app.states.IngredientViewState;
 import com.aboutblank.baking_app.states.RecipeViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
-import com.aboutblank.baking_app.view.fragments.IngredientListFragment;
 import com.aboutblank.baking_app.view.fragments.RecipeFragment;
-import com.aboutblank.baking_app.view.fragments.StepDetailFragment;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
-
-import java.util.HashSet;
 
 import io.reactivex.disposables.CompositeDisposable;
 
 public class RecipeActivity extends AppCompatActivity implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
 
-    RecipeFragment recipeFragment;
+    private RecipeFragment recipeFragment;
 
     private CompositeDisposable compositeDisposable;
     private RecipeViewModel recipeViewModel;
 
     private Recipe recipe;
-    private RecipeViewState state;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,7 +69,6 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     }
 
     private void setState(RecipeViewState state) {
-        this.state = state;
         recipeFragment.setState(state);
     }
 
@@ -91,25 +82,5 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     public void onItemClick(View view, int position) {
         Log.d(LOG_TAG, "Loading detail view with position " + position);
         getRecipeViewModel().changeToDetailView(this, recipe.getId(), position);
-    }
-
-    //TODO make animation to expand the view.
-
-    private void loadIngredientListFragment(IngredientListFragment ingredientListFragment) {
-        ingredientListFragment.setViewState(new IngredientViewState(state.getRecipe(), new HashSet<>()));
-//        ingredientListFragment.subscribeToIndexedIngredients(recipeViewModel.getIndexedIngredients(state.getRecipe().getId()));
-
-    }
-
-    private void loadStepDetailFragment(int position) {
-        StepDetailFragment stepDetailFragment = new StepDetailFragment();
-
-    }
-
-    private void attachFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.recipe_fragment, fragment);
-
-        fragmentTransaction.commit();
     }
 }

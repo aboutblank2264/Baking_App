@@ -6,18 +6,20 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.aboutblank.baking_app.data.model.Recipe;
+import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.usecases.ChangeViewUseCase;
 import com.aboutblank.baking_app.usecases.LoadImageUseCase;
 import com.aboutblank.baking_app.usecases.LoadIngredientsUseCase;
 import com.aboutblank.baking_app.usecases.LoadMediaPlayerUseCase;
 import com.aboutblank.baking_app.usecases.LoadRecipesUseCase;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 @Singleton
 public class RecipeViewModel extends ViewModel {
@@ -44,6 +46,10 @@ public class RecipeViewModel extends ViewModel {
         changeViewUseCase.startDetailActivity(context, recipeId, position);
     }
 
+    public Single<MediaPlayer> getPlayer() {
+        return loadMediaPlayerUseCase.getPlayer();
+    }
+
     public void loadImage(ImageView imageView, String imageUrl) {
         loadImageUseCase.loadImage(imageView, imageUrl);
     }
@@ -54,7 +60,7 @@ public class RecipeViewModel extends ViewModel {
         loadMediaPlayerUseCase.clear();
     }
 
-    public Observable<Set<Integer>> getIndexedIngredients(int recipeId) {
+    public Observable<List<Integer>> getIndexedIngredients(int recipeId) {
         return loadIngredientsUseCase.getIndexedIngredients(recipeId);
     }
 
