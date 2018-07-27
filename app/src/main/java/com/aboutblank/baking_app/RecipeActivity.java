@@ -63,7 +63,7 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
         getRecipeViewModel().getRecipe(recipeId).observe(this, recipe -> {
             if (recipe != null) {
                 this.recipe = recipe;
-                setState(new RecipeViewState(recipe));
+                setState(new RecipeViewState(new RecipeViewState.Builder(recipe)));
             }
         });
     }

@@ -28,8 +28,9 @@ import io.reactivex.disposables.Disposable;
 
 public class IngredientListFragment extends BaseFragment implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
+    private static final String ID = "id";
     private static final String INGREDIENTS = "ingredients";
-    private static final String INDEXEDINGREDIENTS = "indexed";
+    private static final String INDEXED_INGREDIENTS = "indexed";
 
     @BindView(R.id.ingredient_recycler)
     RecyclerView ingredientRecycler;
@@ -67,9 +68,10 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
 
     private void onLoadInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            ingredientViewState = new IngredientViewState();
-            ingredientViewState.setIngredients(savedInstanceState.getParcelableArrayList(INGREDIENTS));
-            ingredientViewState.setIndexedIngredients(savedInstanceState.getIntegerArrayList(INDEXEDINGREDIENTS));
+            ingredientViewState = new IngredientViewState.Builder(savedInstanceState.getInt(ID))
+                    .setIngredients(savedInstanceState.getParcelableArrayList(INGREDIENTS))
+                    .setIndexedIngredients(savedInstanceState.getIntegerArrayList(INDEXED_INGREDIENTS))
+                    .build();
 
             Log.d(LOG_TAG, "Loading saved IngredientViewState: " + ingredientViewState.toString());
         }
@@ -78,8 +80,9 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt(ID, ingredientViewState.getRecipeId());
         outState.putParcelableArrayList(INGREDIENTS, (ArrayList<? extends Parcelable>) ingredientViewState.getIngredients());
-        outState.putIntegerArrayList(INDEXEDINGREDIENTS, (ArrayList<Integer>) ingredientViewState.getIndexedIngredients());
+        outState.putIntegerArrayList(INDEXED_INGREDIENTS, (ArrayList<Integer>) ingredientViewState.getIndexedIngredients());
     }
 
     public void setViewState(ViewState viewState) {

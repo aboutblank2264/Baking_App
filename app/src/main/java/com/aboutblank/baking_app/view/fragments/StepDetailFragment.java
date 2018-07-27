@@ -29,7 +29,7 @@ public class StepDetailFragment extends BaseFragment {
     private final static String VIDEO = "video";
     private final static String THUMBNAIL = "thumbnail";
     private final static String POSITION = "position";
-    private final static String SAMEPLAYER = "same_player";
+    private final static String SAME_PLAYER = "same_player";
 
     @BindView(R.id.detail_description)
     TextView description;
@@ -75,12 +75,13 @@ public class StepDetailFragment extends BaseFragment {
 
     private void onLoadInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            detailViewState = new DetailViewState();
-            detailViewState.setDescription(savedInstanceState.getString(DESCRIPTION));
-            detailViewState.setVideoUrl(savedInstanceState.getString(VIDEO));
-            detailViewState.setThumbnailUrl(savedInstanceState.getString(THUMBNAIL));
-            detailViewState.setCurrentPlaybackPosition(savedInstanceState.getLong(POSITION));
-            samePlayer = savedInstanceState.getBoolean(SAMEPLAYER);
+            detailViewState = new DetailViewState.Builder()
+                    .setDescription(savedInstanceState.getString(DESCRIPTION))
+                    .setVideoUrl(savedInstanceState.getString(VIDEO))
+                    .setThumbnailUrl(savedInstanceState.getString(THUMBNAIL))
+                    .setCurrentPlaybackPosition(savedInstanceState.getLong(POSITION))
+                    .build();
+            samePlayer = savedInstanceState.getBoolean(SAME_PLAYER);
 
             Log.d(LOG_TAG, "Loading saved DetailViewState: " + detailViewState.toString());
         }
@@ -93,14 +94,14 @@ public class StepDetailFragment extends BaseFragment {
         outState.putString(DESCRIPTION, detailViewState.getDescription());
         outState.putString(VIDEO, detailViewState.getVideoUrl());
         outState.putString(THUMBNAIL, detailViewState.getThumbnailUrl());
-        outState.putBoolean(SAMEPLAYER, true);
+        outState.putBoolean(SAME_PLAYER, true);
 
         if (playerView.getPlayer() != null) {
             outState.putLong(POSITION, playerView.getPlayer().getCurrentPosition());
         }
     }
 
-    private void setDescription(String descriptionString, boolean hasDescription) {
+    private void setDescriptionView(String descriptionString, boolean hasDescription) {
         if (hasDescription) {
             description.setText(descriptionString);
         } else {
@@ -108,7 +109,7 @@ public class StepDetailFragment extends BaseFragment {
         }
     }
 
-    private void setVideoAndView(String videoUrl, boolean hasVideo) {
+    private void setVideoView(String videoUrl, boolean hasVideo) {
         if (hasVideo) {
             Disposable disposable = recipeViewModel.getPlayer(samePlayer).subscribe(player -> {
                 if (!samePlayer) {
@@ -125,7 +126,7 @@ public class StepDetailFragment extends BaseFragment {
         }
     }
 
-    private void setThumbnailAndView(String imageUrl, boolean hasThumbnail) {
+    private void setThumbnailView(String imageUrl, boolean hasThumbnail) {
         if (hasThumbnail) {
             Log.d(LOG_TAG, "Preparing thumbnail with: " + imageUrl);
             recipeViewModel.loadImage(thumbnail, imageUrl);
@@ -144,9 +145,9 @@ public class StepDetailFragment extends BaseFragment {
     private void updateViews() {
         //just to test, if description is null, most likely the fragment isn't finished creating
         if (description != null && detailViewState != null) {
-            setDescription(detailViewState.getDescription(), detailViewState.hasDescription());
-            setThumbnailAndView(detailViewState.getThumbnailUrl(), detailViewState.hasThumbnail());
-            setVideoAndView(detailViewState.getVideoUrl(), detailViewState.hasVideoUrl());
+            setDescriptionView(detailViewState.getDescription(), detailViewState.hasDescription());
+            setThumbnailView(detailViewState.getThumbnailUrl(), detailViewState.hasThumbnail());
+            setVideoView(detailViewState.getVideoUrl(), detailViewState.hasVideoUrl());
         }
     }
 

@@ -16,7 +16,6 @@ import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHolder>
         implements ItemClickedListener {
@@ -34,8 +33,6 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
         this.recipeViewModel = recipeViewModel;
         this.compositeDisposable = compositeDisposable;
         this.itemClickedListener = itemClickedListener;
-
-        recipeViewState = new RecipeViewState();
     }
 
     @NonNull
@@ -65,24 +62,25 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final CustomViewHolder holder, int position) {
-        Log.d(LOG_TAG, "BindViewHolder called at position " + position);
-        Log.d(LOG_TAG, "Class of ViewHolder: " + holder.getClass());
-        Log.d(LOG_TAG, "Position: " + position);
-
-        Recipe recipe = recipeViewState.getRecipe();
-        ViewState viewState;
-        //If position is not the INGREDIENTS index
-        if (position != INGREDIENTS) {
-            // otherwise is a Step, reduce position by 1 to keep inline with steps
-            int tempPosition = getRealStepPosition(position);
-            viewState = new DetailViewState(recipe.getSteps().get(tempPosition));
-            holder.setViewState(viewState);
+        if (recipeViewState != null) {
+            Recipe recipe = recipeViewState.getRecipe();
+            ViewState viewState;
+            //If position is not the INGREDIENTS index
+            if (position != INGREDIENTS) {
+                // otherwise is a Step, reduce position by 1 to keep inline with steps
+                int tempPosition = getRealStepPosition(position);
+                viewState = new DetailViewState(recipe.getSteps().get(tempPosition));
+                holder.setViewState(viewState);
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return recipeViewState.getNumberOfSteps();
+        if(recipeViewState != null) {
+            return recipeViewState.getNumberOfSteps();
+        }
+        return 0;
     }
 
     private final static int INGREDIENTS = 0;
@@ -102,37 +100,25 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
     public void onItemClick(View view, int position) {
         //pass the item click up to the parent
         itemClickedListener.onItemClick(view, position);
-//        expand(view, 500);
     }
 
     public void setState(RecipeViewState recipeViewState) {
-        this.recipeViewState = new RecipeViewState(recipeViewState.getRecipe());
-        observeIndexedIngredients();
+        this.recipeViewState = recipeViewState;
+//        observeIndexedIngredients();
 
         notifyDataSetChanged();
     }
 
-    private void observeIndexedIngredients() {
-        Disposable disposable = recipeViewModel.getIndexedIngredients(recipeViewState.getRecipe().getId())
-                .subscribe(indexedIngredients -> {
-                    RecipeRecyclerViewAdapter.this.recipeViewState.setIndexedIngredients(indexedIngredients);
-                });
-
-        compositeDisposable.add(disposable);
-    }
+//    private void observeIndexedIngredients() {
+//        Disposable disposable = recipeViewModel.getIndexedIngredients(recipeViewState.getRecipe().getId())
+//                .subscribe(indexedIngredients -> {
+//                    RecipeRecyclerViewAdapter.this.recipeViewState.setIndexedIngredients(indexedIngredients);
+//                });
+//
+//        compositeDisposable.add(disposable);
+//    }
 
     private int getRealStepPosition(int position) {
         return position > 0 ? position - 1 : position;
     }
-
-//    public void expand(final View v, final int height) {
-//        ValueAnimator va = ValueAnimator.ofInt(v.getHeight(), height);
-//        va.setDuration(700);
-//        va.addUpdateListener(animation -> {
-//            v.getLayoutParams().height = (Integer) animation.getAnimatedValue();
-//            v.requestLayout();
-//        });
-//
-//        va.start();
-//    }
 }

@@ -1,5 +1,7 @@
 package com.aboutblank.baking_app.states;
 
+import android.text.TextUtils;
+
 import com.aboutblank.baking_app.data.model.Step;
 
 public class DetailViewState extends ViewState {
@@ -9,54 +11,32 @@ public class DetailViewState extends ViewState {
     private String thumbnailUrl;
     private long currentPlaybackPosition;
 
-    public DetailViewState() {
-    }
-
-    public DetailViewState(Step step) {
-        shortDescription = step.getShortDescription();
-        description = step.getDescription();
-        videoUrl = step.getVideoUrl();
-        thumbnailUrl = step.getThumbnailUrl();
+    public DetailViewState(Builder builder) {
+        shortDescription = builder.shortDescription;
+        description = builder.description;
+        videoUrl = builder.videoUrl;
+        thumbnailUrl = builder.thumbnailUrl;
+        currentPlaybackPosition = builder.currentPlaybackPosition;
     }
 
     public String getShortDescription() {
         return shortDescription;
     }
 
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getVideoUrl() {
         return videoUrl;
     }
 
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
-    }
-
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
-    }
-
     public long getCurrentPlaybackPosition() {
         return currentPlaybackPosition;
-    }
-
-    public void setCurrentPlaybackPosition(long currentPlaybackPosition) {
-        this.currentPlaybackPosition = currentPlaybackPosition;
     }
 
     public boolean hasShortDescription() {
@@ -76,7 +56,7 @@ public class DetailViewState extends ViewState {
     }
 
     private boolean checkNonNull(String string) {
-        return string != null && !string.isEmpty();
+        return !TextUtils.isEmpty(string);
     }
 
     @Override
@@ -88,5 +68,52 @@ public class DetailViewState extends ViewState {
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
                 ", currentPlaybackPosition='" + currentPlaybackPosition + '\'' +
                 '}';
+    }
+
+    public static class Builder {
+        private String shortDescription;
+        private String description;
+        private String videoUrl;
+        private String thumbnailUrl;
+        private long currentPlaybackPosition;
+
+        public Builder() {
+        }
+
+        public Builder(Step step) {
+            this.shortDescription = step.getShortDescription();
+            this.description = step.getDescription();
+            this.videoUrl = step.getVideoUrl();
+            this.thumbnailUrl = step.getThumbnailUrl();
+        }
+
+        public Builder setShortDescription(String shortDescription) {
+            this.shortDescription = shortDescription;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setVideoUrl(String videoUrl) {
+            this.videoUrl = videoUrl;
+            return this;
+        }
+
+        public Builder setThumbnailUrl(String thumbnailUrl) {
+            this.thumbnailUrl = thumbnailUrl;
+            return this;
+        }
+
+        public Builder setCurrentPlaybackPosition(long currentPlaybackPosition) {
+            this.currentPlaybackPosition = currentPlaybackPosition;
+            return this;
+        }
+
+        public DetailViewState build() {
+            return new DetailViewState(this);
+        }
     }
 }

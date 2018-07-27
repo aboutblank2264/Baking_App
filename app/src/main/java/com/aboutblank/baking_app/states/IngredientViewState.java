@@ -1,7 +1,5 @@
 package com.aboutblank.baking_app.states;
 
-import android.support.annotation.NonNull;
-
 import com.aboutblank.baking_app.data.model.Ingredient;
 import com.aboutblank.baking_app.data.model.Recipe;
 
@@ -13,17 +11,10 @@ public class IngredientViewState extends ViewState {
     private List<Ingredient> ingredients;
     private List<Integer> indexedIngredients;
 
-    public IngredientViewState() {
-    }
-
-    public IngredientViewState(@NonNull Recipe recipe) {
-        this(recipe, new ArrayList<>());
-    }
-
-    public IngredientViewState(@NonNull Recipe recipe, @NonNull List<Integer> indexedIngredients) {
-        this.recipeId = recipe.getId();
-        this.ingredients = recipe.getIngredients();
-        this.indexedIngredients = indexedIngredients;
+    public IngredientViewState(Builder builder) {
+        this.recipeId = builder.recipeId;
+        this.ingredients = builder.ingredients;
+        this.indexedIngredients = builder.indexedIngredients;
     }
 
     public int getRecipeId() {
@@ -34,16 +25,8 @@ public class IngredientViewState extends ViewState {
         return ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }
-
     public List<Integer> getIndexedIngredients() {
         return indexedIngredients;
-    }
-
-    public void setIndexedIngredients(List<Integer> indexedIngredients) {
-        this.indexedIngredients = indexedIngredients;
     }
 
     @Override
@@ -53,5 +36,37 @@ public class IngredientViewState extends ViewState {
                 ", ingredients=" + ingredients +
                 ", indexedIngredients=" + indexedIngredients +
                 '}';
+    }
+
+    public static class Builder {
+        private int recipeId;
+        private List<Ingredient> ingredients;
+        private List<Integer> indexedIngredients;
+
+        public Builder(Recipe recipe) {
+            recipeId = recipe.getId();
+            ingredients = recipe.getIngredients();
+        }
+
+        public Builder(int recipeId) {
+            this.recipeId = recipeId;
+        }
+
+        public Builder setIngredients(List<Ingredient> ingredients) {
+            this.ingredients = ingredients;
+            return this;
+        }
+
+        public Builder setIndexedIngredients(List<Integer> indexedIngredients) {
+            this.indexedIngredients = indexedIngredients;
+            return this;
+        }
+
+        public IngredientViewState build() {
+            if (indexedIngredients == null) {
+                indexedIngredients = new ArrayList<>();
+            }
+            return new IngredientViewState(this);
+        }
     }
 }
