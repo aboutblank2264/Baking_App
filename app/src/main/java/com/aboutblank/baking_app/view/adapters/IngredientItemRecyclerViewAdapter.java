@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.Ingredient;
+import com.aboutblank.baking_app.states.IngredientViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 
 import java.util.ArrayList;
@@ -26,9 +27,8 @@ public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<Ingr
     private final static float NORMAL = 1.0f;
 
     private List<Ingredient> ingredientList;
-    private ItemClickedListener itemClickedListener;
-
     private List<Integer> indexedIngredients;
+    private ItemClickedListener itemClickedListener;
 
     public IngredientItemRecyclerViewAdapter(List<Ingredient> ingredientList, ItemClickedListener itemClickedListener) {
         this.ingredientList = ingredientList;
@@ -52,11 +52,11 @@ public class IngredientItemRecyclerViewAdapter extends RecyclerView.Adapter<Ingr
         }
     }
 
-    public void update(List<Ingredient> ingredients, List<Integer> indexedIngredients) {
+    public void update(IngredientViewState ingredientViewState) {
         ingredientList.clear();
-        ingredientList.addAll(ingredients);
+        ingredientList.addAll(ingredientViewState.getIngredients());
 
-        updateIndexedIngredients(indexedIngredients);
+        updateIndexedIngredients(ingredientViewState.getIndexedIngredients());
     }
 
     public void updateIndexedIngredients(List<Integer> newIndexedIngredients) {

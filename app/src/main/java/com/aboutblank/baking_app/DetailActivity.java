@@ -11,16 +11,19 @@ import android.view.View;
 import com.aboutblank.baking_app.states.DetailViewState;
 import com.aboutblank.baking_app.states.IngredientViewState;
 import com.aboutblank.baking_app.states.RecipeViewState;
+import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.OnSwipeListener;
+import com.aboutblank.baking_app.view.fragments.BaseFragment;
 import com.aboutblank.baking_app.view.fragments.IngredientListFragment;
 import com.aboutblank.baking_app.view.fragments.StepDetailFragment;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements BaseActivity {
     private final String LOG_TAG = getClass().getSimpleName();
     private final static String DETAIL_FRAGMENT = "detailFragment";
 
@@ -33,9 +36,9 @@ public class DetailActivity extends AppCompatActivity {
     private RecipeViewModel recipeViewModel;
     private CompositeDisposable compositeDisposable;
 
-    private Fragment currentFragment;
+    private BaseFragment currentFragment;
 
-    private RecipeViewState state;
+    private RecipeViewState viewState;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,31 +46,33 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
+        int recipeId = -1;
+        int position = -1;
         // If there was already a view loaded, use that one. Otherwise start initializing.
         if (savedInstanceState != null) {
-            currentFragment = getSupportFragmentManager().getFragment(savedInstanceState, DETAIL_FRAGMENT);
-        } else {
+            currentFragment = (BaseFragment) getSupportFragmentManager().getFragment(savedInstanceState, DETAIL_FRAGMENT);
+            recipeId = savedInstanceState.getInt(getString(R.string.intent_recipe_id));
+            position = savedInstanceState.getInt(getString(R.string.position));
+        } else if (getIntent() != null) {
             // Make sure there is a legal position, aka the step number
-            int position = getIntent().getIntExtra(getString(R.string.position), -1);
-            if (position > -1) {
-                int recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
-                if (recipeId <= 0) {
-                    throw new IllegalArgumentException("Unable to load recipe, recipe Id not properly set, was given: " + recipeId);
-                } else {
-                    Log.d(LOG_TAG, String.format("Id provided: %d", recipeId));
-                    observeRecipe(recipeId, position);
-                    setOnTouchListenerTo(layout);
-                }
-            } else {
-                throw new IllegalArgumentException("Unable to load details, position not properly set.");
-            }
+            position = getIntent().getIntExtra(getString(R.string.position), -1);
+            recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
         }
+        if (recipeId < 0 || position < 0) {
+            throw new IllegalArgumentException(
+                    String.format("Unable to load details, required properties not properly set. Given recipeId: %s, position: %s", recipeId, position));
+        }
+
+        observeRecipe(recipeId, position);
+        setOnTouchListenerTo(layout);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, DETAIL_FRAGMENT, currentFragment);
+        outState.putInt(getString(R.string.intent_recipe_id), viewState.getRecipe().getId());
+        outState.putInt(getString(R.string.position), viewState.getCurrentPosition());
     }
 
     public void observeRecipe(int recipeId, int position) {
@@ -84,40 +89,16 @@ public class DetailActivity extends AppCompatActivity {
         view.setOnTouchListener(new OnSwipeListener(this) {
             @Override
             public void onSwipeLeft() {
-                Log.d(LOG_TAG, "onSwipeRight event triggered");
-
-                if (checkIfHasNextStep(true, state.getCurrentPosition())) {
-                    setState(getNextViewState(true));
-                }
+                Log.d(LOG_TAG, "onGoPrevious event triggered");
+                onClickPrevious();
             }
 
             @Override
             public void onSwipeRight() {
-                Log.d(LOG_TAG, "onSwipeLeft event triggered");
-                if (checkIfHasNextStep(false, state.getCurrentPosition())) {
-                    setState(getNextViewState(false));
-                }
+                Log.d(LOG_TAG, "onGoNext event triggered");
+                onClickNext();
             }
         });
-    }
-
-    private boolean checkIfHasNextStep(boolean next, int currentPosition) {
-        if (next) {
-            return currentPosition < state.getNumberOfSteps() - 1; // subtract 1 for the ingredients tab.
-        } else {
-            return currentPosition > 0;
-        }
-    }
-
-    private RecipeViewState getNextViewState(boolean later) {
-        RecipeViewState.Builder builder = new RecipeViewState.Builder(state.getRecipe())
-                .setIndexedIngredients(state.getIndexedIngredients());
-        if (later) {
-            builder.setCurrentPosition(state.getCurrentPosition() + 1);
-        } else {
-            builder.setCurrentPosition(state.getCurrentPosition() - 1);
-        }
-        return builder.build();
     }
 
     public RecipeViewModel getRecipeViewModel() {
@@ -134,32 +115,49 @@ public class DetailActivity extends AppCompatActivity {
         return compositeDisposable;
     }
 
-    private void setState(RecipeViewState state) {
-        this.state = state;
-        loadFragment(state.getCurrentPosition());
-    }
-
-    private void loadFragment(int position) {
-        if (position == 0) {
-            currentFragment = loadIngredientListFragment();
-        } else {
-            int truePosition = position - 1; // accounting for the extra ingredients item
-            currentFragment = loadStepDetailFragment(truePosition);
+    @Override
+    public void setState(ViewState viewState) {
+        if (viewState.getClass() == RecipeViewState.class) {
+            RecipeViewState newViewState = (RecipeViewState) viewState;
+            // if there is no old view or the new position is different from the old position
+            if (this.viewState == null || this.viewState.getCurrentPosition() != newViewState.getCurrentPosition()) {
+                // if position is the ingredient view
+                if (newViewState.getCurrentPosition() == 0) {
+                    currentFragment = loadIngredientListFragment(newViewState);
+                } else {
+                    currentFragment = loadStepDetailFragment(newViewState);
+                }
+            }
+            this.viewState = (RecipeViewState) viewState;
+            attachFragment(currentFragment);
         }
-        attachFragment(currentFragment);
     }
 
-    private IngredientListFragment loadIngredientListFragment() {
+    @OnClick(R.id.detail_previous)
+    void onClickPrevious() {
+        Log.d(LOG_TAG, "Go previous");
+        recipeViewModel.goPrevious(DetailActivity.this, viewState);
+    }
+
+    @OnClick(R.id.detail_next)
+    void onClickNext() {
+        Log.d(LOG_TAG, "Go next");
+        recipeViewModel.goNext(DetailActivity.this, viewState);
+    }
+
+    private IngredientListFragment loadIngredientListFragment(RecipeViewState state) {
         Log.d(LOG_TAG, "Loading IngredientListFragment");
         IngredientListFragment ingredientListFragment = new IngredientListFragment();
         ingredientListFragment.setViewState(new IngredientViewState.Builder(state.getRecipe()).build());
         return ingredientListFragment;
     }
 
-    private StepDetailFragment loadStepDetailFragment(int position) {
+    private StepDetailFragment loadStepDetailFragment(RecipeViewState state) {
         Log.d(LOG_TAG, "Loading StepDetailFragment");
         StepDetailFragment stepDetailFragment = new StepDetailFragment();
-        stepDetailFragment.setViewState(new DetailViewState.Builder(state.getRecipe().getSteps().get(position)).build());
+
+        // reduce the current position by 1, accounting for the extra ingredients item
+        stepDetailFragment.setViewState(new DetailViewState.Builder(state.getRecipe().getSteps().get(state.getCurrentPosition() - 1)).build());
         return stepDetailFragment;
     }
 

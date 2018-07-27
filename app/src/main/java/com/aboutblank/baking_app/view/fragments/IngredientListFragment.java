@@ -58,12 +58,17 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        updateViewAdapter(ingredientViewState);
+    }
+
     private void setupRecyclerView() {
         ingredientItemRecyclerViewAdapter = new IngredientItemRecyclerViewAdapter(new ArrayList<>(), this);
         ingredientRecycler.setAdapter(ingredientItemRecyclerViewAdapter);
         ingredientRecycler.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
-
-        loadViewAdapter();
     }
 
     private void onLoadInstanceState(Bundle savedInstanceState) {
@@ -89,20 +94,22 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
         if (viewState.getClass() == IngredientViewState.class) {
             ingredientViewState = (IngredientViewState) viewState;
         }
-        loadViewAdapter();
+        updateViewAdapter(ingredientViewState);
     }
 
     public void subscribeToIndexedIngredients() {
         Disposable disposable = recipeViewModel.getIndexedIngredients(ingredientViewState.getRecipeId())
                 .subscribe(indexedIngredients ->
-                        ingredientItemRecyclerViewAdapter.updateIndexedIngredients(indexedIngredients));
+                        setViewState(new IngredientViewState.Builder(ingredientViewState.getRecipeId())
+                                .setIngredients(ingredientViewState.getIngredients())
+                                .setIndexedIngredients(indexedIngredients)
+                                .build()));
         compositeDisposable.add(disposable);
     }
 
-    private void loadViewAdapter() {
+    private void updateViewAdapter(IngredientViewState viewState) {
         if (ingredientItemRecyclerViewAdapter != null) {
-            ingredientItemRecyclerViewAdapter.update(ingredientViewState.getIngredients(),
-                    ingredientViewState.getIndexedIngredients());
+            ingredientItemRecyclerViewAdapter.update(viewState);
         }
     }
 

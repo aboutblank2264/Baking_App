@@ -4,7 +4,8 @@
     <string name = "intent_recipe_id">intent_id</string>
     <string name = "icon">icon</string>
     <string name = "ingredients">Ingredients</string>
-    <string name = "text_ellipses">...</string>
     <string name = "position">position</string>
     <string name = "thumbnail_image">thumbnail image</string>
+    <string name = "previous">Previous</string>
+    <string name = "next">Next</string>
 </resources>

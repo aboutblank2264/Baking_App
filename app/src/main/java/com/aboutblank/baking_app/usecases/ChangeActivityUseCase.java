@@ -11,10 +11,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class ChangeViewUseCase {
+public class ChangeActivityUseCase {
 
     @Inject
-    public ChangeViewUseCase() {
+    public ChangeActivityUseCase() {
     }
 
     public void startRecipeActivity(Context context, int recipeId) {

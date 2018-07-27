@@ -6,7 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
-import com.aboutblank.baking_app.usecases.ChangeViewUseCase;
+import com.aboutblank.baking_app.usecases.ChangeActivityUseCase;
 import com.aboutblank.baking_app.usecases.LoadRecipesUseCase;
 
 import java.util.List;
@@ -20,13 +20,13 @@ public class MainViewModel extends ViewModel {
     @NonNull
     private LoadRecipesUseCase loadRecipesUseCase;
     @NonNull
-    private ChangeViewUseCase changeViewUseCase;
+    private ChangeActivityUseCase changeActivityUseCase;
 
     @Inject
     public MainViewModel(@NonNull LoadRecipesUseCase loadRecipesUseCase,
-                         @NonNull ChangeViewUseCase changeViewUseCase) {
+                         @NonNull ChangeActivityUseCase changeActivityUseCase) {
         this.loadRecipesUseCase = loadRecipesUseCase;
-        this.changeViewUseCase = changeViewUseCase;
+        this.changeActivityUseCase = changeActivityUseCase;
     }
 
     public void update() {
@@ -38,7 +38,7 @@ public class MainViewModel extends ViewModel {
     }
 
     public void changeToRecipeView(Context context, int recipeId) {
-        changeViewUseCase.startRecipeActivity(context, recipeId);
+        changeActivityUseCase.startRecipeActivity(context, recipeId);
     }
 
     @Override

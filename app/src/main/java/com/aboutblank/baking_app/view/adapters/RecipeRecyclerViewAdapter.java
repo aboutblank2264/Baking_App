@@ -104,19 +104,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
 
     public void setState(RecipeViewState recipeViewState) {
         this.recipeViewState = recipeViewState;
-//        observeIndexedIngredients();
-
         notifyDataSetChanged();
     }
-
-//    private void observeIndexedIngredients() {
-//        Disposable disposable = recipeViewModel.getIndexedIngredients(recipeViewState.getRecipe().getId())
-//                .subscribe(indexedIngredients -> {
-//                    RecipeRecyclerViewAdapter.this.recipeViewState.setIndexedIngredients(indexedIngredients);
-//                });
-//
-//        compositeDisposable.add(disposable);
-//    }
 
     private int getRealStepPosition(int position) {
         return position > 0 ? position - 1 : position;

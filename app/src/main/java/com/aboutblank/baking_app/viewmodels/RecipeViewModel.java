@@ -5,9 +5,12 @@ import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.widget.ImageView;
 
+import com.aboutblank.baking_app.BaseActivity;
 import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.player.MediaPlayer;
-import com.aboutblank.baking_app.usecases.ChangeViewUseCase;
+import com.aboutblank.baking_app.states.RecipeViewState;
+import com.aboutblank.baking_app.usecases.ChangeActivityUseCase;
+import com.aboutblank.baking_app.usecases.ChangeRecipeStepViewUseCase;
 import com.aboutblank.baking_app.usecases.LoadImageUseCase;
 import com.aboutblank.baking_app.usecases.LoadIngredientsUseCase;
 import com.aboutblank.baking_app.usecases.LoadMediaPlayerUseCase;
@@ -26,24 +29,27 @@ public class RecipeViewModel extends ViewModel {
     private LoadIngredientsUseCase loadIngredientsUseCase;
     private LoadRecipesUseCase loadRecipesUseCase;
     private LoadImageUseCase loadImageUseCase;
-    private ChangeViewUseCase changeViewUseCase;
+    private ChangeActivityUseCase changeActivityUseCase;
+    private ChangeRecipeStepViewUseCase changeRecipeStepViewUseCase;
     private LoadMediaPlayerUseCase loadMediaPlayerUseCase;
 
     @Inject
     public RecipeViewModel(LoadIngredientsUseCase loadIngredientsUseCase,
                            LoadRecipesUseCase loadRecipesUseCase,
                            LoadImageUseCase loadImageUseCase,
-                           ChangeViewUseCase changeViewUseCase,
+                           ChangeActivityUseCase changeActivityUseCase,
+                           ChangeRecipeStepViewUseCase changeRecipeStepViewUseCase,
                            LoadMediaPlayerUseCase loadMediaPlayerUseCase) {
         this.loadIngredientsUseCase = loadIngredientsUseCase;
         this.loadRecipesUseCase = loadRecipesUseCase;
         this.loadImageUseCase = loadImageUseCase;
-        this.changeViewUseCase = changeViewUseCase;
+        this.changeActivityUseCase = changeActivityUseCase;
+        this.changeRecipeStepViewUseCase = changeRecipeStepViewUseCase;
         this.loadMediaPlayerUseCase = loadMediaPlayerUseCase;
     }
 
     public void changeToDetailView(Context context, int recipeId, int position) {
-        changeViewUseCase.startDetailActivity(context, recipeId, position);
+        changeActivityUseCase.startDetailActivity(context, recipeId, position);
     }
 
     public Single<MediaPlayer> getPlayer(boolean samePlayer) {
@@ -70,5 +76,13 @@ public class RecipeViewModel extends ViewModel {
 
     public LiveData<Recipe> getRecipe(int recipeId) {
         return loadRecipesUseCase.getRecipe(recipeId);
+    }
+
+    public void goNext(BaseActivity activity, RecipeViewState state) {
+        changeRecipeStepViewUseCase.onGoNext(activity, state);
+    }
+
+    public void goPrevious(BaseActivity activity, RecipeViewState state) {
+        changeRecipeStepViewUseCase.onGoPrevious(activity, state);
     }
 }

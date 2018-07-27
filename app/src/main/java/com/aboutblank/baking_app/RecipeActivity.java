@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.aboutblank.baking_app.data.model.Recipe;
 import com.aboutblank.baking_app.states.RecipeViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.view.fragments.RecipeFragment;
@@ -21,8 +20,7 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
 
     private CompositeDisposable compositeDisposable;
     private RecipeViewModel recipeViewModel;
-
-    private Recipe recipe;
+    private RecipeViewState recipeViewState;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,16 +57,16 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
         return recipeViewModel;
     }
 
-    public void observeRecipe(int recipeId) {
+    private void observeRecipe(int recipeId) {
         getRecipeViewModel().getRecipe(recipeId).observe(this, recipe -> {
             if (recipe != null) {
-                this.recipe = recipe;
-                setState(new RecipeViewState(new RecipeViewState.Builder(recipe)));
+                setState(new RecipeViewState.Builder(recipe).build());
             }
         });
     }
 
     private void setState(RecipeViewState state) {
+        recipeViewState = state;
         recipeFragment.setState(state);
     }
 
@@ -81,6 +79,6 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     @Override
     public void onItemClick(View view, int position) {
         Log.d(LOG_TAG, "Loading detail view with position " + position);
-        getRecipeViewModel().changeToDetailView(this, recipe.getId(), position);
+        getRecipeViewModel().changeToDetailView(this, recipeViewState.getRecipe().getId(), position);
     }
 }
