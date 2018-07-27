@@ -69,7 +69,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
             if (position != INGREDIENTS) {
                 // otherwise is a Step, reduce position by 1 to keep inline with steps
                 int tempPosition = getRealStepPosition(position);
-                viewState = new DetailViewState(recipe.getSteps().get(tempPosition));
+                viewState = new DetailViewState.Builder(recipe.getSteps().get(tempPosition)).build();
                 holder.setViewState(viewState);
             }
         }
@@ -77,7 +77,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHo
 
     @Override
     public int getItemCount() {
-        if(recipeViewState != null) {
+        if (recipeViewState != null) {
             return recipeViewState.getNumberOfSteps();
         }
         return 0;
