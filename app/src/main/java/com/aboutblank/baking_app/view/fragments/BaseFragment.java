@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.aboutblank.baking_app.states.ViewState;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -32,4 +35,6 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public abstract int getLayout();
+    public abstract void saveFragment(FragmentManager fragmentManager);
+    public abstract void setViewState(ViewState viewState);
 }

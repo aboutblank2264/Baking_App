@@ -3,6 +3,7 @@ package com.aboutblank.baking_app.view.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.RecipeActivity;
 import com.aboutblank.baking_app.states.RecipeViewState;
+import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.view.adapters.RecipeRecyclerViewAdapter;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
@@ -63,8 +65,16 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
         return R.layout.fragment_recipe;
     }
 
-    public void setState(RecipeViewState state) {
-        recipeRecyclerViewAdapter.setState(state);
+    @Override
+    public void saveFragment(FragmentManager fragmentManager) {
+
+    }
+
+    @Override
+    public void setViewState(ViewState viewState) {
+        if(viewState.getClass() == RecipeViewState.class) {
+            recipeRecyclerViewAdapter.setState((RecipeViewState) viewState);
+        }
     }
 
     @Override

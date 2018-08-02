@@ -68,7 +68,7 @@ public class DataModel implements IDataModel {
         }
 
         if (ingredientList.contains(ingredientIndex)) {
-            ingredientList.remove(ingredientIndex);
+            ingredientList.remove(ingredientList.indexOf(ingredientIndex));
         } else {
             ingredientList.add(ingredientIndex);
         }

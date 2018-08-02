@@ -67,7 +67,7 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
 
     private void setState(RecipeViewState state) {
         recipeViewState = state;
-        recipeFragment.setState(state);
+        recipeFragment.setViewState(state);
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -32,6 +33,8 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     private static final String ID = "id";
     private static final String INGREDIENTS = "ingredients";
     private static final String INDEXED_INGREDIENTS = "indexed";
+
+    public static final String INGREDIENT_LIST_FRAGMENT_TAG = "IngredientListFragment";
 
     @BindView(R.id.ingredient_recycler)
     RecyclerView ingredientRecycler;
@@ -88,11 +91,10 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(ID, ingredientViewState.getRecipeId());
-        outState.putParcelableArrayList(INGREDIENTS, (ArrayList<? extends Parcelable>) ingredientViewState.getIngredients());
-        outState.putIntegerArrayList(INDEXED_INGREDIENTS, (ArrayList<Integer>) ingredientViewState.getIndexedIngredients());
+       outState.putAll(getBundle());
     }
 
+    @Override
     public void setViewState(ViewState viewState) {
         if (viewState.getClass() == IngredientViewState.class) {
             ingredientViewState = (IngredientViewState) viewState;
@@ -125,5 +127,19 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     @Override
     public int getLayout() {
         return R.layout.fragment_ingredients_list;
+    }
+
+    @Override
+    public void saveFragment(FragmentManager fragmentManager) {
+        fragmentManager.putFragment(getBundle(), INGREDIENT_LIST_FRAGMENT_TAG, this);
+    }
+
+    private Bundle getBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ID, ingredientViewState.getRecipeId());
+        bundle.putParcelableArrayList(INGREDIENTS, (ArrayList<? extends Parcelable>) ingredientViewState.getIngredients());
+        bundle.putIntegerArrayList(INDEXED_INGREDIENTS, (ArrayList<Integer>) ingredientViewState.getIndexedIngredients());
+
+        return bundle;
     }
 }

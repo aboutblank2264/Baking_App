@@ -3,7 +3,7 @@ package com.aboutblank.baking_app;
 import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
      */
     private void initializeRecyclerView() {
         adapter = new MainRecyclerViewAdapter(new ArrayList<>(), this);
-        mainRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mainRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         mainRecyclerView.setAdapter(adapter);
     }
 

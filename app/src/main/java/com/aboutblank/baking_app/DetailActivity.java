@@ -40,20 +40,16 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
 
     private RecipeViewState viewState;
 
+    private int recipeId = -1;
+    private int position = -1;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
-        int recipeId = -1;
-        int position = -1;
-        // If there was already a view loaded, use that one. Otherwise start initializing.
-        if (savedInstanceState != null) {
-            currentFragment = (BaseFragment) getSupportFragmentManager().getFragment(savedInstanceState, DETAIL_FRAGMENT);
-            recipeId = savedInstanceState.getInt(getString(R.string.intent_recipe_id));
-            position = savedInstanceState.getInt(getString(R.string.position));
-        } else if (getIntent() != null) {
+        if (getIntent() != null) {
             // Make sure there is a legal position, aka the step number
             position = getIntent().getIntExtra(getString(R.string.position), -1);
             recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
@@ -70,9 +66,18 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, DETAIL_FRAGMENT, currentFragment);
+//        getSupportFragmentManager().putFragment(outState, DETAIL_FRAGMENT, currentFragment);
+        currentFragment.saveFragment(getSupportFragmentManager());
         outState.putInt(getString(R.string.intent_recipe_id), viewState.getRecipe().getId());
         outState.putInt(getString(R.string.position), viewState.getCurrentPosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        recipeId = savedInstanceState.getInt(getString(R.string.intent_recipe_id));
+        position = savedInstanceState.getInt(getString(R.string.position));
     }
 
     public void observeRecipe(int recipeId, int position) {
@@ -89,14 +94,14 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
         view.setOnTouchListener(new OnSwipeListener(this) {
             @Override
             public void onSwipeLeft() {
-                Log.d(LOG_TAG, "onGoPrevious event triggered");
-                onClickPrevious();
+                Log.d(LOG_TAG, "onGoNext event triggered");
+                onClickNext();
             }
 
             @Override
             public void onSwipeRight() {
-                Log.d(LOG_TAG, "onGoNext event triggered");
-                onClickNext();
+                Log.d(LOG_TAG, "onGoPrevious event triggered");
+                onClickPrevious();
             }
         });
     }
@@ -145,20 +150,26 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
         recipeViewModel.goNext(DetailActivity.this, viewState);
     }
 
-    private IngredientListFragment loadIngredientListFragment(RecipeViewState state) {
+    private BaseFragment loadIngredientListFragment(RecipeViewState state) {
         Log.d(LOG_TAG, "Loading IngredientListFragment");
-        IngredientListFragment ingredientListFragment = new IngredientListFragment();
-        ingredientListFragment.setViewState(new IngredientViewState.Builder(state.getRecipe()).build());
-        return ingredientListFragment;
+        Fragment ingredientListFragment = getSupportFragmentManager().findFragmentByTag(IngredientListFragment.INGREDIENT_LIST_FRAGMENT_TAG);
+        if (ingredientListFragment == null) {
+            ingredientListFragment = new IngredientListFragment();
+        }
+        ((BaseFragment) ingredientListFragment).setViewState(new IngredientViewState.Builder(state.getRecipe()).build());
+        return ((BaseFragment) ingredientListFragment);
     }
 
-    private StepDetailFragment loadStepDetailFragment(RecipeViewState state) {
+    private BaseFragment loadStepDetailFragment(RecipeViewState state) {
         Log.d(LOG_TAG, "Loading StepDetailFragment");
-        StepDetailFragment stepDetailFragment = new StepDetailFragment();
+        Fragment stepDetailFragment = getSupportFragmentManager().findFragmentByTag(StepDetailFragment.STEP_DETAIL_FRAGMENT_TAG);
 
+        if (stepDetailFragment == null) {
+            stepDetailFragment = new StepDetailFragment();
+        }
         // reduce the current position by 1, accounting for the extra ingredients item
-        stepDetailFragment.setViewState(new DetailViewState.Builder(state.getRecipe().getSteps().get(state.getCurrentPosition() - 1)).build());
-        return stepDetailFragment;
+        ((BaseFragment) stepDetailFragment).setViewState(new DetailViewState.Builder(state.getRecipe().getSteps().get(state.getCurrentPosition() - 1)).build());
+        return ((BaseFragment) stepDetailFragment);
     }
 
     private void attachFragment(Fragment fragment) {

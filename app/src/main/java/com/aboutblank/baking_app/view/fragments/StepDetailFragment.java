@@ -1,8 +1,11 @@
 package com.aboutblank.baking_app.view.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +28,13 @@ import io.reactivex.disposables.Disposable;
 
 public class StepDetailFragment extends BaseFragment {
     private final String LOG_TAG = getClass().getSimpleName();
-    private final static String DESCRIPTION = "description";
-    private final static String VIDEO = "video";
-    private final static String THUMBNAIL = "thumbnail";
-    private final static String POSITION = "position";
-    private final static String SAME_PLAYER = "same_player";
+    private static final String DESCRIPTION = "description";
+    private static final String VIDEO = "video";
+    private static final String THUMBNAIL = "thumbnail";
+    private static final String POSITION = "position";
+    private static final String SAME_PLAYER = "same_player";
+
+    public static final String STEP_DETAIL_FRAGMENT_TAG = "StepDetailFragment";
 
     @BindView(R.id.detail_description)
     TextView description;
@@ -45,6 +50,7 @@ public class StepDetailFragment extends BaseFragment {
     private CompositeDisposable compositeDisposable;
 
     private boolean samePlayer = false;
+    private boolean isFullScreen = false;
 
     @Nullable
     @Override
@@ -91,14 +97,35 @@ public class StepDetailFragment extends BaseFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "Saving state");
-        outState.putString(DESCRIPTION, detailViewState.getDescription());
-        outState.putString(VIDEO, detailViewState.getVideoUrl());
-        outState.putString(THUMBNAIL, detailViewState.getThumbnailUrl());
-        outState.putBoolean(SAME_PLAYER, true);
+        outState.putAll(getBundle());
+    }
 
-        if (playerView.getPlayer() != null) {
-            outState.putLong(POSITION, playerView.getPlayer().getCurrentPosition());
+    @Override
+    public void onStart() {
+        super.onStart();
+        Configuration configuration = getResources().getConfiguration();
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && detailViewState.hasVideoUrl()) {
+//            fullscreenPlayer();
+        } else if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            resetPlayer();
         }
+    }
+
+    private void fullscreenPlayer() {
+        Log.d(LOG_TAG, "Setting player to fullscreen");
+
+        playerView.setLayoutParams(
+                new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
+                        ConstraintLayout.LayoutParams.MATCH_PARENT));
+    }
+
+    private void resetPlayer() {
+        Log.d(LOG_TAG, "Setting player to normal");
+
+        playerView.setLayoutParams(
+                new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
+                        (int) getResources().getDimension(R.dimen.media_height))
+        );
     }
 
     private void setDescriptionView(String descriptionString, boolean hasDescription) {
@@ -135,6 +162,7 @@ public class StepDetailFragment extends BaseFragment {
         }
     }
 
+    @Override
     public void setViewState(ViewState viewState) {
         if (viewState.getClass() == DetailViewState.class) {
             detailViewState = (DetailViewState) viewState;
@@ -154,5 +182,24 @@ public class StepDetailFragment extends BaseFragment {
     @Override
     public int getLayout() {
         return R.layout.fragment_step_detail;
+    }
+
+    @Override
+    public void saveFragment(FragmentManager fragmentManager) {
+        fragmentManager.putFragment(getBundle(), STEP_DETAIL_FRAGMENT_TAG, this);
+    }
+
+    private Bundle getBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putString(DESCRIPTION, detailViewState.getDescription());
+        bundle.putString(VIDEO, detailViewState.getVideoUrl());
+        bundle.putString(THUMBNAIL, detailViewState.getThumbnailUrl());
+        bundle.putBoolean(SAME_PLAYER, true);
+
+        if (playerView.getPlayer() != null) {
+            bundle.putLong(POSITION, playerView.getPlayer().getCurrentPosition());
+        }
+
+        return bundle;
     }
 }
