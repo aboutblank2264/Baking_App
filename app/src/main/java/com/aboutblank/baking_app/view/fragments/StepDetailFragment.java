@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.player.MediaPlayerView;
 import com.aboutblank.baking_app.states.DetailViewState;
 import com.aboutblank.baking_app.states.ViewState;
+import com.aboutblank.baking_app.view.MediaDialog;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import java.util.Objects;
@@ -101,31 +101,51 @@ public class StepDetailFragment extends BaseFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         Configuration configuration = getResources().getConfiguration();
+        Log.d("Rotation Check", String.valueOf(configuration.orientation));
+
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && detailViewState.hasVideoUrl()) {
-//            fullscreenPlayer();
+            fullscreenPlayer();
         } else if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            resetPlayer();
+            resetPlayer();
+        }
+    }
+
+    private MediaDialog fullscreenDialog;
+
+    private void createFullscreenDialog() {
+        if (fullscreenDialog == null) {
+            fullscreenDialog = new MediaDialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
+                @Override
+                public void onBackPressed() {
+                    resetPlayer();
+                    super.onBackPressed();
+                }
+            };
         }
     }
 
     private void fullscreenPlayer() {
         Log.d(LOG_TAG, "Setting player to fullscreen");
 
-        playerView.setLayoutParams(
-                new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
-                        ConstraintLayout.LayoutParams.MATCH_PARENT));
+        createFullscreenDialog();
+        fullscreenDialog.takePlayer(playerView);
+        fullscreenDialog.show();
+
+        isFullScreen = true;
     }
 
     private void resetPlayer() {
         Log.d(LOG_TAG, "Setting player to normal");
 
-        playerView.setLayoutParams(
-                new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
-                        (int) getResources().getDimension(R.dimen.media_height))
-        );
+        if(isFullScreen) {
+            fullscreenDialog.returnPlayer(playerView);
+            fullscreenDialog.dismiss();
+
+            isFullScreen = false;
+        }
     }
 
     private void setDescriptionView(String descriptionString, boolean hasDescription) {
@@ -176,6 +196,7 @@ public class StepDetailFragment extends BaseFragment {
             setDescriptionView(detailViewState.getDescription(), detailViewState.hasDescription());
             setThumbnailView(detailViewState.getThumbnailUrl(), detailViewState.hasThumbnail());
             setVideoView(detailViewState.getVideoUrl(), detailViewState.hasVideoUrl());
+
         }
     }
 
@@ -197,6 +218,7 @@ public class StepDetailFragment extends BaseFragment {
         bundle.putBoolean(SAME_PLAYER, true);
 
         if (playerView.getPlayer() != null) {
+            Log.e("TIME", String.valueOf(playerView.getPlayer().getCurrentPosition()));
             bundle.putLong(POSITION, playerView.getPlayer().getCurrentPosition());
         }
 
