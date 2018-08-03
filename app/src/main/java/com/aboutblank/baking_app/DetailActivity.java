@@ -1,5 +1,6 @@
 package com.aboutblank.baking_app;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -141,13 +142,27 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
     @OnClick(R.id.detail_previous)
     void onClickPrevious() {
         Log.d(LOG_TAG, "Go previous");
-        recipeViewModel.goPrevious(DetailActivity.this, viewState);
+        setState(recipeViewModel.goPrevious(viewState));
     }
 
     @OnClick(R.id.detail_next)
     void onClickNext() {
         Log.d(LOG_TAG, "Go next");
-        recipeViewModel.goNext(DetailActivity.this, viewState);
+        setState(recipeViewModel.goNext(viewState));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.d("onConfigurationChanged", String.valueOf(newConfig.orientation));
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+                && currentFragment.getClass().equals(StepDetailFragment.class)) {
+
+            recipeViewModel.showDialog(getSupportFragmentManager(), (StepDetailFragment) currentFragment);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT
+                && currentFragment.getClass().equals(StepDetailFragment.class)) {
+            recipeViewModel.dismissDialog((StepDetailFragment) currentFragment);
+        }
+        super.onConfigurationChanged(newConfig);
     }
 
     private BaseFragment loadIngredientListFragment(RecipeViewState state) {

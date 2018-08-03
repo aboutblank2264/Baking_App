@@ -1,6 +1,5 @@
 package com.aboutblank.baking_app.usecases;
 
-import com.aboutblank.baking_app.BaseActivity;
 import com.aboutblank.baking_app.states.RecipeViewState;
 
 import javax.inject.Inject;
@@ -13,16 +12,22 @@ public class ChangeRecipeStepViewUseCase {
     public ChangeRecipeStepViewUseCase() {
     }
 
-    public void onGoPrevious(BaseActivity activity, RecipeViewState state) {
+    public RecipeViewState onGoPrevious(RecipeViewState state) {
+        RecipeViewState newViewState = state;
         if (checkIfHasNextStep(false, state)) {
-            activity.setState(getNextViewState(state, false));
+            newViewState = getNextViewState(state, false);
         }
+
+        return newViewState;
     }
 
-    public void onGoNext(BaseActivity activity, RecipeViewState state) {
+    public RecipeViewState onGoNext(RecipeViewState state) {
+        RecipeViewState newViewState = state;
         if (checkIfHasNextStep(true, state)) {
-            activity.setState(getNextViewState(state, true));
+            newViewState = getNextViewState(state, true);
         }
+
+        return newViewState;
     }
 
     private boolean checkIfHasNextStep(boolean next, RecipeViewState state) {

@@ -1,6 +1,5 @@
 package com.aboutblank.baking_app.view.fragments;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -100,30 +99,18 @@ public class StepDetailFragment extends BaseFragment {
         outState.putAll(getBundle());
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Configuration configuration = getResources().getConfiguration();
-        Log.d("Rotation Check", String.valueOf(configuration.orientation));
-
-        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && detailViewState.hasVideoUrl()) {
-            fullscreenPlayer();
-        } else if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            resetPlayer();
-        }
-    }
-
     private MediaDialog fullscreenDialog;
 
     private void createFullscreenDialog() {
         if (fullscreenDialog == null) {
-            fullscreenDialog = new MediaDialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
-                @Override
-                public void onBackPressed() {
-                    resetPlayer();
-                    super.onBackPressed();
-                }
-            };
+//            fullscreenDialog = new MediaDialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
+//                @Override
+//                public void onBackPressed() {
+//                    resetPlayer();
+//                    super.onBackPressed();
+//                }
+//            };
+
         }
     }
 
@@ -132,7 +119,7 @@ public class StepDetailFragment extends BaseFragment {
 
         createFullscreenDialog();
         fullscreenDialog.takePlayer(playerView);
-        fullscreenDialog.show();
+//        fullscreenDialog.fullscreen();
 
         isFullScreen = true;
     }
@@ -188,6 +175,10 @@ public class StepDetailFragment extends BaseFragment {
             detailViewState = (DetailViewState) viewState;
         }
         updateViews();
+    }
+
+    public MediaPlayerView getPlayerView() {
+        return playerView;
     }
 
     private void updateViews() {

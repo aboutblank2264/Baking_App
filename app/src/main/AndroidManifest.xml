@@ -19,8 +19,10 @@
                 <category android:name = "android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name = ".RecipeActivity"/>
-        <activity android:name = ".DetailActivity"/>
+        <activity android:name = ".RecipeActivity" />
+        <activity
+            android:name = ".DetailActivity"
+            android:configChanges = "orientation" />
     </application>
 
 </manifest>
