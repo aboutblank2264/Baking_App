@@ -155,7 +155,8 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         Log.d("onConfigurationChanged", String.valueOf(newConfig.orientation));
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-                && currentFragment.getClass().equals(StepDetailFragment.class)) {
+                && currentFragment.getClass().equals(StepDetailFragment.class)
+                && ((StepDetailFragment)currentFragment).hasVideo()) {
 
             recipeViewModel.showDialog(getSupportFragmentManager(), (StepDetailFragment) currentFragment);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT

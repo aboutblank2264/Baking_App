@@ -1,5 +1,6 @@
 package com.aboutblank.baking_app.view;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aboutblank.baking_app.R;
-import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.player.MediaPlayerView;
 
 import butterknife.BindView;
@@ -22,10 +22,10 @@ public class MediaDialog extends DialogFragment {
     @BindView(R.id.media_player_view)
     MediaPlayerView mediaPlayerView;
 
-    private MediaPlayer mediaPlayer;
     private MediaPlayerView otherMediaPlayerView;
-
     private ReturnPlayerListener returnPlayerListener;
+
+    private boolean isShowing = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,15 +42,26 @@ public class MediaDialog extends DialogFragment {
         Log.d("TESTING", "onCreateView");
 
         takePlayer(otherMediaPlayerView);
+        isShowing = true;
+
         return view;
     }
 
     @Override
     public void dismiss() {
         super.dismiss();
+        isShowing = false;
+
         if (returnPlayerListener != null) {
-            returnPlayerListener.onDismiss(mediaPlayer);
+            returnPlayerListener.onDismiss(otherMediaPlayerView);
         }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        Log.d("TESTING", "onCancel");
+        dismiss();
     }
 
     public void setOtherMediaPlayerView(MediaPlayerView otherMediaPlayerView) {
@@ -67,6 +78,10 @@ public class MediaDialog extends DialogFragment {
 
     public void returnPlayer(MediaPlayerView otherPlayerView) {
         otherPlayerView.switchToMediaPlayer(mediaPlayerView);
+    }
+
+    public boolean isShowing() {
+        return isShowing;
     }
 
     public static class Builder {
@@ -94,10 +109,10 @@ public class MediaDialog extends DialogFragment {
 
             mediaDialog.setReturnPlayerListener(listener);
 
-            if(parentFragment != null) {
+            if (parentFragment != null) {
                 mediaDialog.setTargetFragment(parentFragment, 100);
             }
-            if(otherPlayerView != null) {
+            if (otherPlayerView != null) {
                 mediaDialog.setOtherMediaPlayerView(otherPlayerView);
             }
 
@@ -106,6 +121,6 @@ public class MediaDialog extends DialogFragment {
     }
 
     public interface ReturnPlayerListener {
-        void onDismiss(MediaPlayer mediaPlayer);
+        void onDismiss(MediaPlayerView mediaPlayerView);
     }
 }

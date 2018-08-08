@@ -14,15 +14,12 @@ import javax.inject.Singleton;
 public class ShowMediaDialogUseCase {
 
     private MediaDialog mediaDialog;
-    private StepDetailFragment dialogOwner;
-
     private MediaDialog.ReturnPlayerListener listener;
 
     @Inject
-    public ShowMediaDialogUseCase(LoadMediaPlayerUseCase loadMediaPlayerUseCase) {
-        this.listener = mediaPlayer -> {
-            loadMediaPlayerUseCase.releasePlayer();
-            mediaDialog.returnPlayer(dialogOwner.getPlayerView());
+    public ShowMediaDialogUseCase() {
+        this.listener = mediaPlayerView -> {
+            mediaDialog.returnPlayer(mediaPlayerView);
         };
     }
 
@@ -46,7 +43,7 @@ public class ShowMediaDialogUseCase {
     }
 
     public void dismiss() {
-        if (mediaDialog != null) {
+        if (mediaDialog != null && mediaDialog.isShowing()) {
             mediaDialog.dismiss();
         }
     }

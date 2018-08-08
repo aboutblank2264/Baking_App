@@ -48,6 +48,7 @@ public class StepDetailFragment extends BaseFragment {
     private CompositeDisposable compositeDisposable;
 
     private boolean samePlayer = false;
+    private boolean hasVideo = false;
 
     @Nullable
     @Override
@@ -106,6 +107,7 @@ public class StepDetailFragment extends BaseFragment {
     }
 
     private void setVideoView(String videoUrl, boolean hasVideo) {
+        this.hasVideo = hasVideo;
         if (hasVideo) {
             Disposable disposable = recipeViewModel.getPlayer(samePlayer).subscribe(player -> {
                 if (!samePlayer) {
@@ -137,6 +139,10 @@ public class StepDetailFragment extends BaseFragment {
             detailViewState = (DetailViewState) viewState;
         }
         updateViews();
+    }
+
+    public boolean hasVideo() {
+        return hasVideo;
     }
 
     public MediaPlayerView getPlayerView() {
