@@ -95,7 +95,7 @@ public class RecipeViewModel extends ViewModel {
         showMediaDialogUseCase.show(fragmentManager, stepDetailFragment);
     }
 
-    public void dismissDialog(StepDetailFragment stepDetailFragment) {
-        showMediaDialogUseCase.dismiss(stepDetailFragment);
+    public void dismissDialog() {
+        showMediaDialogUseCase.dismiss();
     }
 }

@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.view.MediaDialog;
 import com.aboutblank.baking_app.view.fragments.StepDetailFragment;
 
@@ -15,24 +14,25 @@ import javax.inject.Singleton;
 public class ShowMediaDialogUseCase {
 
     private MediaDialog mediaDialog;
+    private StepDetailFragment dialogOwner;
+
+    private MediaDialog.ReturnPlayerListener listener;
 
     @Inject
-    public ShowMediaDialogUseCase() {
-    }
-
-    public void show(FragmentManager fragmentManager, MediaPlayer mediaPlayer) {
-        if(mediaPlayer != null) {
-            mediaDialog = new MediaDialog();
-        }
+    public ShowMediaDialogUseCase(LoadMediaPlayerUseCase loadMediaPlayerUseCase) {
+        this.listener = mediaPlayer -> {
+            loadMediaPlayerUseCase.releasePlayer();
+            mediaDialog.returnPlayer(dialogOwner.getPlayerView());
+        };
     }
 
     public void show(FragmentManager fragmentManager, StepDetailFragment stepDetailFragment) {
-        if(stepDetailFragment.getPlayerView().getPlayer() != null) {
-            if (mediaDialog == null) {
-                mediaDialog = new MediaDialog();
-            }
-            mediaDialog.setTargetFragment(stepDetailFragment, 100);
-            mediaDialog.takePlayer(stepDetailFragment.getPlayerView());
+        if (stepDetailFragment != null) {
+            mediaDialog = new MediaDialog.Builder()
+                    .setListener(listener)
+                    .setOtherPlayerView(stepDetailFragment.getPlayerView())
+                    .setParentFragment(stepDetailFragment)
+                    .build();
 
             FragmentTransaction ft = fragmentManager.beginTransaction();
             Fragment prev = fragmentManager.findFragmentByTag(MediaDialog.TAG);
@@ -45,9 +45,8 @@ public class ShowMediaDialogUseCase {
         }
     }
 
-    public void dismiss(StepDetailFragment stepDetailFragment) {
-        if(mediaDialog != null) {
-            mediaDialog.returnPlayer(stepDetailFragment.getPlayerView());
+    public void dismiss() {
+        if (mediaDialog != null) {
             mediaDialog.dismiss();
         }
     }

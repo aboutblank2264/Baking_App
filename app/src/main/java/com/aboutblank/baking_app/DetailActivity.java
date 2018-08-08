@@ -160,7 +160,7 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
             recipeViewModel.showDialog(getSupportFragmentManager(), (StepDetailFragment) currentFragment);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT
                 && currentFragment.getClass().equals(StepDetailFragment.class)) {
-            recipeViewModel.dismissDialog((StepDetailFragment) currentFragment);
+            recipeViewModel.dismissDialog();
         }
         super.onConfigurationChanged(newConfig);
     }

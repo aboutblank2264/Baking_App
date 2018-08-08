@@ -47,6 +47,24 @@ public class MediaPlayerPool {
                 });
     }
 
+    public MediaPlayer getPlayer() {
+        return mediaPlayer;
+    }
+
+    public MediaPlayer getMediaPlayer(boolean samePlayer) {
+        if (mediaPlayer != null) {
+            Log.d(LOG_TAG, "Retrieving player, reset: " + samePlayer);
+            if (!samePlayer) {
+                mediaPlayer.getExoPlayer().stop(true);
+            }
+        } else {
+            Log.d(LOG_TAG, "Creating new player");
+            mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector),
+                    extractorMediaSource);
+        }
+        return mediaPlayer;
+    }
+
     // Release the mediaPlayer and set to null.
     // Must call this method at some point to make sure
     public void cleanup() {

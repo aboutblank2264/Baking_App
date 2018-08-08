@@ -30,6 +30,6 @@ public class MediaPlayerView extends PlayerView {
 
     // Switch the player to this MediaPlayerView
     public void switchToMediaPlayer(MediaPlayerView oldPlayerView) {
-        PlayerView.switchTargetView(getPlayer(), oldPlayerView, this);
+        PlayerView.switchTargetView(oldPlayerView.getPlayer(), oldPlayerView, this);
     }
 }

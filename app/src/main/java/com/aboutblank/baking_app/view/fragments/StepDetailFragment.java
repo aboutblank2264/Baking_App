@@ -16,7 +16,6 @@ import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.player.MediaPlayerView;
 import com.aboutblank.baking_app.states.DetailViewState;
 import com.aboutblank.baking_app.states.ViewState;
-import com.aboutblank.baking_app.view.MediaDialog;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import java.util.Objects;
@@ -49,7 +48,6 @@ public class StepDetailFragment extends BaseFragment {
     private CompositeDisposable compositeDisposable;
 
     private boolean samePlayer = false;
-    private boolean isFullScreen = false;
 
     @Nullable
     @Override
@@ -97,42 +95,6 @@ public class StepDetailFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "Saving state");
         outState.putAll(getBundle());
-    }
-
-    private MediaDialog fullscreenDialog;
-
-    private void createFullscreenDialog() {
-        if (fullscreenDialog == null) {
-//            fullscreenDialog = new MediaDialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
-//                @Override
-//                public void onBackPressed() {
-//                    resetPlayer();
-//                    super.onBackPressed();
-//                }
-//            };
-
-        }
-    }
-
-    private void fullscreenPlayer() {
-        Log.d(LOG_TAG, "Setting player to fullscreen");
-
-        createFullscreenDialog();
-        fullscreenDialog.takePlayer(playerView);
-//        fullscreenDialog.fullscreen();
-
-        isFullScreen = true;
-    }
-
-    private void resetPlayer() {
-        Log.d(LOG_TAG, "Setting player to normal");
-
-        if(isFullScreen) {
-            fullscreenDialog.returnPlayer(playerView);
-            fullscreenDialog.dismiss();
-
-            isFullScreen = false;
-        }
     }
 
     private void setDescriptionView(String descriptionString, boolean hasDescription) {
@@ -187,7 +149,6 @@ public class StepDetailFragment extends BaseFragment {
             setDescriptionView(detailViewState.getDescription(), detailViewState.hasDescription());
             setThumbnailView(detailViewState.getThumbnailUrl(), detailViewState.hasThumbnail());
             setVideoView(detailViewState.getVideoUrl(), detailViewState.hasVideoUrl());
-
         }
     }
 
