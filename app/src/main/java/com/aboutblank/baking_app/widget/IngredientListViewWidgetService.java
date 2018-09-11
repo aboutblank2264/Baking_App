@@ -5,29 +5,36 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.aboutblank.baking_app.BakingApplication;
 import com.aboutblank.baking_app.R;
+import com.aboutblank.baking_app.data.IDataModel;
 import com.aboutblank.baking_app.data.model.Ingredient;
 
 import java.util.List;
 
 public class IngredientListViewWidgetService extends RemoteViewsService {
+    public static final int INVALID_ID = -1;
+
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        String title = intent.getStringExtra("title");
-        List<Ingredient> ingredients = intent.getParcelableArrayListExtra("ingredients");
-
-        return new IngredientsListView(getApplicationContext(), title, ingredients);
+        return new IngredientsListView(getApplicationContext(), intent.getIntExtra("id", INVALID_ID));
     }
 
     class IngredientsListView implements RemoteViewsService.RemoteViewsFactory {
         private Context context;
-        private String title;
         private List<Ingredient> ingredientList;
 
-        public IngredientsListView(Context context, String title, List<Ingredient> ingredientList) {
+        public IngredientsListView(Context context, int id) {
             this.context = context;
-            this.title = title;
-            this.ingredientList = ingredientList;
+
+            if (id != INVALID_ID) {
+                IDataModel dataModel = ((BakingApplication) context.getApplicationContext()).getDataModel();
+                dataModel.getRecipe(id).observeForever(recipe -> {
+                    if (recipe != null && recipe.getIngredients() != null) {
+                        this.ingredientList = recipe.getIngredients();
+                    }
+                });
+            }
         }
 
         @Override

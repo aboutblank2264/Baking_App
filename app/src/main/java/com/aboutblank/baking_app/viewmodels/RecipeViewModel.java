@@ -23,9 +23,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-
 @Singleton
 public class RecipeViewModel extends ViewModel {
     private LoadIngredientsUseCase loadIngredientsUseCase;
@@ -57,7 +54,7 @@ public class RecipeViewModel extends ViewModel {
         changeActivityUseCase.startDetailActivity(context, recipeId, position);
     }
 
-    public Single<MediaPlayer> getPlayer(boolean samePlayer) {
+    public MediaPlayer getPlayer(boolean samePlayer) {
         return loadMediaPlayerUseCase.getPlayer(samePlayer);
     }
 
@@ -71,7 +68,7 @@ public class RecipeViewModel extends ViewModel {
         loadMediaPlayerUseCase.clear();
     }
 
-    public Observable<List<Integer>> getIndexedIngredients(int recipeId) {
+    public List<Integer> getIndexedIngredients(int recipeId) {
         return loadIngredientsUseCase.getIndexedIngredients(recipeId);
     }
 

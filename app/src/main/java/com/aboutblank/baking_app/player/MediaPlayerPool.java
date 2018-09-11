@@ -10,8 +10,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Single;
-
 @Singleton
 public class MediaPlayerPool {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -30,28 +28,7 @@ public class MediaPlayerPool {
         this.extractorMediaSource = extractorMediaSource;
     }
 
-    public Single<MediaPlayer> getPlayer(boolean samePlayer) {
-        return Single.create(
-                emitter -> {
-                    if (mediaPlayer != null) {
-                        Log.d(LOG_TAG, "Retrieving player, reset: " + samePlayer);
-                        if (!samePlayer) {
-                            mediaPlayer.getExoPlayer().stop(true);
-                        }
-                    } else {
-                        Log.d(LOG_TAG, "Creating new player");
-                        mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector),
-                                extractorMediaSource);
-                    }
-                    emitter.onSuccess(mediaPlayer);
-                });
-    }
-
-    public MediaPlayer getPlayer() {
-        return mediaPlayer;
-    }
-
-    public MediaPlayer getMediaPlayer(boolean samePlayer) {
+    public MediaPlayer getPlayer(boolean samePlayer) {
         if (mediaPlayer != null) {
             Log.d(LOG_TAG, "Retrieving player, reset: " + samePlayer);
             if (!samePlayer) {
@@ -62,6 +39,10 @@ public class MediaPlayerPool {
             mediaPlayer = new MediaPlayer(ExoPlayerFactory.newSimpleInstance(context, trackSelector),
                     extractorMediaSource);
         }
+        return mediaPlayer;
+    }
+
+    public MediaPlayer getPlayer() {
         return mediaPlayer;
     }
 

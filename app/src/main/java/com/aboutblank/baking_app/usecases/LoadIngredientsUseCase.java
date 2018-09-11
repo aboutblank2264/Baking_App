@@ -7,8 +7,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
-
 @Singleton
 public class LoadIngredientsUseCase {
     private final IDataModel dataModel;
@@ -22,7 +20,7 @@ public class LoadIngredientsUseCase {
         dataModel.indexIngredient(recipeIndex, ingredientIndex);
     }
 
-    public Observable<List<Integer>> getIndexedIngredients(int recipeIndex) {
+    public List<Integer> getIndexedIngredients(int recipeIndex) {
         return dataModel.getIndexedIngredients(recipeIndex);
     }
 }

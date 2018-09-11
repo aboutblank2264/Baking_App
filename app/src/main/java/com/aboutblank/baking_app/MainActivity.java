@@ -61,10 +61,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
         //TODO: TESTING
         mainViewModel.clearLocalDatabase();
 
-
-        //TODO does not handle no network connection
-        mainViewModel.update();
-
         LiveData<List<MinimalRecipe>> minimalRecipes = mainViewModel.getMinimalRecipes();
 
         minimalRecipes.observe(this, minimalRecipes1 -> adapter.updateRecipeList(minimalRecipes1));

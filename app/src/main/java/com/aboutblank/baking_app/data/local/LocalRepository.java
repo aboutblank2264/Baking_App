@@ -39,15 +39,17 @@ public class LocalRepository {
     }
 
     public void insertRecipes(Recipe... recipes) {
-        recipeDao.insert(recipes);
+        AsyncTask.execute(() -> recipeDao.insert(recipes));
     }
 
     public void updateRecipe(@NonNull Recipe recipe) {
-        recipeDao.update(recipe);
+        AsyncTask.execute(() ->
+                recipeDao.update(recipe));
     }
 
     public void deleteRecipe(Recipe... recipes) {
-        recipeDao.delete(recipes);
+        AsyncTask.execute(() ->
+                recipeDao.delete(recipes));
     }
 
     public void deleteAll() {

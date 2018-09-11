@@ -6,10 +6,6 @@ import com.aboutblank.baking_app.player.MediaPlayerPool;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-
 @Singleton
 public class LoadMediaPlayerUseCase {
     private final MediaPlayerPool mediaPlayerPool;
@@ -19,10 +15,8 @@ public class LoadMediaPlayerUseCase {
         this.mediaPlayerPool = mediaPlayerPool;
     }
 
-    public Single<MediaPlayer> getPlayer(boolean samePlayer) {
-        return mediaPlayerPool.getPlayer(samePlayer)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread());
+    public MediaPlayer getPlayer(boolean samePlayer) {
+        return mediaPlayerPool.getPlayer(samePlayer);
     }
 
     public void clear() {

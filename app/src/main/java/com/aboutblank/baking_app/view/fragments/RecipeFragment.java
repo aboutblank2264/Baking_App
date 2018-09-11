@@ -16,12 +16,10 @@ import com.aboutblank.baking_app.states.RecipeViewState;
 import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.view.adapters.RecipeRecyclerViewAdapter;
-import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import java.util.Objects;
 
 import butterknife.BindView;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class RecipeFragment extends BaseFragment implements ItemClickedListener {
 
@@ -30,18 +28,12 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     private RecipeRecyclerViewAdapter recipeRecyclerViewAdapter;
 
     private ItemClickedListener itemClickedListener;
-    private RecipeViewModel recipeViewModel;
-
-    private CompositeDisposable compositeDisposable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        RecipeActivity recipeActivity = (RecipeActivity) Objects.requireNonNull(getActivity());
-        recipeViewModel = recipeActivity.getRecipeViewModel();
-        compositeDisposable = recipeActivity.getCompositeDisposable();
-        itemClickedListener = recipeActivity;
+        itemClickedListener = (RecipeActivity) Objects.requireNonNull(getActivity());
     }
 
     @Nullable
@@ -49,13 +41,13 @@ public class RecipeFragment extends BaseFragment implements ItemClickedListener 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =  super.onCreateView(inflater, container, savedInstanceState);
 
-        setupRecyclerView(recipeViewModel, compositeDisposable);
+        setupRecyclerView();
 
         return view;
     }
 
-    private void setupRecyclerView(@NonNull RecipeViewModel recipeViewModel, CompositeDisposable compositeDisposable) {
-        recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(recipeViewModel, this, compositeDisposable);
+    private void setupRecyclerView() {
+        recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(this);
         recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
         recipeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
     }

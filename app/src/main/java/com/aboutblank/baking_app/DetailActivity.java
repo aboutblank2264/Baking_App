@@ -22,7 +22,6 @@ import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class DetailActivity extends AppCompatActivity implements BaseActivity {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -35,7 +34,6 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
     View fragment_placeholder;
 
     private RecipeViewModel recipeViewModel;
-    private CompositeDisposable compositeDisposable;
 
     private BaseFragment currentFragment;
 
@@ -112,13 +110,6 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
             recipeViewModel = ((BakingApplication) getApplication()).getRecipeViewModel();
         }
         return recipeViewModel;
-    }
-
-    public CompositeDisposable getCompositeDisposable() {
-        if (compositeDisposable == null) {
-            compositeDisposable = new CompositeDisposable();
-        }
-        return compositeDisposable;
     }
 
     @Override

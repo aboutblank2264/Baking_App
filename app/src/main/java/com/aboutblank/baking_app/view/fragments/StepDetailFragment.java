@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.aboutblank.baking_app.DetailActivity;
 import com.aboutblank.baking_app.R;
+import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.player.MediaPlayerView;
 import com.aboutblank.baking_app.states.DetailViewState;
 import com.aboutblank.baking_app.states.ViewState;
@@ -21,8 +22,6 @@ import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 import java.util.Objects;
 
 import butterknife.BindView;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 public class StepDetailFragment extends BaseFragment {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -45,7 +44,6 @@ public class StepDetailFragment extends BaseFragment {
 
     private RecipeViewModel recipeViewModel;
     private DetailViewState detailViewState;
-    private CompositeDisposable compositeDisposable;
 
     private boolean samePlayer = false;
     private boolean hasVideo = false;
@@ -59,8 +57,6 @@ public class StepDetailFragment extends BaseFragment {
 
         DetailActivity detailActivity = (DetailActivity) Objects.requireNonNull(getActivity());
         recipeViewModel = detailActivity.getRecipeViewModel();
-        compositeDisposable = detailActivity.getCompositeDisposable();
-
         return view;
     }
 
@@ -109,19 +105,18 @@ public class StepDetailFragment extends BaseFragment {
     private void setVideoView(String videoUrl, boolean hasVideo) {
         this.hasVideo = hasVideo;
         if (hasVideo) {
-            Disposable disposable = recipeViewModel.getPlayer(samePlayer).subscribe(player -> {
-                if (!samePlayer) {
-                    Log.d(LOG_TAG, "Preparing player with: " + videoUrl);
-                    player.prepare(videoUrl);
-                }
-                player.seekToPosition(detailViewState.getCurrentPlaybackPosition());
-                playerView.setPlayer(player);
-                playerView.setPlayWhenReady(true);
-            });
-            compositeDisposable.add(disposable);
+            MediaPlayer mediaPlayer = recipeViewModel.getPlayer(samePlayer);
+            if (!samePlayer) {
+                Log.d(LOG_TAG, "Preparing player with: " + videoUrl);
+                mediaPlayer.prepare(videoUrl);
+            }
+            mediaPlayer.seekToPosition(detailViewState.getCurrentPlaybackPosition());
+            playerView.setPlayer(mediaPlayer);
+            playerView.setPlayWhenReady(true);
         } else {
             playerView.setVisibility(View.GONE);
         }
+
     }
 
     private void setThumbnailView(String imageUrl, boolean hasThumbnail) {

@@ -20,11 +20,6 @@ public class LoadRecipesUseCase {
         this.dataModel = dataModel;
     }
 
-    public void update() {
-        //TODO DataModel returns an observable to subscribe to for error reporting.
-        dataModel.update();
-    }
-
     public LiveData<List<MinimalRecipe>> getMinimalRecipe() {
         return dataModel.getMinimalRecipes();
     }

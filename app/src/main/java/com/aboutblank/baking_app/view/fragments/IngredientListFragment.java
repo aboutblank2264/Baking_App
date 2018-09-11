@@ -22,11 +22,10 @@ import com.aboutblank.baking_app.view.adapters.IngredientItemRecyclerViewAdapter
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 public class IngredientListFragment extends BaseFragment implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -43,7 +42,6 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
 
     private IngredientViewState ingredientViewState;
     private RecipeViewModel recipeViewModel;
-    private CompositeDisposable compositeDisposable;
 
     @Nullable
     @Override
@@ -54,7 +52,6 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
 
         DetailActivity detailActivity = (DetailActivity) Objects.requireNonNull(getActivity());
         recipeViewModel = detailActivity.getRecipeViewModel();
-        compositeDisposable = detailActivity.getCompositeDisposable();
         setupRecyclerView();
 
         subscribeToIndexedIngredients();
@@ -103,13 +100,11 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     }
 
     public void subscribeToIndexedIngredients() {
-        Disposable disposable = recipeViewModel.getIndexedIngredients(ingredientViewState.getRecipeId())
-                .subscribe(indexedIngredients ->
-                        setViewState(new IngredientViewState.Builder(ingredientViewState.getRecipeId())
-                                .setIngredients(ingredientViewState.getIngredients())
-                                .setIndexedIngredients(indexedIngredients)
-                                .build()));
-        compositeDisposable.add(disposable);
+        List<Integer> indexedIngredients = recipeViewModel.getIndexedIngredients(ingredientViewState.getRecipeId());
+        setViewState(new IngredientViewState.Builder(ingredientViewState.getRecipeId())
+                .setIngredients(ingredientViewState.getIngredients())
+                .setIndexedIngredients(indexedIngredients)
+                .build());
     }
 
     private void updateViewAdapter(IngredientViewState viewState) {

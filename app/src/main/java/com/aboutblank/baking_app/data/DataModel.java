@@ -15,10 +15,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-
 @Singleton
 public class DataModel implements IDataModel {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -27,8 +23,6 @@ public class DataModel implements IDataModel {
     private LocalRepository localRepository;
     @NonNull
     private RemoteRepository remoteRepository;
-    @NonNull
-    private CompositeDisposable compositeDisposable;
 
     private SparseArray<List<Integer>> ownedRecipeIngredientsMap;
 
@@ -37,16 +31,7 @@ public class DataModel implements IDataModel {
         this.localRepository = localRepository;
         this.remoteRepository = remoteRepository;
 
-        compositeDisposable = new CompositeDisposable();
         ownedRecipeIngredientsMap = new SparseArray<>();
-    }
-
-    @Override
-    public void update() {
-        Observable<List<Recipe>> recipes = remoteRepository.getRecipes();
-
-        compositeDisposable.add(recipes.subscribeOn(Schedulers.computation())
-                .subscribe(recipes1 -> localRepository.insertRecipes(recipes1.toArray(new Recipe[0]))));
     }
 
     @Override
@@ -75,13 +60,13 @@ public class DataModel implements IDataModel {
     }
 
     @Override
-    public Observable<List<Integer>> getIndexedIngredients(int recipeIndex) {
+    public List<Integer> getIndexedIngredients(int recipeIndex) {
         List<Integer> currentSet = ownedRecipeIngredientsMap.get(recipeIndex);
         if (currentSet == null) {
             currentSet = new ArrayList<>();
             ownedRecipeIngredientsMap.append(recipeIndex, currentSet);
         }
-        return Observable.just(ownedRecipeIngredientsMap.get(recipeIndex));
+        return ownedRecipeIngredientsMap.get(recipeIndex);
     }
 
     @Override

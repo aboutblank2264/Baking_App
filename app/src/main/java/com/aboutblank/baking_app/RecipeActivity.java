@@ -11,14 +11,11 @@ import com.aboutblank.baking_app.view.ItemClickedListener;
 import com.aboutblank.baking_app.view.fragments.RecipeFragment;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
-import io.reactivex.disposables.CompositeDisposable;
-
 public class RecipeActivity extends AppCompatActivity implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
 
     private RecipeFragment recipeFragment;
 
-    private CompositeDisposable compositeDisposable;
     private RecipeViewModel recipeViewModel;
     private RecipeViewState recipeViewState;
 
@@ -41,13 +38,6 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
         } else {
             throw new IllegalArgumentException("Unable to load recipe, recipe Id not properly set, no recipe id was given");
         }
-    }
-
-    public CompositeDisposable getCompositeDisposable() {
-        if (compositeDisposable == null) {
-            compositeDisposable = new CompositeDisposable();
-        }
-        return compositeDisposable;
     }
 
     public RecipeViewModel getRecipeViewModel() {
@@ -73,7 +63,6 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     @Override
     protected void onStop() {
         super.onStop();
-        compositeDisposable.clear();
     }
 
     @Override

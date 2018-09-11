@@ -13,25 +13,16 @@ import com.aboutblank.baking_app.states.DetailViewState;
 import com.aboutblank.baking_app.states.RecipeViewState;
 import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
-import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
-
-import io.reactivex.disposables.CompositeDisposable;
 
 public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<CustomViewHolder>
         implements ItemClickedListener {
     private final String LOG_TAG = getClass().getSimpleName();
 
-    private RecipeViewModel recipeViewModel;
-    private CompositeDisposable compositeDisposable;
     private ItemClickedListener itemClickedListener;
 
     private RecipeViewState recipeViewState;
 
-    public RecipeRecyclerViewAdapter(RecipeViewModel recipeViewModel,
-                                     ItemClickedListener itemClickedListener,
-                                     CompositeDisposable compositeDisposable) {
-        this.recipeViewModel = recipeViewModel;
-        this.compositeDisposable = compositeDisposable;
+    public RecipeRecyclerViewAdapter(ItemClickedListener itemClickedListener) {
         this.itemClickedListener = itemClickedListener;
     }
 

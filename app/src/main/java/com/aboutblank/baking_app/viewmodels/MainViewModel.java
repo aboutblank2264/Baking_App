@@ -29,10 +29,6 @@ public class MainViewModel extends ViewModel {
         this.changeActivityUseCase = changeActivityUseCase;
     }
 
-    public void update() {
-        loadRecipesUseCase.update();
-    }
-
     public LiveData<List<MinimalRecipe>> getMinimalRecipes() {
         return loadRecipesUseCase.getMinimalRecipe();
     }
