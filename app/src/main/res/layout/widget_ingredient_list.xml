@@ -1,20 +1,22 @@
-<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
     android:layout_width = "match_parent"
     android:layout_height = "match_parent"
-    android:background = "#09C"
+    android:background="@android:color/white"
     android:padding = "@dimen/widget_margin"
+    android:orientation="vertical"
     >
 
     <TextView
         android:id="@+id/widget_title"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
+        style="@style/WidgetTitleStyle"
         />
 
     <ListView
-        android:id="@+id/widge_list"
+        android:id="@+id/widget_list"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         />
 
-</RelativeLayout>
+</LinearLayout>

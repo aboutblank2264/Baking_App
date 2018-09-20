@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +32,9 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
     @BindView(R.id.chooser)
     RecyclerView listView;
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     private int appWidgetId;
     private List<MinimalRecipe> minimalRecipes;
 
@@ -36,13 +42,18 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setResult(RESULT_CANCELED);
+        Log.d("Widget", "getting recipes");
 
         setContentView(R.layout.widget_configure);
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
+
         IDataModel dataModel = ((BakingApplication) getApplicationContext()).getDataModel();
+
         dataModel.getMinimalRecipes().observe(this, minimalRecipes -> {
             if (minimalRecipes != null) {
+                Log.d("Widget", minimalRecipes.toString());
                 this.minimalRecipes = minimalRecipes;
                 setupListView();
             }
@@ -60,16 +71,19 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
 
     private void setupListView() {
         ChooserAdapter chooserAdapter = new ChooserAdapter(minimalRecipes, this);
+        listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(chooserAdapter);
     }
 
     @Override
     public void onItemClick(View view, int position) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] widgetIds = appWidgetManager.getAppWidgetIds(getComponentName());
 
-        IngredientWidgetProvider.updateAppWidgets(this, appWidgetManager,
-                minimalRecipes.get(position), widgetIds);
+        Log.d("Widget", String.valueOf(position));
+        Log.d("Widget", String.valueOf(appWidgetId));
+
+        IngredientWidgetProvider.updateAppWidget(this, appWidgetManager,
+                minimalRecipes.get(position), appWidgetId);
 
         Intent result = new Intent();
         result.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -78,11 +92,11 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
         finish();
     }
 
-    private class ChooserAdapter extends RecyclerView.Adapter<ChooserViewHolder> implements ItemClickedListener {
+    private class ChooserAdapter extends RecyclerView.Adapter<ChooserViewHolder> {
         private List<MinimalRecipe> titles;
         private ItemClickedListener itemClickedListener;
 
-        public ChooserAdapter(List<MinimalRecipe> titles, ItemClickedListener itemClickedListener) {
+        ChooserAdapter(List<MinimalRecipe> titles, ItemClickedListener itemClickedListener) {
             this.titles = titles;
             this.itemClickedListener = itemClickedListener;
         }
@@ -91,7 +105,7 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
         @Override
         public ChooserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.widget_configure_item, parent, false);
-            return new ChooserViewHolder(view, this);
+            return new ChooserViewHolder(view, itemClickedListener);
         }
 
         @Override
@@ -102,11 +116,6 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
         @Override
         public int getItemCount() {
             return titles.size();
-        }
-
-        @Override
-        public void onItemClick(View view, int position) {
-            itemClickedListener.onItemClick(view, position);
         }
     }
 

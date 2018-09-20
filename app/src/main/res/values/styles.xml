@@ -37,4 +37,16 @@
         <item name = "android:paddingEnd">16dp</item>
     </style>
 
+    <style name = "WidgetTitleStyle">
+        <item name = "android:textColor">@android:color/black</item>
+        <item name = "android:textStyle">bold</item>
+        <item name = "android:textSize">20sp</item>
+        <item name = "android:padding">4dp</item>
+    </style>
+
+    <style name = "WidgetListStyle">
+        <item name = "android:textColor">@android:color/black</item>
+        <item name = "android:textSize">14sp</item>
+        <item name = "android:padding">4dp</item>
+    </style>
 </resources>
