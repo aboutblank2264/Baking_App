@@ -35,14 +35,14 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private int appWidgetId;
+    private int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private List<MinimalRecipe> minimalRecipes;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setResult(RESULT_CANCELED);
         Log.d("Widget", "getting recipes");
+        setResult(RESULT_CANCELED);
 
         setContentView(R.layout.widget_configure);
         ButterKnife.bind(this);
@@ -82,7 +82,7 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
         Log.d("Widget", String.valueOf(position));
         Log.d("Widget", String.valueOf(appWidgetId));
 
-        IngredientWidgetProvider.updateAppWidget(this, appWidgetManager,
+        IngredientWidgetProvider.createAppWidget(this, appWidgetManager,
                 minimalRecipes.get(position), appWidgetId);
 
         Intent result = new Intent();

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_item_parent_view"
     android:layout_width = "match_parent"
     android:layout_height = "match_parent"
     android:orientation="vertical"
     >
 
     <TextView
-        android:id = "@+id/widget_ingredient_text"
+        android:id = "@+id/widget_item_text_view"
         style = "@style/WidgetListStyle"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"

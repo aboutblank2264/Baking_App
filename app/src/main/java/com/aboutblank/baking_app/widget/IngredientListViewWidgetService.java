@@ -2,7 +2,6 @@ package com.aboutblank.baking_app.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -23,7 +22,7 @@ public class IngredientListViewWidgetService extends RemoteViewsService {
     class IngredientsListView implements RemoteViewsService.RemoteViewsFactory {
         private Context context;
         private List<Ingredient> ingredientList;
-        private int id; //TODO id is not being set.
+        private int id;
         private IngredientListFetcher ingredientListFetcher;
 
         IngredientsListView(Context context, int id) {
@@ -63,15 +62,12 @@ public class IngredientListViewWidgetService extends RemoteViewsService {
             Log.d("WidgetService", ingredientList.get(position).toPrint());
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list_item);
-            views.setTextViewText(R.id.widget_ingredient_text, ingredientList.get(position).toPrint());
+            views.setTextViewText(R.id.widget_item_text_view, ingredientList.get(position).toPrint());
 
-            Bundle extra = new Bundle();
-            extra.putInt(context.getString(R.string.position), 0);
-            extra.putInt(context.getString(R.string.intent_recipe_id), id);
             Intent fillIntent = new Intent();
-            fillIntent.putExtras(extra);
-
-            views.setOnClickFillInIntent(R.id.widget_ingredient_text, fillIntent);
+            fillIntent.putExtra(context.getString(R.string.position), 0);
+            fillIntent.putExtra(context.getString(R.string.intent_recipe_id), id);
+            views.setOnClickFillInIntent(R.id.widget_item_parent_view, fillIntent);
 
             return views;
         }

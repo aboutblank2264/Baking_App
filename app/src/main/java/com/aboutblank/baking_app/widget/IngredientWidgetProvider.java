@@ -6,28 +6,36 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.RemoteViews;
 
 import com.aboutblank.baking_app.DetailActivity;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.data.model.MinimalRecipe;
 
-import java.util.Arrays;
-
 /**
  * Implementation of App Widget functionality.
  */
 public class IngredientWidgetProvider extends AppWidgetProvider {
+    private static SparseArray<MinimalRecipe> widgetIdMap = new SparseArray<>();
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                MinimalRecipe minimalRecipe, int[] appWidgetIds) {
+    static void updateAllAppWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, minimalRecipe, appWidgetId);
+            updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    static void createAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 MinimalRecipe minimalRecipe, int appWidgetId) {
+        widgetIdMap.append(appWidgetId, minimalRecipe);
+        updateAppWidget(context, appWidgetManager, appWidgetId);
+    }
+
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        Log.d("WidgetIdMap", widgetIdMap.toString());
+
+        MinimalRecipe minimalRecipe = widgetIdMap.get(appWidgetId);
+
         // Construct the List view adapter intent
         Intent intent = new Intent(context, IngredientListViewWidgetService.class);
         intent.putExtra("id", minimalRecipe.getId());
@@ -50,9 +58,8 @@ public class IngredientWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         Log.d("WidgetProvider", "onUpdate");
-        Log.d("WidgetProvider", Arrays.toString(appWidgetIds));
 
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
+        IngredientListIntentService.startActionUpdateListWidgets(context);
     }
 
     @Override
@@ -63,6 +70,14 @@ public class IngredientWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        Log.d("WidgetProvider", "onDeleted");
+        for(int id : appWidgetIds) {
+            widgetIdMap.remove(id);
+        }
     }
 }
 
