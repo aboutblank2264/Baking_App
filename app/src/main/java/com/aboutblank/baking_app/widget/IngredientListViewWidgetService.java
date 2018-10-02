@@ -25,7 +25,7 @@ public class IngredientListViewWidgetService extends RemoteViewsService {
     //This object is shared among all widgets. must move single widget data out into a shared object that can be referenced.
     class IngredientsListView implements RemoteViewsService.RemoteViewsFactory {
         private Context context;
-        private int recipeId;
+        private final int recipeId;
         private final WidgetDataModel widgetDataModel;
         private final List<Ingredient> ingredientList;
 
@@ -33,7 +33,7 @@ public class IngredientListViewWidgetService extends RemoteViewsService {
             this.context = context;
             this.recipeId = recipeId;
             this.ingredientList = new ArrayList<>();
-            widgetDataModel = new WidgetDataModel(context, recipeId);
+            widgetDataModel = new WidgetDataModel(context);
         }
 
         @Override
@@ -43,9 +43,6 @@ public class IngredientListViewWidgetService extends RemoteViewsService {
         @Override
         public void onDataSetChanged() {
             Log.d("WidgetService", "onDataSetChanged");
-//            widgetDataModel.getRecipe(ret -> {//issues with async nature of livedata
-//                ingredientList.addAll(ret.getIngredients());
-//            });
             ingredientList.addAll(widgetDataModel.getNonLiveRecipe(recipeId).getIngredients());
         }
 
