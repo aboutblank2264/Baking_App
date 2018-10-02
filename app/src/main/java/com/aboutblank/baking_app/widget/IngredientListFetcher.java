@@ -36,8 +36,4 @@ public class IngredientListFetcher {
         recipeLiveData = dataModel.getRecipe(id);
         recipeLiveData.observeForever(recipeObserver);
     }
-
-    void cleanup() {
-        recipeLiveData.removeObserver(recipeObserver);
-    }
 }

@@ -19,11 +19,15 @@ import retrofit2.Response;
 @Singleton
 public class RemoteRepository implements Callback<List<Recipe>> {
     private LocalRepository localRepository;
+    private RecipeService recipeService;
 
     @Inject
     public RemoteRepository(RecipeService recipeService, LocalRepository localRepository) {
         this.localRepository = localRepository;
+        this.recipeService = recipeService;
+    }
 
+    public void getRemoteData() {
         recipeService.getRecipes().enqueue(this);
     }
 

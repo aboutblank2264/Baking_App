@@ -5,45 +5,41 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.SparseArray;
 import android.widget.RemoteViews;
 
 import com.aboutblank.baking_app.DetailActivity;
 import com.aboutblank.baking_app.R;
-import com.aboutblank.baking_app.data.model.MinimalRecipe;
+
+import java.util.Arrays;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class IngredientWidgetProvider extends AppWidgetProvider {
-    private static SparseArray<MinimalRecipe> widgetIdMap = new SparseArray<>();
 
-    static void updateAllAppWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
-    }
-
-    static void createAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                MinimalRecipe minimalRecipe, int appWidgetId) {
-        widgetIdMap.append(appWidgetId, minimalRecipe);
-        updateAppWidget(context, appWidgetManager, appWidgetId);
-    }
-
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        Log.d("WidgetIdMap", widgetIdMap.toString());
-
-        MinimalRecipe minimalRecipe = widgetIdMap.get(appWidgetId);
+    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        Log.d("WidgetProvider", String.format("Updating: RecipeId: %d, Name: %s",
+                WidgetDataModel.getWidgetRecipeId(context, appWidgetId),
+                WidgetDataModel.getWidgetRecipeName(context, appWidgetId)));
 
         // Construct the List view adapter intent
         Intent intent = new Intent(context, IngredientListViewWidgetService.class);
-        intent.putExtra("id", minimalRecipe.getId());
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+
+        //Note: setting data ensures that each intent will be sent to the applicable widget, instead of the same intent to all widgets.
+        //https://stackoverflow.com/questions/28049544/multiple-widgets-with-configuration-activity
+        intent.setData(Uri.withAppendedPath(Uri.parse("abc" + "://widget/id/"), String.valueOf(appWidgetId)));
+
+        intent.putExtra(context.getString(R.string.widget_recipe_id), WidgetDataModel.getWidgetRecipeId(context, appWidgetId));
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_ingredient_list);
+        views.setTextViewText(R.id.widget_title, WidgetDataModel.getWidgetRecipeName(context, appWidgetId));
         views.setRemoteAdapter(R.id.widget_list, intent);
-        views.setTextViewText(R.id.widget_title, minimalRecipe.getName());
 
         //Set pending intent to launch DetailActivity
         Intent appIntent = new Intent(context, DetailActivity.class);
@@ -59,7 +55,61 @@ public class IngredientWidgetProvider extends AppWidgetProvider {
         // There may be multiple widgets active, so update all of them
         Log.d("WidgetProvider", "onUpdate");
 
-        IngredientListIntentService.startActionUpdateListWidgets(context);
+        for (int id : appWidgetIds) {
+            Log.d("WidgetProvider", "widgetId: " + id);
+            updateAppWidget(context, appWidgetManager, id);
+        }
+    }
+
+    @Override
+    public void onReceive(Context context, @NonNull Intent intent) {
+        Log.d("WidgetProvider", "onReceive");
+
+        String action = intent.getAction();
+        Bundle extras = intent.getExtras();
+
+        Log.d("WidgetProvider", action);
+
+        if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
+            if (extras != null) {
+                int[] appWidgetIds = extras.getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+
+                Log.d("WidgetProvider", "AppWidgetIds: " + Arrays.toString(appWidgetIds));
+
+                if (appWidgetIds != null && appWidgetIds.length > 0) {
+                    for (int appWidgetId : appWidgetIds) {
+                        // if this is a valid fully formed widget, on creating a new widget, there is a null set widget that triggers update.
+                        if (extras.getInt(context.getString(R.string.widget_app_id) + appWidgetId) != 0 &&
+                                extras.getString(context.getString(R.string.widget_name) + appWidgetId) != null) {
+                            Log.d("WidgetProvider", "saving new widget");
+                            Log.d("WidgetProvider", String.format("Name: %s, Id %d",
+                                    extras.getString(context.getString(R.string.widget_name) + appWidgetId),
+                                    extras.getInt(context.getString(R.string.widget_app_id) + appWidgetId)));
+
+                            WidgetDataModel.saveWidgetRecipeId(context, appWidgetId,
+                                    extras.getInt(context.getString(R.string.widget_app_id) + appWidgetId));
+                            WidgetDataModel.saveWidgetRecipeName(context, appWidgetId,
+                                    extras.getString(context.getString(R.string.widget_name) + appWidgetId));
+
+                            updateAppWidget(context, AppWidgetManager.getInstance(context), appWidgetId);
+                        }
+                        Log.d("WidgetData", String.format("Name: %s, Id %d",
+                                WidgetDataModel.getWidgetRecipeName(context, appWidgetId),
+                                WidgetDataModel.getWidgetRecipeId(context, appWidgetId)));
+                    }
+//                    this.onUpdate(context, AppWidgetManager.getInstance(context), appWidgetIds);
+                }
+            }
+        } else if (AppWidgetManager.ACTION_APPWIDGET_DELETED.equals(action)) {
+            if (extras != null && extras.containsKey(AppWidgetManager.EXTRA_APPWIDGET_ID)) {
+                final int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
+                this.onDeleted(context, new int[]{appWidgetId});
+            }
+        } else if (AppWidgetManager.ACTION_APPWIDGET_ENABLED.equals(action)) {
+            this.onEnabled(context);
+        } else if (AppWidgetManager.ACTION_APPWIDGET_DISABLED.equals(action)) {
+            this.onDisabled(context);
+        }
     }
 
     @Override
@@ -74,9 +124,10 @@ public class IngredientWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        Log.d("WidgetProvider", "onDeleted");
-        for(int id : appWidgetIds) {
-            widgetIdMap.remove(id);
+        for (int id : appWidgetIds) {
+            Log.d("WidgetProvider", "onDeleted");
+            Log.d("WidgetProvider", Arrays.toString(appWidgetIds));
+            WidgetDataModel.deleteWidget(context, id);
         }
     }
 }

@@ -58,9 +58,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
     private void initializeData() {
         mainViewModel = ((BakingApplication) getApplication()).getMainViewModel();
 
-        //TODO: TESTING
-        mainViewModel.clearLocalDatabase();
-
         LiveData<List<MinimalRecipe>> minimalRecipes = mainViewModel.getMinimalRecipes();
 
         minimalRecipes.observe(this, minimalRecipes1 -> adapter.updateRecipeList(minimalRecipes1));

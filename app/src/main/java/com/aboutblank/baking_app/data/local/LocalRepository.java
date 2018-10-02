@@ -38,6 +38,10 @@ public class LocalRepository {
         return recipeDao.getRecipe(id);
     }
 
+    public Recipe getNonLiveRecipe(int id) {
+        return recipeDao.getNonLiveRecipe(id);
+    }
+
     public void insertRecipes(Recipe... recipes) {
         AsyncTask.execute(() -> recipeDao.insert(recipes));
     }

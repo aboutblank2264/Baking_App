@@ -1,6 +1,7 @@
 package com.aboutblank.baking_app.widget;
 
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -77,17 +78,27 @@ public class ConfigureWidgetActivity extends AppCompatActivity implements ItemCl
 
     @Override
     public void onItemClick(View view, int position) {
+        Log.d("Widget", String.format("Position: %s, Id: %s, Name: %s",
+                String.valueOf(position), appWidgetId, minimalRecipes.get(position).getName()));
+
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-
-        Log.d("Widget", String.valueOf(position));
-        Log.d("Widget", String.valueOf(appWidgetId));
-
-        IngredientWidgetProvider.createAppWidget(this, appWidgetManager,
-                minimalRecipes.get(position), appWidgetId);
+        ComponentName thisAppWidget = new ComponentName(
+                ConfigureWidgetActivity.this, IngredientWidgetProvider.class);
 
         Intent result = new Intent();
         result.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         setResult(RESULT_OK, result);
+
+        //Notes:
+        //https://stackoverflow.com/questions/14582395/handling-multiple-instances-of-appwidget
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+        Intent startBroadcast = new Intent(ConfigureWidgetActivity.this,
+                IngredientWidgetProvider.class);
+        startBroadcast.putExtra(getString(R.string.widget_app_id) + appWidgetId, minimalRecipes.get(position).getId());
+        startBroadcast.putExtra(getString(R.string.widget_name) + appWidgetId, minimalRecipes.get(position).getName());
+        startBroadcast.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        startBroadcast.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        sendBroadcast(startBroadcast);
 
         finish();
     }

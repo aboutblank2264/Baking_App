@@ -11,4 +11,10 @@
     <string name = "image_of_recipe">Image of Recipe</string>
     <string name = "appwidget_text">EXAMPLE</string>
     <string name = "add_widget">Add widget</string>
+
+
+    <string name = "widget_name">name</string>
+    <string name = "widget_app_id">widget_id</string>
+    <string name = "widget_recipe_id">recipe_id</string>
+    <string name = "widget_ingredient_list">ingredient_list</string>
 </resources>

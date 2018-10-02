@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    android:id = "@+id/detail_layout"
+    android:layout_width = "match_parent"
+    android:layout_height = "match_parent"
+    >
+
+    <FrameLayout
+        android:id = "@+id/fragment_placeholder"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        app:layout_constraintBottom_toTopOf = "@id/detail_previous"
+        />
+
+    <Button
+        android:id = "@+id/detail_previous"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:drawableStart = "@drawable/ic_left_black_24dp"
+        android:padding = "8dp"
+        android:text = "@string/previous"
+        app:layout_constraintBottom_toBottomOf = "parent"
+        app:layout_constraintStart_toStartOf = "parent"
+        />
+
+    <Button
+        android:id = "@+id/detail_next"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:drawableEnd = "@drawable/ic_right_black_24dp"
+        android:padding = "8dp"
+        android:text = "@string/next"
+        app:layout_constraintBottom_toBottomOf = "parent"
+        app:layout_constraintEnd_toEndOf = "parent"
+        />
+
+
+</android.support.constraint.ConstraintLayout>

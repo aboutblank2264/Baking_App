@@ -36,7 +36,7 @@ public class IngredientListIntentService extends IntentService {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, IngredientWidgetProvider.class));
         //Trigger data update to handle the GridView widgets and force a data refresh
-        IngredientWidgetProvider.updateAllAppWidgets(this, appWidgetManager, appWidgetIds);
+//        IngredientWidgetProvider.updateAllAppWidgets(this, appWidgetManager, appWidgetIds);
 
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
     }

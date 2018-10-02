@@ -15,21 +15,25 @@ import java.util.List;
 public class IngredientListViewWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        Log.d("WidgetService", String.valueOf(intent.getIntExtra("id", -1)));
-        return new IngredientsListView(getApplicationContext(), intent.getIntExtra("id", -1));
+        Log.d("WidgetService",
+                String.valueOf(intent.getIntExtra(getApplicationContext().getString(R.string.widget_recipe_id), -1)));
+        Context context = getApplicationContext();
+        return new IngredientsListView(context,
+                intent.getIntExtra(context.getString(R.string.widget_recipe_id), -1));
     }
 
+    //This object is shared among all widgets. must move single widget data out into a shared object that can be referenced.
     class IngredientsListView implements RemoteViewsService.RemoteViewsFactory {
         private Context context;
-        private List<Ingredient> ingredientList;
-        private int id;
-        private IngredientListFetcher ingredientListFetcher;
+        private int recipeId;
+        private final WidgetDataModel widgetDataModel;
+        private final List<Ingredient> ingredientList;
 
-        IngredientsListView(Context context, int id) {
+        IngredientsListView(Context context, int recipeId) {
             this.context = context;
-            this.id = id;
+            this.recipeId = recipeId;
             this.ingredientList = new ArrayList<>();
-            ingredientListFetcher = new IngredientListFetcher(context);
+            widgetDataModel = new WidgetDataModel(context, recipeId);
         }
 
         @Override
@@ -39,34 +43,32 @@ public class IngredientListViewWidgetService extends RemoteViewsService {
         @Override
         public void onDataSetChanged() {
             Log.d("WidgetService", "onDataSetChanged");
-            ingredientListFetcher.getRecipe(id, ingredientList);
+//            widgetDataModel.getRecipe(ret -> {//issues with async nature of livedata
+//                ingredientList.addAll(ret.getIngredients());
+//            });
+            ingredientList.addAll(widgetDataModel.getNonLiveRecipe(recipeId).getIngredients());
         }
 
         @Override
         public void onDestroy() {
             Log.d("WidgetService", "onDestroy");
-            context = null;
-            ingredientListFetcher.cleanup();
         }
 
         @Override
         public int getCount() {
-            if(ingredientList != null) {
-                return ingredientList.size();
-            }
-            return 0;
+            return ingredientList.size();
         }
 
         @Override
         public RemoteViews getViewAt(int position) {
-            Log.d("WidgetService", ingredientList.get(position).toPrint());
+            Log.d("WidgetService", "view at: " + String.valueOf(position));
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list_item);
             views.setTextViewText(R.id.widget_item_text_view, ingredientList.get(position).toPrint());
 
             Intent fillIntent = new Intent();
             fillIntent.putExtra(context.getString(R.string.position), 0);
-            fillIntent.putExtra(context.getString(R.string.intent_recipe_id), id);
+            fillIntent.putExtra(context.getString(R.string.intent_recipe_id), recipeId);
             views.setOnClickFillInIntent(R.id.widget_item_parent_view, fillIntent);
 
             return views;

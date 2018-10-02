@@ -31,6 +31,8 @@ public class DataModel implements IDataModel {
         this.localRepository = localRepository;
         this.remoteRepository = remoteRepository;
 
+        remoteRepository.getRemoteData();
+
         ownedRecipeIngredientsMap = new SparseArray<>();
     }
 
@@ -40,8 +42,17 @@ public class DataModel implements IDataModel {
     }
 
     @Override
+    public LiveData<List<Recipe>> getFullRecipes() {
+        return localRepository.getFullRecipes();
+    }
+
+    @Override
     public LiveData<Recipe> getRecipe(int id) {
         return localRepository.getRecipe(id);
+    }
+
+    public Recipe getNonLiveRecipe(int id) {
+        return localRepository.getNonLiveRecipe(id);
     }
 
     @Override
