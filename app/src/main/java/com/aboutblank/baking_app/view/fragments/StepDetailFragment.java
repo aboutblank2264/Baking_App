@@ -119,10 +119,12 @@ public class StepDetailFragment extends BaseFragment {
 
     }
 
-    private void setThumbnailView(String imageUrl, boolean hasThumbnail) {
-        if (hasThumbnail) {
-            Log.d(LOG_TAG, "Preparing thumbnail with: " + imageUrl);
-            recipeViewModel.loadImage(thumbnail, imageUrl);
+    private void setThumbnailView(String imageUrl, boolean hasImageUrl, boolean hasVideoUrl) {
+        if (!hasVideoUrl) {
+            if(hasImageUrl) {
+                Log.d(LOG_TAG, "Preparing thumbnail with: " + imageUrl);
+                recipeViewModel.loadImage(thumbnail, imageUrl);
+            }
         } else {
             thumbnail.setVisibility(View.GONE);
         }
@@ -148,7 +150,7 @@ public class StepDetailFragment extends BaseFragment {
         //just to test, if description is null, most likely the fragment isn't finished creating
         if (description != null && detailViewState != null) {
             setDescriptionView(detailViewState.getDescription(), detailViewState.hasDescription());
-            setThumbnailView(detailViewState.getThumbnailUrl(), detailViewState.hasThumbnail());
+            setThumbnailView(detailViewState.getThumbnailUrl(), detailViewState.hasThumbnail(), detailViewState.hasVideoUrl());
             setVideoView(detailViewState.getVideoUrl(), detailViewState.hasVideoUrl());
         }
     }

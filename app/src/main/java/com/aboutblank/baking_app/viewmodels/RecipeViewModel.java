@@ -54,6 +54,14 @@ public class RecipeViewModel extends ViewModel {
         changeActivityUseCase.startDetailActivity(context, recipeId, position);
     }
 
+    public void changeDetailView(Context context, int recipeId, int position, boolean isTablet) {
+        if(isTablet) {
+
+        } else {
+            changeActivityUseCase.startDetailActivity(context, recipeId, position);
+        }
+    }
+
     public MediaPlayer getPlayer(boolean samePlayer) {
         return loadMediaPlayerUseCase.getPlayer(samePlayer);
     }

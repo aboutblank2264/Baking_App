@@ -19,12 +19,17 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     private RecipeViewModel recipeViewModel;
     private RecipeViewState recipeViewState;
 
+    private boolean tabletLayout = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
         recipeFragment = (RecipeFragment) getSupportFragmentManager().findFragmentById(R.id.recipe_fragment);
+
+        //check if is a tablet layout or not.
+        tabletLayout = findViewById(R.id.other_fragment) == null;
 
         if (getIntent() != null) {
             int recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
