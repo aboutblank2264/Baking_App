@@ -24,10 +24,11 @@ public class ChangeActivityUseCase {
         context.startActivity(launchRecipeIntent);
     }
 
-    public void startDetailActivity(Context context, int recipeId, int position) {
+    public void startDetailActivity(Context context, int recipeId, int position, String recipeName) {
         Intent launchDetailIntent = new Intent(context, DetailActivity.class);
         launchDetailIntent.putExtra(context.getString(R.string.position), position);
         launchDetailIntent.putExtra(context.getString(R.string.intent_recipe_id), recipeId);
+        launchDetailIntent.putExtra(context.getString(R.string.toolbar_title), recipeName);
 
         context.startActivity(launchDetailIntent);
     }

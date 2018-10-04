@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        setSupportActionBar(findViewById(R.id.main_toolbar));
+
         initializeRecyclerView();
 
         initializeData();

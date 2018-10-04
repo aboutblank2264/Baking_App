@@ -26,6 +26,8 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
+        setSupportActionBar(findViewById(R.id.recipe_toolbar));
+
         recipeFragment = (RecipeFragment) getSupportFragmentManager().findFragmentById(R.id.recipe_fragment);
 
         //check if is a tablet layout or not.
@@ -56,6 +58,9 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
         getRecipeViewModel().getRecipe(recipeId).observe(this, recipe -> {
             if (recipe != null) {
                 setState(new RecipeViewState.Builder(recipe).build());
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setTitle(recipe.getName());
+                }
             }
         });
     }
@@ -73,6 +78,9 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     @Override
     public void onItemClick(View view, int position) {
         Log.d(LOG_TAG, "Loading detail view with position " + position);
-        getRecipeViewModel().changeToDetailView(this, recipeViewState.getRecipe().getId(), position);
+        getRecipeViewModel().changeToDetailView(this,
+                recipeViewState.getRecipe().getId(),
+                position,
+                recipeViewState.getRecipe().getName());
     }
 }

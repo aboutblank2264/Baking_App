@@ -50,15 +50,15 @@ public class RecipeViewModel extends ViewModel {
         this.showMediaDialogUseCase = showMediaDialogUseCase;
     }
 
-    public void changeToDetailView(Context context, int recipeId, int position) {
-        changeActivityUseCase.startDetailActivity(context, recipeId, position);
+    public void changeToDetailView(Context context, int recipeId, int position, String recipeName) {
+        changeActivityUseCase.startDetailActivity(context, recipeId, position, recipeName);
     }
 
     public void changeDetailView(Context context, int recipeId, int position, boolean isTablet) {
         if(isTablet) {
 
         } else {
-            changeActivityUseCase.startDetailActivity(context, recipeId, position);
+            changeActivityUseCase.startDetailActivity(context, recipeId, position, "");
         }
     }
 

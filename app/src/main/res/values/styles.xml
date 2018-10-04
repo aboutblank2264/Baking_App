@@ -43,6 +43,13 @@
         <item name = "android:background">@color/cardview_dark_background</item>
     </style>
 
+    <style name = "ToolbarStyle" parent="Theme.AppCompat">
+        <item name = "android:background">@color/colorPrimary</item>
+        <item name = "android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name = "popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name = "android:textColor">@android:color/white</item>
+    </style>
+
     <style name = "WidgetTitleStyle">
         <item name = "android:textColor">@android:color/white</item>
         <item name = "android:textStyle">bold</item>

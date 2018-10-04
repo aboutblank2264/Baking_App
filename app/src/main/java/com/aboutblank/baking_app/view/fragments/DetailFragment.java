@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.aboutblank.baking_app.BakingApplication;
 import com.aboutblank.baking_app.R;
@@ -34,6 +35,12 @@ public class DetailFragment extends BaseFragment {
     @BindView(R.id.fragment_placeholder)
     View fragment_placeholder;
 
+    @BindView(R.id.detail_next)
+    Button nextButton;
+
+    @BindView(R.id.detail_previous)
+    Button previousButton;
+
     private RecipeViewModel recipeViewModel;
 
     private BaseFragment currentFragment;
@@ -47,9 +54,6 @@ public class DetailFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(LOG_TAG, String.valueOf(requireActivity().getIntent() != null));
-        Log.d(LOG_TAG, String.valueOf(getArguments() != null));
-
         if (requireActivity().getIntent() != null) {
             // Make sure there is a legal position, aka the step number
             position = requireActivity().getIntent().getIntExtra(getString(R.string.position), -1);
@@ -59,9 +63,6 @@ public class DetailFragment extends BaseFragment {
             throw new IllegalArgumentException(
                     String.format("Unable to load details, required properties not properly set. Given recipeId: %s, position: %s", recipeId, position));
         }
-
-//        observeRecipe(recipeId, position);
-//        setOnTouchListenerTo(layout);
     }
 
     @Nullable
@@ -86,7 +87,7 @@ public class DetailFragment extends BaseFragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             recipeId = savedInstanceState.getInt(getString(R.string.intent_recipe_id));
             position = savedInstanceState.getInt(getString(R.string.position));
         }
@@ -132,7 +133,7 @@ public class DetailFragment extends BaseFragment {
 
     @Override
     public void saveFragment(FragmentManager fragmentManager) {
-
+//TODO
     }
 
     @Override
@@ -151,6 +152,14 @@ public class DetailFragment extends BaseFragment {
             this.viewState = (RecipeViewState) viewState;
             attachFragment(currentFragment);
         }
+
+        //check if either buttons need to be disabled
+        toggleNavigationButtons();
+    }
+
+    private void toggleNavigationButtons() {
+        previousButton.setEnabled(viewState.getCurrentPosition() != 0);
+        nextButton.setEnabled(viewState.getCurrentPosition() != (viewState.getNumberOfSteps() - 1));
     }
 
     @OnClick(R.id.detail_previous)

@@ -9,10 +9,8 @@
         android:id="@+id/toolbar"
         android:layout_width = "match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Choose Ingredient List"
+        style="@style/ToolbarStyle"
+        app:title="@string/choose_ingredient_widget"
         />
 
     <android.support.v7.widget.RecyclerView
