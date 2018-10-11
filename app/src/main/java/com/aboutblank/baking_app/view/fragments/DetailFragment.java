@@ -93,7 +93,7 @@ public class DetailFragment extends BaseFragment {
         }
     }
 
-    public void observeRecipe(int recipeId, int position) {
+    private void observeRecipe(int recipeId, int position) {
         getRecipeViewModel().getRecipe(recipeId).observe(this, recipe -> {
             if (recipe != null) {
                 setViewState(new RecipeViewState.Builder(recipe)
@@ -163,13 +163,13 @@ public class DetailFragment extends BaseFragment {
     }
 
     @OnClick(R.id.detail_previous)
-    void onClickPrevious() {
+    public void onClickPrevious() {
         Log.d(LOG_TAG, "Go previous");
         setViewState(getRecipeViewModel().goPrevious(viewState));
     }
 
     @OnClick(R.id.detail_next)
-    void onClickNext() {
+    public void onClickNext() {
         Log.d(LOG_TAG, "Go next");
         setViewState(getRecipeViewModel().goNext(viewState));
     }

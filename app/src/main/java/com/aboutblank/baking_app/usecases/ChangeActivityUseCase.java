@@ -20,6 +20,8 @@ public class ChangeActivityUseCase {
     public void startRecipeActivity(Context context, int recipeId) {
         Intent launchRecipeIntent = new Intent(context, RecipeActivity.class);
         launchRecipeIntent.putExtra(context.getString(R.string.intent_recipe_id), recipeId);
+        //For tablet version
+        launchRecipeIntent.putExtra(context.getString(R.string.position), 1);
 
         context.startActivity(launchRecipeIntent);
     }

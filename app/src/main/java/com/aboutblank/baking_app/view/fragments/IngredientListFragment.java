@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aboutblank.baking_app.DetailActivity;
+import com.aboutblank.baking_app.BakingApplication;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.states.IngredientViewState;
 import com.aboutblank.baking_app.states.ViewState;
@@ -23,7 +23,6 @@ import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 
@@ -50,8 +49,6 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
 
         onLoadInstanceState(savedInstanceState);
 
-        DetailActivity detailActivity = (DetailActivity) Objects.requireNonNull(getActivity());
-        recipeViewModel = detailActivity.getRecipeViewModel();
         setupRecyclerView();
 
         subscribeToIndexedIngredients();
@@ -64,6 +61,13 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
         super.onActivityCreated(savedInstanceState);
 
         updateViewAdapter(ingredientViewState);
+    }
+
+    private RecipeViewModel getRecipeViewModel() {
+        if(recipeViewModel == null) {
+            recipeViewModel = ((BakingApplication) requireActivity().getApplication()).getRecipeViewModel();
+        }
+        return recipeViewModel;
     }
 
     private void setupRecyclerView() {
@@ -100,7 +104,7 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     }
 
     public void subscribeToIndexedIngredients() {
-        List<Integer> indexedIngredients = recipeViewModel.getIndexedIngredients(ingredientViewState.getRecipeId());
+        List<Integer> indexedIngredients = getRecipeViewModel().getIndexedIngredients(ingredientViewState.getRecipeId());
         setViewState(new IngredientViewState.Builder(ingredientViewState.getRecipeId())
                 .setIngredients(ingredientViewState.getIngredients())
                 .setIndexedIngredients(indexedIngredients)
@@ -116,7 +120,7 @@ public class IngredientListFragment extends BaseFragment implements ItemClickedL
     @Override
     public void onItemClick(View view, int position) {
         Log.d(LOG_TAG, "Adding item position to indexed ingredients " + position);
-        recipeViewModel.indexIngredient(ingredientViewState.getRecipeId(), position);
+        getRecipeViewModel().indexIngredient(ingredientViewState.getRecipeId(), position);
     }
 
     @Override

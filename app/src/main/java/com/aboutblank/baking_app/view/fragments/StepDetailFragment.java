@@ -11,15 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.aboutblank.baking_app.DetailActivity;
+import com.aboutblank.baking_app.BakingApplication;
 import com.aboutblank.baking_app.R;
 import com.aboutblank.baking_app.player.MediaPlayer;
 import com.aboutblank.baking_app.player.MediaPlayerView;
 import com.aboutblank.baking_app.states.DetailViewState;
 import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
-
-import java.util.Objects;
 
 import butterknife.BindView;
 
@@ -55,8 +53,6 @@ public class StepDetailFragment extends BaseFragment {
 
         onLoadInstanceState(savedInstanceState);
 
-        DetailActivity detailActivity = (DetailActivity) Objects.requireNonNull(getActivity());
-        recipeViewModel = detailActivity.getRecipeViewModel();
         return view;
     }
 
@@ -71,6 +67,13 @@ public class StepDetailFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         playerView.setPlayWhenReady(false);
+    }
+
+    private RecipeViewModel getRecipeViewModel() {
+        if(recipeViewModel == null) {
+            recipeViewModel = ((BakingApplication) requireActivity().getApplication()).getRecipeViewModel();
+        }
+        return recipeViewModel;
     }
 
     private void onLoadInstanceState(Bundle savedInstanceState) {
@@ -105,7 +108,7 @@ public class StepDetailFragment extends BaseFragment {
     private void setVideoView(String videoUrl, boolean hasVideo) {
         this.hasVideo = hasVideo;
         if (hasVideo) {
-            MediaPlayer mediaPlayer = recipeViewModel.getPlayer(samePlayer);
+            MediaPlayer mediaPlayer = getRecipeViewModel().getPlayer(samePlayer);
             if (!samePlayer) {
                 Log.d(LOG_TAG, "Preparing player with: " + videoUrl);
                 mediaPlayer.prepare(videoUrl);
@@ -123,7 +126,7 @@ public class StepDetailFragment extends BaseFragment {
         if (!hasVideoUrl) {
             if(hasImageUrl) {
                 Log.d(LOG_TAG, "Preparing thumbnail with: " + imageUrl);
-                recipeViewModel.loadImage(thumbnail, imageUrl);
+                getRecipeViewModel().loadImage(thumbnail, imageUrl);
             }
         } else {
             thumbnail.setVisibility(View.GONE);

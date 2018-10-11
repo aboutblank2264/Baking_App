@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
     android:layout_width = "match_parent"
     android:layout_height = "match_parent"
-    xmlns:app = "http://schemas.android.com/apk/res-auto"
-    android:orientation = "horizontal"
     >
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/recipe_toolbar"
+        android:id = "@+id/recipe_toolbar"
+        style = "@style/ToolbarStyle"
         android:layout_width = "match_parent"
         android:layout_height = "?android:attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="@string/app_name"
+        app:title = "@string/app_name"
+        />
+
+    <View
+        android:id = "@+id/center_divider"
+        android:layout_width = "2dp"
+        android:layout_height = "0dp"
+        android:background = "@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf = "parent"
+        app:layout_constraintLeft_toLeftOf = "parent"
+        app:layout_constraintRight_toRightOf = "parent"
+        app:layout_constraintTop_toBottomOf = "@id/recipe_toolbar"
         />
 
     <fragment
         android:id = "@+id/recipe_fragment"
         android:name = "com.aboutblank.baking_app.view.fragments.RecipeFragment"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
+        android:layout_width = "0dp"
+        android:layout_height = "0dp"
+        app:layout_constraintBottom_toBottomOf = "parent"
+        app:layout_constraintLeft_toLeftOf = "parent"
+        app:layout_constraintRight_toLeftOf = "@id/center_divider"
+        app:layout_constraintTop_toBottomOf = "@id/recipe_toolbar"
         />
 
-    <View
-        android:layout_width = "2dp"
-        android:layout_height = "match_parent"
-        android:background = "@android:color/darker_gray"
+    <fragment
+        android:id = "@+id/recipe_detail_fragment"
+        android:name = "com.aboutblank.baking_app.view.fragments.DetailFragment"
+        android:layout_width = "0dp"
+        android:layout_height = "0dp"
+        app:layout_constraintBottom_toBottomOf = "parent"
+        app:layout_constraintLeft_toRightOf = "@id/center_divider"
+        app:layout_constraintRight_toRightOf = "parent"
+        app:layout_constraintTop_toBottomOf = "@id/recipe_toolbar"
         />
-
-    <FrameLayout
-        android:id = "@+id/other_fragment"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        />
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

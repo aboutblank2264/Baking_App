@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.aboutblank.baking_app.states.RecipeViewState;
 import com.aboutblank.baking_app.view.ItemClickedListener;
+import com.aboutblank.baking_app.view.fragments.DetailFragment;
 import com.aboutblank.baking_app.view.fragments.RecipeFragment;
 import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
 
@@ -20,6 +21,7 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     private RecipeViewState recipeViewState;
 
     private boolean tabletLayout = false;
+    private DetailFragment detailFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +33,16 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
         recipeFragment = (RecipeFragment) getSupportFragmentManager().findFragmentById(R.id.recipe_fragment);
 
         //check if is a tablet layout or not.
-        tabletLayout = findViewById(R.id.other_fragment) == null;
+        tabletLayout = findViewById(R.id.recipe_detail_fragment) != null;
+
+        if(tabletLayout) {
+            Log.d(LOG_TAG, "Detecting tablet view, switching to appropriate layout");
+            detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.recipe_detail_fragment);
+
+//            if(savedInstanceState != null) {
+//                detailFragment.setArguments(savedInstanceState);
+//            }
+        }
 
         if (getIntent() != null) {
             int recipeId = getIntent().getIntExtra(getString(R.string.intent_recipe_id), -1);
@@ -57,10 +68,10 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     private void observeRecipe(int recipeId) {
         getRecipeViewModel().getRecipe(recipeId).observe(this, recipe -> {
             if (recipe != null) {
-                setState(new RecipeViewState.Builder(recipe).build());
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(recipe.getName());
                 }
+                setState(new RecipeViewState.Builder(recipe).build());
             }
         });
     }
@@ -68,6 +79,13 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     private void setState(RecipeViewState state) {
         recipeViewState = state;
         recipeFragment.setViewState(state);
+        setDetailFragmentViewState(state);
+    }
+
+    private void setDetailFragmentViewState(RecipeViewState viewState) {
+        if(tabletLayout) {
+            detailFragment.setViewState(viewState);
+        }
     }
 
     @Override
@@ -78,9 +96,16 @@ public class RecipeActivity extends AppCompatActivity implements ItemClickedList
     @Override
     public void onItemClick(View view, int position) {
         Log.d(LOG_TAG, "Loading detail view with position " + position);
-        getRecipeViewModel().changeToDetailView(this,
-                recipeViewState.getRecipe().getId(),
-                position,
-                recipeViewState.getRecipe().getName());
+        if(tabletLayout) {
+            RecipeViewState newState = new RecipeViewState.Builder(recipeViewState.getRecipe())
+                    .setCurrentPosition(position)
+                    .setIndexedIngredients(recipeViewState.getIndexedIngredients()).build();
+            setState(newState);
+        } else {
+            getRecipeViewModel().changeToDetailView(this,
+                    recipeViewState.getRecipe().getId(),
+                    position,
+                    recipeViewState.getRecipe().getName());
+        }
     }
 }

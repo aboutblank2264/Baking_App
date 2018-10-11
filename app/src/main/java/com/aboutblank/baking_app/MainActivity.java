@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedListen
      */
     private void initializeRecyclerView() {
         adapter = new MainRecyclerViewAdapter(new ArrayList<>(), this);
-        mainRecyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
+        mainRecyclerView.setLayoutManager(new GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false));
         mainRecyclerView.setAdapter(adapter);
     }
 

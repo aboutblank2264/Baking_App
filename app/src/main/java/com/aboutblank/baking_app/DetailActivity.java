@@ -6,21 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.aboutblank.baking_app.states.ViewState;
 import com.aboutblank.baking_app.view.fragments.DetailFragment;
-import com.aboutblank.baking_app.viewmodels.RecipeViewModel;
-
-import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity implements BaseActivity {
 
     private DetailFragment detailFragment;
 
-    private RecipeViewModel recipeViewModel;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        ButterKnife.bind(this);
 
         setSupportActionBar(findViewById(R.id.detail_toolbar));
 
@@ -31,13 +25,6 @@ public class DetailActivity extends AppCompatActivity implements BaseActivity {
             getSupportActionBar().setTitle(getIntent().getExtras().getString(getString(R.string.toolbar_title),
                     getString(R.string.app_name)));
         }
-    }
-
-    public RecipeViewModel getRecipeViewModel() {
-        if (recipeViewModel == null) {
-            recipeViewModel = ((BakingApplication) getApplication()).getRecipeViewModel();
-        }
-        return recipeViewModel;
     }
 
     @Override
